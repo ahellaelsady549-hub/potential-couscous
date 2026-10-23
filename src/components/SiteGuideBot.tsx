@@ -198,20 +198,26 @@ export const SiteGuideBot = ({ onOpenChange }: SiteGuideBotProps = {}) => {
       />
 
       {/* Floating Button */}
-      <Button
-        onClick={() => setIsOpen(true)}
-        className="fixed bottom-4 left-4 h-11 w-11 rounded-full shadow-lg z-50 bg-gradient-to-r from-primary to-accent hover:scale-105 transition-transform"
-        size="icon"
-      >
-        <MessageCircle className="h-5 w-5" />
-      </Button>
+      {!isOpen && (
+        <Button
+          onClick={() => setIsOpen(true)}
+          aria-label="افتح المحادثة مع طمّني"
+          aria-expanded={isOpen}
+          aria-controls="site-guide-chat"
+          className="fixed z-40 h-14 w-14 rounded-full border border-primary-foreground/20 bg-gradient-to-br from-primary to-secondary text-primary-foreground shadow-[0_8px_30px_-8px_hsl(var(--primary)/0.7)] transition-all duration-300 hover:-translate-y-1 hover:scale-105 hover:shadow-[0_12px_36px_-8px_hsl(var(--primary)/0.8)] focus-visible:ring-4 focus-visible:ring-primary/30 sm:w-auto sm:gap-3 sm:px-5"
+          style={{ right: 'max(1rem, env(safe-area-inset-right))', bottom: 'max(1rem, env(safe-area-inset-bottom))' }}
+        >
+          <MessageCircle className="h-6 w-6" />
+          <span className="hidden sm:inline">اسأل طمّني</span>
+        </Button>
+      )}
 
       {/* Chat Window */}
       {isOpen && (
-        <Card className={`fixed z-50 flex flex-col overflow-hidden border border-primary/20 shadow-xl transition-all duration-300 ease-in-out
+        <Card id="site-guide-chat" className={`fixed z-[60] flex flex-col overflow-hidden border border-primary/20 shadow-xl transition-all duration-300 ease-in-out
           ${isFullScreen
             ? 'inset-0 rounded-none'
-            : 'bottom-4 left-4 right-4 top-20 rounded-xl sm:top-auto sm:right-auto sm:bottom-4 sm:left-4 sm:w-80 sm:h-[420px]'
+            : 'bottom-4 left-4 right-4 top-20 rounded-xl sm:top-auto sm:bottom-4 sm:left-auto sm:right-4 sm:w-80 sm:h-[420px]'
           }
         `}>
           {/* Header */}

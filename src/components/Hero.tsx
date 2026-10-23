@@ -77,14 +77,14 @@ export const Hero = () => {
 
       <div className="container mx-auto px-4 relative z-10">
         <div className="mx-auto max-w-3xl text-center">
-          <h2 className="mb-6 text-4xl md:text-6xl font-bold tracking-tight">
+          <h2 className="motion-hero-title mb-6 text-4xl md:text-6xl font-bold tracking-tight">
             {t('hero.title')}
           </h2>
-          <p className="mb-10 text-lg md:text-xl text-muted-foreground">
+          <p className="motion-hero-subtitle mb-10 text-lg md:text-xl text-muted-foreground">
             {t('hero.subtitle')}
           </p>
 
-          <div className="flex flex-col gap-3 max-w-2xl mx-auto">
+          <div className="motion-hero-search flex flex-col gap-3 max-w-2xl mx-auto">
             <div className="flex gap-2 justify-center flex-wrap">
               <Button
                 variant={searchType === 'symptoms' ? 'default' : 'outline'}

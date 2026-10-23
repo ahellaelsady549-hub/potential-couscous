@@ -14,7 +14,6 @@ import { DietPlan } from '@/components/DietPlan';
 import { PersonalityTest } from '@/components/PersonalityTest';
 import { LocationSearch } from '@/components/LocationSearch';
 import { Physiotherapy } from '@/components/Physiotherapy';
-import { SiteGuideBot } from '@/components/SiteGuideBot';
 import { Footer } from '@/components/Footer';
 import { useAuth } from '@/contexts/AuthContext';
 import { useScrollReveal } from '@/hooks/useScrollReveal';
@@ -54,7 +53,6 @@ const Index = () => {
       {user && <PersonalityTest />}
       <Physiotherapy />
       <LocationSearch />
-      <SiteGuideBot />
       <Footer />
     </div>
   );

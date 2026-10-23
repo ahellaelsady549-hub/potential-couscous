@@ -39,7 +39,7 @@ const items: Item[] = [
 
 export const Header = () => {
   const { theme, toggleTheme } = useTheme();
-  const { t, language, setLanguage, L } = useLanguage();
+  const { t, language, L } = useLanguage();
   const { user } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
@@ -68,34 +68,6 @@ export const Header = () => {
           </Link>
 
           <div className="flex items-center gap-1.5">
-            {/* Language flags */}
-            <div className="flex items-center gap-1 rounded-full border border-border p-0.5" aria-label={t('lang.toggle')}>
-              <button
-                type="button"
-                onClick={() => setLanguage('ar')}
-                aria-label={L('العربية', 'Arabic')}
-                title={L('العربية', 'Arabic')}
-                className={cn(
-                  'rounded-full px-1.5 py-1 text-lg leading-none transition-all duration-200 hover:scale-110',
-                  language === 'ar' ? 'bg-muted ring-1 ring-primary/40' : 'opacity-60',
-                )}
-              >
-                🇪🇬
-              </button>
-              <button
-                type="button"
-                onClick={() => setLanguage('en')}
-                aria-label="English"
-                title="English"
-                className={cn(
-                  'rounded-full px-1.5 py-1 text-lg leading-none transition-all duration-200 hover:scale-110',
-                  language === 'en' ? 'bg-muted ring-1 ring-primary/40' : 'opacity-60',
-                )}
-              >
-                🇬🇧
-              </button>
-            </div>
-
             <Button
               variant="ghost"
               size="icon"

@@ -11,10 +11,10 @@ export const ServiceShortcuts = () => {
     { to: '/gym', icon: Dumbbell, t: L('الجيم', 'Gym'), d: L('برامج تمارين وتغذية', 'Workout and nutrition plans') },
   ];
   return (
-    <section aria-label={L('الخدمات', 'Services')} className="container mx-auto px-4 py-6">
+    <section id="services" aria-label={L('الخدمات', 'Services')} className="container mx-auto px-4 py-6">
       <div className="grid grid-cols-2 gap-3 md:grid-cols-4">
         {items.map(({ to, icon: Icon, t, d }) => (
-          <Link key={to} to={to} className="motion-surface flex flex-col gap-2 rounded-xl border border-border bg-card p-4 text-card-foreground hover:border-primary focus-visible:outline focus-visible:outline-2 focus-visible:outline-primary">
+          <Link key={to} to={to} className="service-shortcut motion-surface flex flex-col gap-2 rounded-xl border border-border bg-card p-4 text-card-foreground hover:border-primary focus-visible:outline focus-visible:outline-2 focus-visible:outline-primary">
             <Icon className="h-6 w-6 text-primary" aria-hidden />
             <span className="font-bold">{t}</span>
             <span className="text-xs text-muted-foreground">{d}</span>

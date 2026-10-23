@@ -12,7 +12,7 @@ export const Footer = () => {
   );
 
   return (
-    <footer className="bg-gradient-medical text-white">
+    <footer id="site-footer" className="bg-gradient-medical text-white">
       <div className="container mx-auto px-4 py-7">
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-7">
           {/* Brand */}

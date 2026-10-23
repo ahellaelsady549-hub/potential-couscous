@@ -3,7 +3,7 @@ import { useEffect, type RefObject } from 'react';
 /** Reveal home sections once, only when they enter the viewport. */
 export function useScrollReveal(root: RefObject<HTMLElement>, dependency: unknown) {
   useEffect(() => {
-    const sections = root.current?.querySelectorAll<HTMLElement>('section[id]:not(#home)');
+    const sections = root.current?.querySelectorAll<HTMLElement>('section[id]:not(#home), footer[id]');
     if (!sections || window.matchMedia('(prefers-reduced-motion: reduce)').matches || !('IntersectionObserver' in window)) return;
 
     const observer = new IntersectionObserver((entries) => {

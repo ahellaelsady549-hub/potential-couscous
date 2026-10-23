@@ -185,15 +185,59 @@ All colors MUST be HSL.
 
 @media (prefers-reduced-motion: no-preference) {
   .home-content [data-scroll-reveal] {
-    transition: opacity 400ms ease-out, translate 400ms cubic-bezier(0.22, 1, 0.36, 1);
+    transition: opacity 700ms ease-out, translate 700ms cubic-bezier(0.22, 1, 0.36, 1), scale 700ms cubic-bezier(0.22, 1, 0.36, 1);
   }
   .home-content [data-scroll-reveal='pending'] {
     opacity: 0;
-    translate: 0 12px;
+    translate: 0 24px;
+    scale: .985;
   }
   .home-content [data-scroll-reveal='visible'] {
     opacity: 1;
     translate: none;
+    scale: 1;
+  }
+  .home-content [data-scroll-reveal='pending'] .motion-surface {
+    opacity: 0;
+    translate: 0 16px;
+    scale: .97;
+  }
+  .home-content [data-scroll-reveal='visible'] .motion-surface {
+    opacity: 1;
+    translate: 0 0;
+    scale: 1;
+    transition: opacity 560ms ease-out, translate 650ms cubic-bezier(0.22, 1, 0.36, 1), scale 650ms cubic-bezier(0.22, 1, 0.36, 1), box-shadow 240ms ease, border-color 240ms ease;
+  }
+  .home-content [data-scroll-reveal='visible'] .motion-surface:nth-of-type(2) { transition-delay: 70ms; }
+  .home-content [data-scroll-reveal='visible'] .motion-surface:nth-of-type(3) { transition-delay: 140ms; }
+  .home-content [data-scroll-reveal='visible'] .motion-surface:nth-of-type(4) { transition-delay: 210ms; }
+  .home-content [data-scroll-reveal='visible'] .motion-surface:nth-of-type(5) { transition-delay: 280ms; }
+  .home-content [data-scroll-reveal='visible'] h2 {
+    animation: section-heading-arrive 650ms cubic-bezier(0.22, 1, 0.36, 1) both;
+  }
+  .home-content #services[data-scroll-reveal='pending'] .service-shortcut {
+    opacity: 0;
+    translate: 0 18px;
+    scale: .97;
+  }
+  .home-content #services[data-scroll-reveal='visible'] .service-shortcut {
+    opacity: 1;
+    translate: 0 0;
+    scale: 1;
+    transition: opacity 500ms ease-out, translate 600ms cubic-bezier(0.22, 1, 0.36, 1), scale 600ms cubic-bezier(0.22, 1, 0.36, 1), box-shadow 240ms ease, border-color 240ms ease;
+  }
+  .home-content #services[data-scroll-reveal='visible'] .service-shortcut:nth-child(2) { transition-delay: 80ms; }
+  .home-content #services[data-scroll-reveal='visible'] .service-shortcut:nth-child(3) { transition-delay: 160ms; }
+  .home-content #services[data-scroll-reveal='visible'] .service-shortcut:nth-child(4) { transition-delay: 240ms; }
+
+  .motion-hero-title {
+    animation: hero-arrive 850ms cubic-bezier(0.22, 1, 0.36, 1) both;
+  }
+  .motion-hero-subtitle {
+    animation: hero-arrive 850ms 120ms cubic-bezier(0.22, 1, 0.36, 1) both;
+  }
+  .motion-hero-search {
+    animation: hero-arrive 850ms 240ms cubic-bezier(0.22, 1, 0.36, 1) both;
   }
 }
 
@@ -265,8 +309,14 @@ All colors MUST be HSL.
 @keyframes mg-float { 0%,100% { transform: translate3d(0,0,0) scale(1); } 50% { transform: translate3d(0,-18px,0) scale(1.06); } }
 @keyframes mg-pulse-ring { 0% { transform: scale(.8); opacity: .6; } 100% { transform: scale(1.8); opacity: 0; } }
 @keyframes mg-heartbeat { 0%,100% { stroke-dashoffset: 300; } 60% { stroke-dashoffset: 0; } }
+@keyframes hero-arrive { from { opacity: 0; translate: 0 22px; filter: blur(6px); } to { opacity: 1; translate: 0 0; filter: blur(0); } }
+@keyframes section-heading-arrive { from { opacity: .35; translate: 0 10px; } to { opacity: 1; translate: 0 0; } }
 .mg-layer { position: absolute; inset: 0; overflow: hidden; pointer-events: none; z-index: 0; }
 .mg-blob { position: absolute; border-radius: 9999px; filter: blur(40px); background: hsl(var(--primary) / .18); animation: mg-float 9s ease-in-out infinite; will-change: transform; }
 .mg-ring { position: absolute; border-radius: 9999px; border: 2px solid hsl(var(--primary) / .35); animation: mg-pulse-ring 3.2s ease-out infinite; }
 .mg-pulse-line { stroke: hsl(var(--primary)); stroke-dasharray: 300; animation: mg-heartbeat 3s ease-in-out infinite; }
 @media (prefers-reduced-motion: reduce) { .mg-blob, .mg-ring, .mg-pulse-line { animation: none; } }
+@media (hover: hover) and (prefers-reduced-motion: no-preference) {
+  .service-shortcut { transition: translate 220ms ease, border-color 220ms ease, box-shadow 220ms ease; }
+  .service-shortcut:hover { translate: 0 -5px; box-shadow: var(--shadow-soft); }
+}
