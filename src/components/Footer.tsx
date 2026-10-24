@@ -1,4 +1,4 @@
-import { Heart, Facebook } from 'lucide-react';
+import { Heart, Facebook, Smartphone } from 'lucide-react';
 import { useLanguage } from '@/contexts/LanguageContext';
 
 export const Footer = () => {
@@ -7,7 +7,7 @@ export const Footer = () => {
   return (
     <footer id="site-footer" className="bg-gradient-medical text-white">
       <div className="container mx-auto px-4 py-7">
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-7">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-7">
           {/* Brand */}
           <div className="sm:col-span-2 lg:col-span-1">
             <div className="flex items-center gap-2 mb-4">
@@ -39,6 +39,20 @@ export const Footer = () => {
             </a>
           </div>
 
+          <div>
+            <h4 className="font-semibold mb-3 flex items-center gap-2 text-white">
+              <Smartphone className="h-4 w-4 opacity-80" />
+              {L('تحميل التطبيق', 'Download the App')}
+            </h4>
+            <a
+              href="/_es3efney_20322449.apk"
+              download="_es3efney_20322449.apk"
+              className="inline-flex items-center gap-2.5 rounded-lg bg-white/15 backdrop-blur-sm px-3 py-1.5 text-xs font-medium text-white hover:bg-white/25 transition-all hover:scale-[1.03] active:scale-95"
+            >
+              <Smartphone className="h-4 w-4" />
+              <span>{L('تحميل لأندرويد', 'Download for Android')}</span>
+            </a>
+          </div>
         </div>
 
         <div className="mt-7 pt-4 border-t border-white/15">
