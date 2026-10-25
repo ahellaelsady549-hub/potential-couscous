@@ -6,6 +6,7 @@ import { Heart, Search, ChevronDown, ChevronUp, Filter } from 'lucide-react';
 import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { MedicalSources } from '@/components/MedicalSources';
 
 const categories = [
   { id: 'all', nameAr: 'الكل', nameEn: 'All' },
@@ -85,6 +86,20 @@ export const FirstAid = () => {
           </p>
         </div>
 
+        <div className="mx-auto mb-8 max-w-4xl rounded-xl border border-emergency/30 bg-emergency/5 p-4 text-center">
+          <p className="mb-3 text-sm leading-6">
+            {L(
+              'هذه إرشادات توعوية عامة وليست بديلاً عن تدريب الإسعافات أو تعليمات الإسعاف. في الحالات الخطيرة اتصل بـ 123 واتبع تعليمات موظف الطوارئ.',
+              'These are general educational tips, not a substitute for first-aid training or emergency dispatcher instructions. For serious situations, call 123 and follow the dispatcher’s guidance.',
+            )}
+          </p>
+          <Button asChild variant="destructive" size="sm">
+            <a href="tel:123">
+              {L('اتصل بالإسعاف 123', 'Call ambulance 123')}
+            </a>
+          </Button>
+        </div>
+
         <div className="max-w-xl mx-auto mb-12 space-y-4">
           <div className="flex items-center gap-2">
             <Filter className="h-5 w-5 text-muted-foreground" />
@@ -128,6 +143,10 @@ export const FirstAid = () => {
                     variant="ghost"
                     size="sm"
                     onClick={() => toggleCard(tip.id)}
+                    aria-expanded={isExpanded}
+                    aria-label={isExpanded
+                      ? L(`إخفاء خطوات ${tip.titleAr}`, `Hide steps for ${tip.titleEn}`)
+                      : L(`عرض خطوات ${tip.titleAr}`, `Show steps for ${tip.titleEn}`)}
                   >
                     {isExpanded ? <ChevronUp className="h-4 w-4" /> : <ChevronDown className="h-4 w-4" />}
                   </Button>
@@ -169,6 +188,8 @@ export const FirstAid = () => {
             </Button>
           </div>
         )}
+
+        <MedicalSources topic="firstAid" />
       </div>
     </section>
   );

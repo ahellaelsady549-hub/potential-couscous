@@ -1,4 +1,4 @@
-import { Search, X, Pill } from 'lucide-react';
+import { Search, X, Pill, Phone, HeartPulse } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Card } from '@/components/ui/card';
@@ -83,6 +83,21 @@ export const Hero = () => {
           <p className="motion-hero-subtitle mb-10 text-lg md:text-xl text-muted-foreground">
             {t('hero.subtitle')}
           </p>
+
+          <div className="mb-8 flex flex-wrap justify-center gap-3">
+            <Button asChild variant="destructive" className="min-h-11">
+              <a href="tel:123">
+                <Phone className="h-4 w-4 me-2" aria-hidden />
+                {L('اتصل بالإسعاف 123', 'Call ambulance 123')}
+              </a>
+            </Button>
+            <Button asChild variant="outline" className="min-h-11">
+              <a href="#first-aid">
+                <HeartPulse className="h-4 w-4 me-2" aria-hidden />
+                {L('إرشادات الإسعافات الأولية', 'First-aid guidance')}
+              </a>
+            </Button>
+          </div>
 
           <div className="motion-hero-search flex flex-col gap-3 max-w-2xl mx-auto">
             <div className="flex gap-2 justify-center flex-wrap">

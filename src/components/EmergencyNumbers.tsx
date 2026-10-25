@@ -1,5 +1,6 @@
-import { Phone, AlertCircle, Flame } from 'lucide-react';
+import { Phone, AlertCircle, Flame, HeartPulse } from 'lucide-react';
 import { Card } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
 import { useLanguage } from '@/contexts/LanguageContext';
 
 const emergencyContacts = [
@@ -17,6 +18,26 @@ export const EmergencyNumbers = () => {
         <h2 className="text-3xl md:text-4xl font-bold text-center mb-12">
           {t('emergency.title')}
         </h2>
+
+        <div className="mx-auto mb-8 max-w-5xl rounded-xl border border-emergency/30 bg-emergency/5 p-5 text-center">
+          <p className="mb-4 font-semibold text-foreground">
+            {t('emergency.immediateHelp')}
+          </p>
+          <div className="flex flex-wrap justify-center gap-3">
+            <Button asChild variant="destructive">
+              <a href="tel:123">
+                <Phone className="h-4 w-4 me-2" aria-hidden />
+                {t('emergency.callAmbulance')}
+              </a>
+            </Button>
+            <Button asChild variant="outline">
+              <a href="#first-aid">
+                <HeartPulse className="h-4 w-4 me-2" aria-hidden />
+                {t('emergency.openFirstAid')}
+              </a>
+            </Button>
+          </div>
+        </div>
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-5xl mx-auto">
           {emergencyContacts.map((contact) => {

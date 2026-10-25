@@ -29,6 +29,7 @@ const ArticleDetail = lazy(() => import("./pages/ArticleDetail"));
 import { BackToTop } from '@/components/BackToTop';
 import { SiteGuideBot } from '@/components/SiteGuideBot';
 import { TermsGate } from "@/components/TermsGate";
+import { ConnectionNotice } from "@/components/ConnectionNotice";
 const NotFound = lazy(() => import("./pages/NotFound"));
 const AskMePage = lazy(() => import("./pages/AskMePage"));
 
@@ -83,6 +84,7 @@ const App = () => (
             <TooltipProvider>
               <Toaster />
               <Sonner />
+              <ConnectionNotice />
               <TermsGate />
               <AnimatedRoutes />
               <BackToTop />

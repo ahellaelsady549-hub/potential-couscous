@@ -40,6 +40,9 @@ const ar: Record<string, string> = {
 
   // Emergency
   'emergency.title': 'أرقام الطوارئ',
+  'emergency.immediateHelp': 'لو في خطر فوري، اتصل بالإسعاف الآن ولا تنتظر رد الموقع.',
+  'emergency.callAmbulance': 'اتصل بالإسعاف 123',
+  'emergency.openFirstAid': 'افتح إرشادات الإسعافات الأولية',
   'emergency.police': 'الشرطة',
   'emergency.ambulance': 'الإسعاف',
   'emergency.fire': 'الإطفاء',
@@ -182,6 +185,9 @@ const en: Record<string, string> = {
   'nav.menu': 'Menu',
 
   'emergency.title': 'Emergency Numbers',
+  'emergency.immediateHelp': 'If someone is in immediate danger, call emergency services now. Do not wait for the website.',
+  'emergency.callAmbulance': 'Call ambulance 123',
+  'emergency.openFirstAid': 'Open first-aid guidance',
   'emergency.police': 'Police',
   'emergency.ambulance': 'Ambulance',
   'emergency.fire': 'Fire Department',

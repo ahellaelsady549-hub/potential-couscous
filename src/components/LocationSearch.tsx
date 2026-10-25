@@ -59,8 +59,8 @@ const faqs = [
     id: 'q1',
     questionAr: 'ما هي أهمية موقع إسعفني للمجتمع؟',
     questionEn: 'What is the importance of Es3efny website for the community?',
-    answerAr: 'موقع إسعفني يوفر معلومات طبية موثوقة ونصائح إسعافات أولية للمجتمع، مما يساعد الأفراد على اتخاذ قرارات صحية سليمة وسريعة في حالات الطوارئ.',
-    answerEn: 'Es3efny website provides reliable medical information and first aid tips to the community, helping individuals make sound and quick health decisions in emergency situations.'
+    answerAr: 'يوفر إسعفني معلومات توعوية صحية وإرشادات إسعافات أولية وروابط لمصادر خارجية، مع توجيه المستخدم إلى طلب المساعدة الطبية عند الحاجة.',
+    answerEn: 'Es3efny provides educational health information, first-aid guidance, and links to external sources, while encouraging users to seek medical care when needed.'
   },
   {
     id: 'q2',
@@ -73,22 +73,22 @@ const faqs = [
     id: 'q3',
     questionAr: 'هل المعلومات الطبية الموجودة على الموقع موثوقة؟',
     questionEn: 'Is the medical information on the website reliable?',
-    answerAr: 'نعم، جميع المعلومات مبنية على مصادر طبية موثوقة ومراجعة من قبل متخصصين، ولكن ننصح دائماً باستشارة طبيب مختص للحالات الخطيرة.',
-    answerEn: 'Yes, all information is based on reliable medical sources and reviewed by specialists, but we always recommend consulting a doctor for serious cases.'
+    answerAr: 'الموقع يقدم معلومات توعوية وروابط لمصادر طبية في بعض الأقسام. لا تعتبر المعلومات تشخيصاً أو بديلاً عن الطبيب، واتبع تعليمات الطوارئ عند الحاجة.',
+    answerEn: 'The site provides educational information and links to medical sources in some sections. It is not a diagnosis or substitute for a clinician; follow emergency-service instructions when needed.'
   },
   {
     id: 'q4',
     questionAr: 'كيف يفيد النظام الغذائي المخصص المستخدمين؟',
     questionEn: 'How does the personalized diet plan benefit users?',
-    answerAr: 'النظام الغذائي المخصص يحسب أفضل نظام غذائي بناءً على الطول والوزن والعمر، مما يساعد المستخدمين على تحسين صحتهم وتحقيق أهدافهم الصحية.',
-    answerEn: 'The personalized diet plan calculates the best diet based on height, weight, and age, helping users improve their health and achieve their health goals.'
+    answerAr: 'توفر الخطة اقتراحات عامة بناءً على البيانات التي يدخلها المستخدم، ولا تغني عن استشارة أخصائي تغذية، خصوصاً لمن لديهم حالة صحية أو احتياجات خاصة.',
+    answerEn: 'The plan offers general suggestions based on user-provided information. It does not replace a dietitian, especially for people with medical conditions or specific needs.'
   },
   {
     id: 'q5',
     questionAr: 'ما الذي يميز موقع إسعفني عن غيره من المواقع الطبية؟',
     questionEn: 'What distinguishes Es3efny from other medical websites?',
-    answerAr: 'الموقع يدعم اللغة العربية والإنجليزية، متخصص في السوق المصري، يوفر معلومات عن أسعار الأدوية المحلية، ويحتوي على بوت مساعد لشرح خصائص الموقع.',
-    answerEn: 'The website supports Arabic and English, specializes in the Egyptian market, provides information on local medication prices, and includes a guide bot to explain website features.'
+    answerAr: 'يجمع الموقع بين دعم العربية والإنجليزية وإرشادات الإسعافات الأولية وأرقام الطوارئ والبحث عن المرافق الصحية. المعلومات توعوية ولا تغني عن الرعاية الطبية.',
+    answerEn: 'The site combines Arabic and English support with first-aid guidance, emergency numbers, and health-facility search. Its information is educational and does not replace medical care.'
   }
 ];
 
@@ -97,14 +97,20 @@ export const LocationSearch = () => {
   const [selectedSpecialty, setSelectedSpecialty] = useState<string>('');
 
   const handleLocationSearch = (searchQuery: string) => {
-    toast.info(language === 'ar' ? 'جاري تحديد موقعك...' : 'Getting your location...');
-    
+    const baseUrl = `https://www.google.com/maps/search/${encodeURIComponent(searchQuery)}`;
+    const mapWindow = window.open(baseUrl, '_blank');
+    if (!mapWindow) {
+      toast.error(language === 'ar' ? 'يرجى السماح بفتح نافذة الخرائط' : 'Please allow the maps tab to open');
+      return;
+    }
+    mapWindow.opener = null;
+
     if ('geolocation' in navigator) {
+      toast.info(language === 'ar' ? 'جاري تحديد موقعك...' : 'Getting your location...');
       navigator.geolocation.getCurrentPosition(
         (position) => {
           const { latitude, longitude } = position.coords;
-          const mapsUrl = `https://www.google.com/maps/search/${encodeURIComponent(searchQuery)}/@${latitude},${longitude},15z`;
-          window.open(mapsUrl, '_blank');
+          mapWindow.location.replace(`${baseUrl}/@${latitude},${longitude},15z`);
           toast.success(language === 'ar' ? 'تم فتح الخريطة' : 'Map opened');
         },
         (error) => {
@@ -114,8 +120,6 @@ export const LocationSearch = () => {
               ? 'تعذر الوصول إلى موقعك. سيتم البحث بدون موقعك الحالي.'
               : 'Unable to access your location. Searching without your current location.'
           );
-          const mapsUrl = `https://www.google.com/maps/search/${encodeURIComponent(searchQuery)}`;
-          window.open(mapsUrl, '_blank');
         },
         {
           enableHighAccuracy: true,
@@ -123,10 +127,7 @@ export const LocationSearch = () => {
           maximumAge: 300000
         }
       );
-    } else {
-      const mapsUrl = `https://www.google.com/maps/search/${encodeURIComponent(searchQuery)}`;
-      window.open(mapsUrl, '_blank');
-    }
+    } else toast.success(language === 'ar' ? 'تم فتح الخريطة' : 'Map opened');
   };
 
   const handleClinicSearch = () => {
@@ -147,6 +148,11 @@ export const LocationSearch = () => {
         <h2 className="text-3xl md:text-4xl font-bold text-center mb-12">
           {language === 'ar' ? 'البحث عن أقرب المرافق الصحية' : 'Find the Nearest Health Facilities'}
         </h2>
+        <p className="mx-auto -mt-8 mb-8 max-w-2xl text-center text-sm text-muted-foreground">
+          {language === 'ar'
+            ? 'استخدام موقعك اختياري. عند السماح به تُضاف إحداثياته إلى بحث الخرائط، وعند الرفض تُفتح خريطة عامة دون إحداثيات من الموقع.'
+            : 'Location access is optional. If allowed, its coordinates are added to the map search; if denied, a general map search opens without coordinates from this site.'}
+        </p>
 
         {/* Clinic Search by Specialty */}
         <Card className="p-6 mb-12 max-w-xl mx-auto shadow-card">

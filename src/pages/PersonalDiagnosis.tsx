@@ -189,6 +189,15 @@ const PersonalDiagnosis = () => {
             <CardDescription className="text-amber-600 dark:text-amber-300">
               {L('هذا تقييم أولي ولا يغني عن زيارة الطبيب المتخصص. في حالات الطوارئ اتصل بالإسعاف: 123','This is a preliminary assessment and does not replace a specialist visit. In emergencies call the ambulance: 123')}
             </CardDescription>
+            <p className="text-sm text-muted-foreground">
+              {L(
+                'لا تكتب اسمك أو رقم هاتفك أو عنوانك أو أي بيانات تعريفية. الوصف والصورة الاختيارية يُرسلان إلى خدمة التحليل لإعداد التقييم.',
+                'Do not include your name, phone number, address, or other identifying details. Your description and optional image are sent to the assessment service.',
+              )}
+            </p>
+            <Button asChild variant="destructive" size="sm" className="w-fit">
+              <a href="tel:123">{L('اتصل بالإسعاف 123', 'Call ambulance 123')}</a>
+            </Button>
           </CardHeader>
         </Card>
 

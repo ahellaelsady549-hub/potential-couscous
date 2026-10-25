@@ -2,8 +2,9 @@ import { BookOpen, ExternalLink } from 'lucide-react';
 import { useLanguage } from '@/contexts/LanguageContext';
 
 type Source = { ar: string; en: string; url: string };
+type TopicSources = { reviewed?: string; items: Source[] };
 
-export const MEDICAL_SOURCES: Record<'mental' | 'physio', { reviewed: string; items: Source[] }> = {
+export const MEDICAL_SOURCES: Record<'mental' | 'physio' | 'firstAid', TopicSources> = {
   mental: {
     reviewed: '2026-10-16',
     items: [
@@ -22,19 +23,28 @@ export const MEDICAL_SOURCES: Record<'mental' | 'physio', { reviewed: string; it
       { ar: 'الجمعية البريطانية لأخصائيي العلاج الطبيعي (CSP)', en: 'Chartered Society of Physiotherapy', url: 'https://www.csp.org.uk/conditions' },
     ],
   },
+  firstAid: {
+    items: [
+      { ar: 'سانت جون للإسعاف – إرشادات الإسعافات الأولية', en: 'St John Ambulance – First aid advice', url: 'https://www.sja.org.uk/first-aid-advice/' },
+      { ar: 'سانت جون للإسعاف – الإنعاش القلبي الرئوي', en: 'St John Ambulance – CPR', url: 'https://www.sja.org.uk/first-aid-advice/cpr/' },
+      { ar: 'سانت جون للإسعاف – الاختناق', en: 'St John Ambulance – Choking', url: 'https://www.sja.org.uk/first-aid-advice/choking/' },
+    ],
+  },
 };
 
-export const MedicalSources = ({ topic }: { topic: 'mental' | 'physio' }) => {
+export const MedicalSources = ({ topic }: { topic: 'mental' | 'physio' | 'firstAid' }) => {
   const { L, language } = useLanguage();
   const data = MEDICAL_SOURCES[topic];
-  const date = new Date(data.reviewed).toLocaleDateString(language === 'ar' ? 'ar-EG' : 'en-GB', { year: 'numeric', month: 'long', day: 'numeric' });
+  const date = data.reviewed
+    ? new Date(data.reviewed).toLocaleDateString(language === 'ar' ? 'ar-EG' : 'en-GB', { year: 'numeric', month: 'long', day: 'numeric' })
+    : null;
   return (
     <aside className="mt-6 rounded-xl border bg-card p-4 text-sm">
       <h3 className="mb-1 flex items-center gap-2 font-semibold text-base">
         <BookOpen className="h-4 w-4 text-primary" aria-hidden />
-        {L('المصادر الموثوقة', 'Trusted sources')}
+        {L('مصادر للاطلاع', 'Sources for further reading')}
       </h3>
-      <p className="mb-3 text-xs text-muted-foreground">{L(`آخر مراجعة للمحتوى: ${date}`, `Content last reviewed: ${date}`)}</p>
+      {date && <p className="mb-3 text-xs text-muted-foreground">{L(`آخر مراجعة للمحتوى: ${date}`, `Content last reviewed: ${date}`)}</p>}
       <ul className="space-y-2">
         {data.items.map((s) => (
           <li key={s.url}>
