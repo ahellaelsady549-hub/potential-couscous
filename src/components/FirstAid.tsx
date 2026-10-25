@@ -2,11 +2,12 @@ import { Card } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { firstAidTips } from '@/data/firstAidTips';
-import { Heart, Search, ChevronDown, ChevronUp, Filter } from 'lucide-react';
+import { Heart, Search, ChevronDown, ChevronUp, Filter, X } from 'lucide-react';
 import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { MedicalSources } from '@/components/MedicalSources';
+import { normalizeSearchText } from '@/lib/search';
 
 const categories = [
   { id: 'all', nameAr: 'الكل', nameEn: 'All' },
@@ -45,14 +46,14 @@ export const FirstAid = () => {
   const filteredTips = firstAidTips.filter(tip => {
     const tipCategory = tip.category || getCategoryForTip(tip);
     const matchesCategory = selectedCategory === 'all' || tipCategory === selectedCategory;
-    const searchLower = searchQuery.toLowerCase().trim();
+    const searchLower = normalizeSearchText(searchQuery.trim());
     const title = language === 'ar' ? tip.titleAr : tip.titleEn;
     const description = language === 'ar' ? tip.descriptionAr : tip.descriptionEn;
     const steps = language === 'ar' ? tip.stepsAr : tip.stepsEn;
     const matchesSearch = searchLower === '' || 
-      title.toLowerCase().includes(searchLower) ||
-      description.toLowerCase().includes(searchLower) ||
-      steps.some(step => step.toLowerCase().includes(searchLower));
+      normalizeSearchText(title).includes(searchLower) ||
+      normalizeSearchText(description).includes(searchLower) ||
+      steps.some(step => normalizeSearchText(step).includes(searchLower));
     return matchesCategory && matchesSearch;
   });
 
@@ -81,7 +82,7 @@ export const FirstAid = () => {
           <h2 className="text-3xl md:text-4xl font-bold">
             {t('firstAid.title')}
           </h2>
-          <p className="text-muted-foreground mt-2">
+          <p className="text-muted-foreground mt-2" aria-live="polite">
             {filteredTips.length} {L('إسعاف أولي متاح', 'first aid tips available')}
           </p>
         </div>
@@ -103,8 +104,8 @@ export const FirstAid = () => {
         <div className="max-w-xl mx-auto mb-12 space-y-4">
           <div className="flex items-center gap-2">
             <Filter className="h-5 w-5 text-muted-foreground" />
-            <Select value={selectedCategory} onValueChange={setSelectedCategory}>
-              <SelectTrigger className="h-12 shadow-soft border-2">
+            <Select value={selectedCategory} onValueChange={(value) => { setSelectedCategory(value); setShowAll(false); }}>
+              <SelectTrigger aria-label={L('تصفية حسب الفئة', 'Filter by category')} className="h-12 shadow-soft border-2">
                 <SelectValue placeholder={L('اختر الفئة', 'Select Category')} />
               </SelectTrigger>
               <SelectContent className="bg-background border border-border z-50">
@@ -118,14 +119,27 @@ export const FirstAid = () => {
           </div>
           
           <div className="relative">
-            <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
+            <Search className="absolute start-4 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" aria-hidden />
             <Input
-              type="text"
+              type="search"
+              aria-label={L('ابحث في إرشادات الإسعافات الأولية', 'Search first-aid guidance')}
               placeholder={L('ابحث في الإسعافات الأولية...', 'Search first aid tips...')}
               value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              className="pl-12 h-12 shadow-soft border-2 focus:border-primary"
+              onChange={(e) => { setSearchQuery(e.target.value); setShowAll(false); }}
+              className="ps-12 pe-12 h-12 shadow-soft border-2 focus:border-primary"
             />
+            {(searchQuery || selectedCategory !== 'all') && (
+              <Button
+                type="button"
+                variant="ghost"
+                size="icon"
+                onClick={() => { setSearchQuery(''); setSelectedCategory('all'); setShowAll(false); }}
+                aria-label={L('مسح البحث والتصفية', 'Clear search and filters')}
+                className="absolute end-1 top-1/2 h-9 w-9 -translate-y-1/2"
+              >
+                <X className="h-4 w-4" />
+              </Button>
+            )}
           </div>
         </div>
 

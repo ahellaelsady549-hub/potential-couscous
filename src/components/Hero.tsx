@@ -4,6 +4,7 @@ import { Input } from '@/components/ui/input';
 import { Card } from '@/components/ui/card';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { useLanguage } from '@/contexts/LanguageContext';
+import { normalizeSearchText } from '@/lib/search';
 import { useState } from 'react';
 import { diseases } from '@/data/diseases';
 import { treatments } from '@/data/treatments';
@@ -18,7 +19,7 @@ export const Hero = () => {
 
   const handleSearch = () => {
     if (searchQuery.trim() || selectedDisease) {
-      const query = searchQuery.toLowerCase();
+      const query = normalizeSearchText(searchQuery.trim());
       let results;
       
       if (selectedDisease) {
@@ -26,12 +27,12 @@ export const Hero = () => {
       } else if (searchType === 'symptoms') {
         results = diseases.filter(disease => {
           const symptoms = language === 'ar' ? disease.symptomsAr : disease.symptomsEn;
-          return symptoms.some(symptom => symptom.toLowerCase().includes(query));
+          return symptoms.some(symptom => normalizeSearchText(symptom).includes(query));
         });
       } else {
         results = diseases.filter(disease => {
           const name = language === 'ar' ? disease.nameAr : disease.nameEn;
-          return name.toLowerCase().includes(query);
+          return normalizeSearchText(name).includes(query);
         });
       }
       
@@ -102,15 +103,19 @@ export const Hero = () => {
           <div className="motion-hero-search flex flex-col gap-3 max-w-2xl mx-auto">
             <div className="flex gap-2 justify-center flex-wrap">
               <Button
+                type="button"
                 variant={searchType === 'symptoms' ? 'default' : 'outline'}
                 onClick={() => { setSearchType('symptoms'); setSelectedDisease(''); }}
+                aria-pressed={searchType === 'symptoms'}
                 className={searchType === 'symptoms' ? 'bg-gradient-medical' : ''}
               >
                 {t('search.bySymptoms')}
               </Button>
               <Button
+                type="button"
                 variant={searchType === 'disease' ? 'default' : 'outline'}
                 onClick={() => { setSearchType('disease'); setSelectedDisease(''); }}
+                aria-pressed={searchType === 'disease'}
                 className={searchType === 'disease' ? 'bg-gradient-medical' : ''}
               >
                 {t('search.byDisease')}
@@ -119,7 +124,7 @@ export const Hero = () => {
 
             <div className="mb-3">
               <Select value={selectedDisease} onValueChange={setSelectedDisease}>
-                <SelectTrigger className="h-14 shadow-soft border-2">
+                <SelectTrigger aria-label={L('اختر المرض', 'Select a condition')} className="h-14 shadow-soft border-2">
                   <SelectValue placeholder={L('اختر المرض', 'Select Disease')} />
                 </SelectTrigger>
                 <SelectContent className="max-h-80">
@@ -134,19 +139,23 @@ export const Hero = () => {
 
             <div className="flex flex-col sm:flex-row gap-3">
               <div className="relative flex-1">
-                <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
+                <Search className="absolute start-4 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" aria-hidden />
                 <Input
-                  type="text"
+                  type="search"
+                  aria-label={searchType === 'symptoms' ? t('search.symptomsPlaceholder') : t('search.diseasePlaceholder')}
                   placeholder={searchType === 'symptoms' ? t('search.symptomsPlaceholder') : t('search.diseasePlaceholder')}
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
                   onKeyDown={(e) => e.key === 'Enter' && handleSearch()}
-                  className="pl-12 h-14 text-base shadow-soft border-2 focus:border-primary"
+                  className="ps-12 h-14 text-base shadow-soft border-2 focus:border-primary"
+                  dir="auto"
                   disabled={!!selectedDisease}
                 />
               </div>
               <Button 
+                type="button"
                 onClick={handleSearch}
+                disabled={!searchQuery.trim() && !selectedDisease}
                 className="h-14 px-8 bg-gradient-medical hover:opacity-90 shadow-soft"
               >
                 {t('hero.searchButton')}
@@ -160,10 +169,21 @@ export const Hero = () => {
                 <h3 className="text-xl font-semibold">
                   {L('نتائج البحث', 'Search Results')}
                 </h3>
-                <Button variant="ghost" size="sm" onClick={clearSearch}>
+                <Button
+                  type="button"
+                  variant="ghost"
+                  size="sm"
+                  onClick={clearSearch}
+                  aria-label={L('مسح نتائج البحث', 'Clear search results')}
+                >
                   <X className="h-4 w-4" />
                 </Button>
               </div>
+              <p className="sr-only" aria-live="polite">
+                {searchResults.length > 0
+                  ? L(`تم العثور على ${searchResults.length} نتيجة`, `${searchResults.length} results found`)
+                  : L('لم يتم العثور على نتائج', 'No results found')}
+              </p>
               
               {searchResults.length > 0 ? (
                 <div className="space-y-4 max-h-96 overflow-y-auto">

@@ -89,7 +89,7 @@ export const Header = () => {
                 <SettingsIcon className="h-5 w-5" />
               </Button>
             ) : (
-              <Button variant="ghost" size="sm" onClick={() => navigate('/auth')} className="gap-1">
+              <Button variant="ghost" size="sm" onClick={() => navigate('/auth')} aria-label={t('nav.login')} className="gap-1">
                 <LogIn className="h-4 w-4" />
                 <span className="hidden sm:inline">{t('nav.login')}</span>
               </Button>

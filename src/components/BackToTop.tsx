@@ -28,7 +28,7 @@ export const BackToTop = () => {
     <Button
       onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
       aria-label={L('الرجوع لأعلى الصفحة', 'Back to top')}
-      className="fixed bottom-6 left-4 z-50 h-12 w-12 rounded-full shadow-lg"
+      className="fixed bottom-[calc(5rem+env(safe-area-inset-bottom))] left-4 z-50 h-12 w-12 rounded-full shadow-lg md:bottom-6"
       size="icon"
     >
       <ArrowUp className="h-5 w-5" />
