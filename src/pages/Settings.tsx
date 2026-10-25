@@ -11,7 +11,7 @@ import {
   AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger,
 } from '@/components/ui/alert-dialog';
 import { toast } from 'sonner';
-import { Mail, KeyRound, LogOut, Trash2, Loader2, Moon, Sun, Languages, Settings as SettingsIcon } from 'lucide-react';
+import { Mail, KeyRound, LogOut, Trash2, Loader2, Moon, Sun, Languages, Settings as SettingsIcon, Eye, EyeOff } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
 import { useLanguage } from '@/contexts/LanguageContext';
@@ -26,6 +26,8 @@ const SettingsPage = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [confirm, setConfirm] = useState('');
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirm, setShowConfirm] = useState(false);
   const [busy, setBusy] = useState<string | null>(null);
 
   if (!user) {
@@ -127,11 +129,35 @@ const SettingsPage = () => {
             <CardContent className="space-y-3">
               <div className="space-y-2">
                 <Label htmlFor="new-pass">{t('settings.newPassword')}</Label>
-                <Input id="new-pass" type="password" dir="ltr" value={password} onChange={(e) => setPassword(e.target.value)} />
+                <div className="relative">
+                  <Input id="new-pass" type={showPassword ? 'text' : 'password'} dir="ltr" value={password} onChange={(e) => setPassword(e.target.value)} className="pe-10" />
+                  <Button
+                    type="button"
+                    variant="ghost"
+                    size="icon"
+                    onClick={() => setShowPassword((visible) => !visible)}
+                    aria-label={showPassword ? L('إخفاء كلمة المرور', 'Hide password') : L('إظهار كلمة المرور', 'Show password')}
+                    className="absolute end-1 top-1/2 h-8 w-8 -translate-y-1/2"
+                  >
+                    {showPassword ? <EyeOff /> : <Eye />}
+                  </Button>
+                </div>
               </div>
               <div className="space-y-2">
                 <Label htmlFor="confirm-pass">{t('settings.confirmPassword')}</Label>
-                <Input id="confirm-pass" type="password" dir="ltr" value={confirm} onChange={(e) => setConfirm(e.target.value)} />
+                <div className="relative">
+                  <Input id="confirm-pass" type={showConfirm ? 'text' : 'password'} dir="ltr" value={confirm} onChange={(e) => setConfirm(e.target.value)} className="pe-10" />
+                  <Button
+                    type="button"
+                    variant="ghost"
+                    size="icon"
+                    onClick={() => setShowConfirm((visible) => !visible)}
+                    aria-label={showConfirm ? L('إخفاء كلمة المرور', 'Hide password') : L('إظهار كلمة المرور', 'Show password')}
+                    className="absolute end-1 top-1/2 h-8 w-8 -translate-y-1/2"
+                  >
+                    {showConfirm ? <EyeOff /> : <Eye />}
+                  </Button>
+                </div>
               </div>
               <Button onClick={changePassword} disabled={busy === 'password'}>
                 {busy === 'password' && <Loader2 className="h-4 w-4 animate-spin me-2" />}
