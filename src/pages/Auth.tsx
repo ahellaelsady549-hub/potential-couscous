@@ -10,13 +10,14 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Textarea } from '@/components/ui/textarea';
 import { useToast } from '@/hooks/use-toast';
-import { Heart, Mail, Lock, User, Home, KeyRound, Stethoscope, FileText, Loader2, RefreshCw } from 'lucide-react';
+import { Heart, Mail, Lock, User, Home, KeyRound, Stethoscope, FileText, Loader2, RefreshCw, Moon, Sun } from 'lucide-react';
 import { z } from 'zod';
 import { InputOTP, InputOTPGroup, InputOTPSlot } from '@/components/ui/input-otp';
 import { supabase } from '@/integrations/supabase/client';
 import { lovable } from '@/integrations/lovable/index';
 import { medicalSpecialties } from '@/data/specialties';
 import QuickBotTest from '@/components/QuickBotTest';
+import { useTheme } from '@/contexts/ThemeContext';
 
 const emailSchema = z.string().email('البريد الإلكتروني غير صالح / Invalid email address');
 const passwordSchema = z.string().min(6, 'كلمة المرور 6 أحرف على الأقل / Password must be at least 6 characters');
@@ -25,6 +26,7 @@ const nameSchema = z.string().min(2, 'الاسم حرفين على الأقل / 
 const Auth = () => {
   const { user, signIn, loading } = useAuth();
   const { L } = useLanguage();
+  const { theme, toggleTheme } = useTheme();
   const navigate = useNavigate();
   const { toast } = useToast();
   
@@ -326,6 +328,15 @@ const Auth = () => {
 
   return (
     <div className="min-h-screen flex flex-col items-center justify-center bg-gradient-to-br from-background via-background to-primary/5 p-4">
+      <Button
+        variant="ghost"
+        size="icon"
+        onClick={toggleTheme}
+        aria-label={theme === 'light' ? L('تفعيل الوضع الداكن', 'Enable dark mode') : L('تفعيل الوضع الفاتح', 'Enable light mode')}
+        className="absolute top-4 left-4"
+      >
+        {theme === 'light' ? <Moon className="h-4 w-4" /> : <Sun className="h-4 w-4" />}
+      </Button>
       <Button
         variant="ghost"
         size="sm"
