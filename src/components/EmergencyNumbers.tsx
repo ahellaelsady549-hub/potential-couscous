@@ -10,7 +10,7 @@ const emergencyContacts = [
 ];
 
 export const EmergencyNumbers = () => {
-  const { t } = useLanguage();
+  const { t, L } = useLanguage();
 
   return (
     <section id="emergency" className="py-16 md:py-24 bg-muted/30">
@@ -57,14 +57,22 @@ export const EmergencyNumbers = () => {
                 <h3 className="text-xl font-semibold mb-2">
                   {t(contact.name)}
                 </h3>
-                <a
-                  href={`tel:${contact.number}`}
-                  className={`text-3xl font-bold ${
-                    isEmergency ? 'text-emergency' : 'text-primary'
-                  } hover:underline`}
+                <Button
+                  asChild
+                  size="lg"
+                  variant={isEmergency ? 'destructive' : 'default'}
+                  className="mt-2 min-w-36"
                 >
-                  {contact.number}
-                </a>
+                  <a
+                    href={`tel:${contact.number}`}
+                    dir="ltr"
+                    aria-label={L(`اتصل بـ ${t(contact.name)} على ${contact.number}`, `Call ${t(contact.name)} at ${contact.number}`)}
+                  >
+                    <Phone className="h-4 w-4" aria-hidden />
+                    {contact.number}
+                    <span className="sr-only">{L('اتصل الآن', 'Call now')}</span>
+                  </a>
+                </Button>
               </Card>
             );
           })}

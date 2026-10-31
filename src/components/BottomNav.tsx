@@ -40,14 +40,15 @@ export const BottomNav = () => {
                 to={tab.to}
                 aria-current={active ? 'page' : undefined}
                 className={cn(
-                  'flex min-h-16 flex-col items-center justify-center gap-1 px-1 py-2 text-[10px] font-medium transition-colors hover:bg-muted/50 focus-visible:outline focus-visible:outline-2 focus-visible:outline-inset focus-visible:outline-primary active:scale-95',
+                  'relative flex min-h-16 flex-col items-center justify-center gap-1 px-1 py-2 text-[10px] font-medium transition-colors hover:bg-muted/50 focus-visible:z-10 focus-visible:outline focus-visible:outline-2 focus-visible:outline-inset focus-visible:outline-primary active:scale-95',
                   active ? 'text-primary' : 'text-muted-foreground',
                 )}
               >
+                {active && <span aria-hidden="true" className="absolute inset-x-1/3 top-0 h-0.5 rounded-full bg-primary" />}
                 <span
                   className={cn(
                     'flex h-8 w-8 items-center justify-center rounded-full transition-colors',
-                    active && 'bg-primary/10',
+                    active && 'bg-primary/15',
                   )}
                 >
                   <tab.icon className="h-5 w-5" />

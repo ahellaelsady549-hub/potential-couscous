@@ -30,7 +30,6 @@ import { BackToTop } from '@/components/BackToTop';
 import { SiteGuideBot } from '@/components/SiteGuideBot';
 import { TermsGate } from "@/components/TermsGate";
 import { ConnectionNotice } from "@/components/ConnectionNotice";
-import { BottomNav } from "@/components/BottomNav";
 const NotFound = lazy(() => import("./pages/NotFound"));
 const AskMePage = lazy(() => import("./pages/AskMePage"));
 
@@ -54,7 +53,7 @@ const AnimatedRoutes = () => {
   }, [location.pathname, location.hash]);
 
   return (
-    <div key={location.pathname} className="route-enter pb-[calc(4rem+env(safe-area-inset-bottom))] md:pb-0">
+    <div key={location.pathname} className="route-enter">
       <Suspense fallback={<div className="flex min-h-screen items-center justify-center" role="status"><div className="h-8 w-8 animate-spin rounded-full border-4 border-primary border-t-transparent" /></div>}>
       <Routes location={location}>
         <Route path="/" element={<Index />} />
@@ -95,7 +94,6 @@ const App = () => (
               <ConnectionNotice />
               <TermsGate />
               <AnimatedRoutes />
-              <BottomNav />
               <BackToTop />
               <SiteGuideBot />
             </TooltipProvider>

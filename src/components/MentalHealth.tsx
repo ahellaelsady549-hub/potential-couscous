@@ -1,5 +1,5 @@
 import { MedicalSources } from '@/components/MedicalSources';
-import { Brain, Search, ChevronDown, ChevronUp, Filter, X } from 'lucide-react';
+import { Brain, Search, ChevronDown, ChevronUp, Filter, X, PhoneCall, Phone } from 'lucide-react';
 import { Card } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
@@ -135,6 +135,37 @@ export const MentalHealth = () => {
               : 'Comprehensive information about mental health disorders, symptoms, and available treatments in Egypt'}
           </p>
         </div>
+
+        <Card className="mx-auto mb-8 max-w-3xl border-primary/20 bg-card p-5 shadow-soft sm:p-6">
+          <div className="flex flex-col items-center gap-4 text-center sm:flex-row sm:text-start">
+            <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-primary/10">
+              <PhoneCall className="h-6 w-6 text-primary" aria-hidden />
+            </div>
+            <div className="flex-1">
+              <h3 className="font-bold">
+                {language === 'ar'
+                  ? 'الخط الساخن للأمانة العامة للصحة النفسية وعلاج الإدمان'
+                  : 'General Secretariat of Mental Health and Addiction Treatment hotline'}
+              </h3>
+              <p className="mt-1 text-sm text-muted-foreground">
+                {language === 'ar'
+                  ? 'للدعم والاستفسارات المتعلقة بالصحة النفسية في مصر'
+                  : 'For mental health support and inquiries in Egypt'}
+              </p>
+            </div>
+            <Button asChild size="lg" className="shrink-0">
+              <a href="tel:16328" dir="ltr" aria-label={language === 'ar' ? 'اتصل بالخط الساخن للصحة النفسية 16328' : 'Call the mental health hotline at 16328'}>
+                <Phone className="h-4 w-4" aria-hidden />
+                16328
+              </a>
+            </Button>
+          </div>
+          <p className="mt-4 border-t border-border pt-4 text-center text-xs text-muted-foreground">
+            {language === 'ar'
+              ? 'في حالة الخطر الفوري، اتصل بالإسعاف على 123.'
+              : 'In an immediate emergency, call the ambulance at 123.'}
+          </p>
+        </Card>
 
         <div className="max-w-3xl mx-auto mb-8 space-y-4">
           {/* Search by name */}

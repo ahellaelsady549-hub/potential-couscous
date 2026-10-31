@@ -13,10 +13,10 @@ interface Message {
 }
 
 const SUGGESTED_QUESTIONS = [
-  'ما هي أعراض الإنفلونزا؟',
-  'كيف أتعامل مع الحروق؟',
-  'ما هي أرقام الطوارئ؟',
-  'ما هي أعراض الاكتئاب؟'
+  'إزاي أستخدم خدمة شخصني؟',
+  'فين ألاقي أرقام الطوارئ؟',
+  'إزاي أبحث عن طبيب؟',
+  'إيه الخدمات الموجودة في الموقع؟'
 ];
 
 const STORAGE_KEY = 'es3efny_chat_history';
@@ -36,7 +36,7 @@ export const SiteGuideBot = ({ onOpenChange }: SiteGuideBotProps = {}) => {
     if (saved) {
       try { return JSON.parse(saved); } catch { return []; }
     }
-    return [{ text: 'مرحباً! أنا طمنّي 🏥 مساعدك الصحي الذكي\n\nكيف يمكنني مساعدتك اليوم؟', isBot: true }];
+    return [{ text: 'أهلًا! أنا طمّني 😊 دليل إسعفني، وهساعدك تلاقي الخدمة المناسبة وتفهم تستخدمها إزاي.\n\nتحب تعرف عن أنهي جزء في الموقع؟ 🏥', isBot: true }];
   });
   const [input, setInput] = useState('');
   const [isProcessing, setIsProcessing] = useState(false);
@@ -176,7 +176,7 @@ export const SiteGuideBot = ({ onOpenChange }: SiteGuideBotProps = {}) => {
   };
 
   const clearHistory = () => {
-    const initialMessage: Message = { text: 'مرحباً! أنا طمنّي 🏥 مساعدك الصحي الذكي\n\nكيف يمكنني مساعدتك اليوم؟', isBot: true };
+    const initialMessage: Message = { text: 'أهلًا! أنا طمّني 😊 دليل إسعفني، وهساعدك تلاقي الخدمة المناسبة وتفهم تستخدمها إزاي.\n\nتحب تعرف عن أنهي جزء في الموقع؟ 🏥', isBot: true };
     setMessages([initialMessage]);
     try { localStorage.removeItem(STORAGE_KEY); } catch {}
     toast({ title: "تم مسح المحادثة", description: "تم حذف سجل المحادثة من هذا الجهاز" });
