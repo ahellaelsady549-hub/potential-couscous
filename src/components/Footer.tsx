@@ -1,48 +1,88 @@
 import { Heart, Facebook } from 'lucide-react';
+import { Link } from 'react-router-dom';
 import { useLanguage } from '@/contexts/LanguageContext';
 
 export const Footer = () => {
   const { L } = useLanguage();
+  const sections = [
+    { to: '/#emergency', label: L('أرقام الطوارئ', 'Emergency numbers') },
+    { to: '/#first-aid', label: L('الإسعافات الأولية', 'First aid') },
+    { to: '/#treatments', label: L('العلاجات', 'Treatments') },
+    { to: '/#mental-health', label: L('الصحة النفسية', 'Mental health') },
+  ];
+  const services = [
+    { to: '/personal-diagnosis', label: L('شخصني', 'Check my symptoms') },
+    { to: '/find-doctor', label: L('ابحث عن طبيب', 'Find a doctor') },
+    { to: '/ask-me', label: L('اسألني', 'Ask me') },
+    { to: '/articles', label: L('المقالات الصحية', 'Health articles') },
+  ];
 
   return (
     <footer id="site-footer" className="bg-gradient-medical text-white">
-      <div className="container mx-auto px-4 py-7">
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-7">
-          {/* Brand */}
-          <div className="sm:col-span-2 lg:col-span-1">
-            <div className="flex items-center gap-2 mb-4">
-              <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-white/15 backdrop-blur-sm">
-                <Heart className="h-5 w-5" />
+      <div className="container mx-auto px-4 py-10 md:py-12">
+        <div className="grid gap-8 border-b border-white/15 pb-8 sm:grid-cols-2 lg:grid-cols-[1.4fr_1fr_1fr_1fr] lg:gap-10">
+          <div>
+            <div className="mb-4 flex items-center gap-3">
+              <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-white/15">
+                <Heart className="h-5 w-5" aria-hidden="true" />
               </div>
-              <h3 className="text-lg font-bold tracking-tight">
+              <h3 className="text-xl font-bold">
                 {L('إسعفني', 'Es3efny')}
               </h3>
             </div>
-            <p className="text-white/85 text-xs leading-relaxed max-w-xs">
+            <p className="max-w-xs text-sm leading-7 text-white/80">
               {L('رفيقك الصحي لحياة أفضل — مساعدة طبية موثوقة في متناول يدك.', 'Your health companion for a better life — trusted medical help at your fingertips.')}
             </p>
           </div>
 
           <div>
-            <h4 className="font-semibold mb-3 flex items-center gap-2 text-white">
-              <Facebook className="h-4 w-4 opacity-80" />
-              {L('تواصل معنا', 'Contact Us')}
+            <h4 className="mb-3 text-sm font-bold text-white">
+              {L('أقسام الموقع', 'Explore')}
+            </h4>
+            <ul className="space-y-2.5">
+              {sections.map((item) => (
+                <li key={item.to}>
+                  <Link to={item.to} className="text-sm text-white/75 transition-colors hover:text-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-white">
+                    {item.label}
+                  </Link>
+                </li>
+              ))}
+            </ul>
+          </div>
+
+          <div>
+            <h4 className="mb-3 text-sm font-bold text-white">
+              {L('خدماتنا', 'Services')}
+            </h4>
+            <ul className="space-y-2.5">
+              {services.map((item) => (
+                <li key={item.to}>
+                  <Link to={item.to} className="text-sm text-white/75 transition-colors hover:text-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-white">
+                    {item.label}
+                  </Link>
+                </li>
+              ))}
+            </ul>
+          </div>
+
+          <div>
+            <h4 className="mb-3 text-sm font-bold text-white">
+              {L('تواصل معنا', 'Contact us')}
             </h4>
             <a
               href="https://www.facebook.com/profile.php?id=61595491273159"
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-flex items-center gap-2.5 text-sm text-white/85 transition-colors hover:text-white"
+              className="inline-flex items-center gap-2.5 text-sm text-white/75 transition-colors hover:text-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-white"
             >
-              <Facebook className="h-4 w-4 opacity-80" />
+              <Facebook className="h-4 w-4" aria-hidden="true" />
               <span>{L('صفحتنا على فيسبوك', 'Our Facebook page')}</span>
             </a>
           </div>
-
         </div>
 
-        <div className="mt-7 pt-4 border-t border-white/15">
-          <p className="text-center text-white/75 text-xs tracking-wide">
+        <div className="pt-5">
+          <p className="text-center text-xs text-white/65">
             © 2026 {L('جميع الحقوق محفوظة', 'All Rights Reserved')}
           </p>
         </div>

@@ -1,19 +1,12 @@
 import { useState, useEffect } from 'react';
-import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Download, Smartphone, Apple, Monitor, CheckCircle } from 'lucide-react';
+import { Smartphone, Apple, Monitor, CheckCircle } from 'lucide-react';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { Header } from '@/components/Header';
 import { Footer } from '@/components/Footer';
 
-interface BeforeInstallPromptEvent extends Event {
-  prompt: () => Promise<void>;
-  userChoice: Promise<{ outcome: 'accepted' | 'dismissed' }>;
-}
-
 const Install = () => {
   const { language } = useLanguage();
-  const [deferredPrompt, setDeferredPrompt] = useState<BeforeInstallPromptEvent | null>(null);
   const [isInstalled, setIsInstalled] = useState(false);
   const [isIOS, setIsIOS] = useState(false);
   const [isAndroid, setIsAndroid] = useState(false);
@@ -29,30 +22,8 @@ const Install = () => {
     setIsIOS(/iphone|ipad|ipod/.test(userAgent));
     setIsAndroid(/android/.test(userAgent));
 
-    // Listen for install prompt
-    const handleBeforeInstall = (e: Event) => {
-      e.preventDefault();
-      setDeferredPrompt(e as BeforeInstallPromptEvent);
-    };
-
-    window.addEventListener('beforeinstallprompt', handleBeforeInstall);
-
-    return () => {
-      window.removeEventListener('beforeinstallprompt', handleBeforeInstall);
-    };
+    return undefined;
   }, []);
-
-  const handleInstall = async () => {
-    if (!deferredPrompt) return;
-
-    await deferredPrompt.prompt();
-    const { outcome } = await deferredPrompt.userChoice;
-    
-    if (outcome === 'accepted') {
-      setIsInstalled(true);
-    }
-    setDeferredPrompt(null);
-  };
 
   const features = language === 'ar' ? [
     'إسعافات أولية سريعة',
@@ -81,7 +52,7 @@ const Install = () => {
               <Smartphone className="h-10 w-10" />
             </div>
             <h1 className="text-3xl font-bold">
-              {language === 'ar' ? 'تحميل تطبيق إسعفني' : 'Download Es3efny App'}
+              {language === 'ar' ? 'استخدم إسعفني على جهازك' : 'Use Es3efny on your device'}
             </h1>
             <p className="text-muted-foreground">
               {language === 'ar' 
@@ -101,26 +72,20 @@ const Install = () => {
             </Card>
           ) : (
             <div className="grid gap-4">
-              {/* Android / PWA Install */}
-              {(isAndroid || deferredPrompt) && (
+              {/* Android instructions */}
+              {isAndroid && (
                 <Card className="border-primary/30">
                   <CardHeader>
                     <CardTitle className="flex items-center gap-2">
                       <Smartphone className="h-5 w-5 text-green-500" />
-                      {language === 'ar' ? 'تثبيت فوري' : 'Instant Install'}
+                      {language === 'ar' ? 'التثبيت على Android' : 'Install on Android'}
                     </CardTitle>
                     <CardDescription>
                       {language === 'ar' 
-                        ? 'ثبت التطبيق مباشرة من المتصفح'
-                        : 'Install the app directly from browser'}
+                        ? 'افتح قائمة المتصفح واختر "تثبيت التطبيق" أو "إضافة إلى الشاشة الرئيسية".'
+                        : 'Open your browser menu and choose "Install app" or "Add to Home screen".'}
                     </CardDescription>
                   </CardHeader>
-                  <CardContent>
-                    <Button onClick={handleInstall} className="w-full gap-2" size="lg">
-                      <Download className="h-5 w-5" />
-                      {language === 'ar' ? 'تثبيت التطبيق' : 'Install App'}
-                    </Button>
-                  </CardContent>
                 </Card>
               )}
 
@@ -154,7 +119,7 @@ const Install = () => {
               )}
 
               {/* Desktop Instructions */}
-              {!isIOS && !isAndroid && !deferredPrompt && (
+              {!isIOS && !isAndroid && (
                 <Card className="border-primary/30">
                   <CardHeader>
                     <CardTitle className="flex items-center gap-2">
