@@ -21,8 +21,6 @@ const Install = () => {
     const userAgent = navigator.userAgent.toLowerCase();
     setIsIOS(/iphone|ipad|ipod/.test(userAgent));
     setIsAndroid(/android/.test(userAgent));
-
-    return undefined;
   }, []);
 
   const features = language === 'ar' ? [

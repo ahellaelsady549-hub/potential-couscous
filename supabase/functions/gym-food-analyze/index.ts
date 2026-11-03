@@ -118,7 +118,7 @@ serve(async (req) => {
         });
       }
       userContent = [
-        { type: 'text', text: `حلّل الأكل في الصورة${body.note ? ` — ملاحظة المستخدم: ${String(body.note).slice(0, 300)}` : ''}. أعد JSON فقط.` },
+        { type: 'text', text: `حلّل الأكل في الصورة بدقة: قدّر وزن كل مكوّن بالجرام من حجم الطبق والأدوات الظاهرة.${body.note ? ` — اسم الوجبة حسب المستخدم: ${String(body.note).slice(0, 300)}` : ''}${body.ingredients ? ` — المحتويات والكميات التي كتبها المستخدم (اعتمد عليها أولاً فهي أدق من الصورة): ${String(body.ingredients).slice(0, 1000)}` : ''}${body.quantityGrams ? ` — الوزن الإجمالي: ${String(body.quantityGrams).slice(0, 10)} جم` : ''}. أعد JSON فقط.` },
         { type: 'image_url', image_url: { url: imageUrl } },
       ];
     } else {

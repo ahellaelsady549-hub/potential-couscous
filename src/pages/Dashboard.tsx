@@ -28,10 +28,15 @@ import {
   Activity,
   Stethoscope,
   Calendar,
-  Link as LinkIcon
+  Link as LinkIcon,
+  Scale,
+  TrendingDown,
+  TrendingUp
 } from 'lucide-react';
 import { treatments } from '@/data/treatments';
 import { useLanguage } from '@/contexts/LanguageContext';
+import { Line, LineChart, CartesianGrid, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts';
+import type { Json } from '@/integrations/supabase/types';
 
 interface Medication {
   id: string;
@@ -48,10 +53,17 @@ interface DietPlan {
   height: number;
   age: number;
   gender: string;
-  goal: string;
   bmi: number;
   calories: number;
   created_at: string;
+  goal: string;
+  diet_plan: Json | null;
+}
+
+interface WeightLog {
+  id: string;
+  weight_kg: number;
+  measured_on: string;
 }
 
 interface PersonalityResult {
@@ -81,6 +93,15 @@ const Dashboard = () => {
   const [dietPlans, setDietPlans] = useState<DietPlan[]>([]);
   const [personalityResults, setPersonalityResults] = useState<PersonalityResult[]>([]);
   const [userDiseases, setUserDiseases] = useState<UserDisease[]>([]);
+  const [weightLogs, setWeightLogs] = useState<WeightLog[]>([]);
+  const [weightInput, setWeightInput] = useState('');
+  const [weightDate, setWeightDate] = useState(() => {
+    const now = new Date();
+    return `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')}`;
+  });
+  const [isSavingWeight, setIsSavingWeight] = useState(false);
+  const [isAdmin, setIsAdmin] = useState(false);
+  const [doctorApplication, setDoctorApplication] = useState<{ is_verified: boolean | null; verification_status: string | null; cv_url: string | null } | null>(null);
   const [isAddingMed, setIsAddingMed] = useState(false);
   const [userProfile, setUserProfile] = useState<{ full_name: string | null; avatar_url: string | null } | null>(null);
   const [newMed, setNewMed] = useState({
@@ -150,7 +171,110 @@ const Dashboard = () => {
       .order('created_at', { ascending: false });
     
     if (diseasesData) setUserDiseases(diseasesData);
+
+    const { data: weightsData, error: weightsError } = await supabase
+      .from('user_weight_logs')
+      .select('id, weight_kg, measured_on')
+      .eq('user_id', user.id)
+      .order('measured_on', { ascending: false })
+      .limit(90);
+
+    if (weightsError) {
+      console.error('Error fetching weight history:', weightsError);
+      toast({
+        title: L('تعذر تحميل سجل الوزن', 'Could not load weight history'),
+        description: weightsError.message,
+        variant: 'destructive'
+      });
+    } else {
+      setWeightLogs((weightsData || []).reverse());
+    }
+
+    const { data: roleData, error: roleError } = await supabase.rpc('has_role', {
+      _user_id: user.id,
+      _role: 'admin'
+    });
+    if (roleError) {
+      console.error('Error checking admin role:', roleError);
+    } else {
+      setIsAdmin(roleData);
+    }
+
+    const { data: doctorData, error: doctorError } = await supabase
+      .from('doctors')
+      .select('is_verified, verification_status, cv_url')
+      .eq('user_id', user.id)
+      .maybeSingle();
+    if (doctorError) {
+      console.error('Error fetching doctor application status:', doctorError);
+    } else {
+      setDoctorApplication(doctorData);
+    }
   };
+
+  const saveWeightLog = async (event: React.FormEvent) => {
+    event.preventDefault();
+    const weight = Number(weightInput);
+    if (!user || !Number.isFinite(weight) || weight <= 20 || weight >= 400 || !weightDate) {
+      toast({
+        title: L('بيانات غير صالحة', 'Invalid information'),
+        description: L('أدخل وزنًا بين 20 و400 كجم واختر تاريخ القياس.', 'Enter a weight between 20 and 400 kg and choose a measurement date.'),
+        variant: 'destructive'
+      });
+      return;
+    }
+
+    setIsSavingWeight(true);
+    const { data, error } = await supabase
+      .from('user_weight_logs')
+      .upsert(
+        { user_id: user.id, weight_kg: weight, measured_on: weightDate },
+        { onConflict: 'user_id,measured_on' }
+      )
+      .select('id, weight_kg, measured_on')
+      .single();
+
+    if (error) {
+      console.error('Error saving weight measurement:', error);
+      toast({
+        title: L('تعذر حفظ القياس', 'Could not save measurement'),
+        description: error.message,
+        variant: 'destructive'
+      });
+    } else {
+      setWeightLogs((current) => [...current.filter((entry) => entry.measured_on !== data.measured_on), data]
+        .sort((a, b) => a.measured_on.localeCompare(b.measured_on))
+        .slice(-90));
+      setWeightInput('');
+      toast({
+        title: L('تم حفظ الوزن', 'Weight saved'),
+        description: L('تم تحديث مؤشر تطور الوزن.', 'Your weight progress has been updated.')
+      });
+    }
+    setIsSavingWeight(false);
+  };
+
+  const latestWeight = weightLogs[weightLogs.length - 1]?.weight_kg || dietPlans[0]?.weight || null;
+  const initialWeight = weightLogs[0]?.weight_kg;
+  const weightProgressPercent = initialWeight && latestWeight
+    ? ((latestWeight - initialWeight) / initialWeight) * 100
+    : null;
+  const latestPlanData = dietPlans[0]?.diet_plan;
+  const weeklyPlanChange = latestPlanData && typeof latestPlanData === 'object' && !Array.isArray(latestPlanData)
+    && latestPlanData.weightPrediction && typeof latestPlanData.weightPrediction === 'object' && !Array.isArray(latestPlanData.weightPrediction)
+    && typeof latestPlanData.weightPrediction.weeklyChange === 'number'
+    ? latestPlanData.weightPrediction.weeklyChange
+    : null;
+  const isWeightLossGoal = dietPlans[0]?.goal === 'lose';
+  const isMinorWeightLossPlan = isWeightLossGoal && (dietPlans[0]?.age ?? 0) < 18;
+  const weeklyChangeRange = isWeightLossGoal && !isMinorWeightLossPlan
+    ? [-0.9, -0.45]
+    : !isMinorWeightLossPlan && weeklyPlanChange !== null
+      ? [weeklyPlanChange, weeklyPlanChange]
+      : null;
+  const weeklyPercentageRange = latestWeight && weeklyChangeRange
+    ? weeklyChangeRange.map((change) => (change / latestWeight) * 100)
+    : null;
 
   const handleAddMedication = async () => {
     if (!user || !newMed.name) return;
@@ -273,6 +397,11 @@ const Dashboard = () => {
               <Home className="w-4 h-4 ml-2" />
               {L('الرئيسية', 'Home')}
             </Button>
+            {isAdmin && (
+              <Button variant="outline" size="sm" onClick={() => navigate('/admin')}>
+                {L('لوحة الإدارة', 'Admin')}
+              </Button>
+            )}
             <Button variant="ghost" size="sm" onClick={handleSignOut} className="text-destructive hover:text-destructive hover:bg-destructive/10">
               <LogOut className="w-4 h-4 ml-2" />
               {L('خروج', 'Sign out')}
@@ -321,6 +450,134 @@ const Dashboard = () => {
                 <div className="text-sm text-white/80">{L('اختبارات', 'Tests')}</div>
               </div>
             </div>
+          </CardContent>
+        </Card>
+
+        {doctorApplication && !doctorApplication.is_verified && (
+          <Card className="mb-8 border-primary/30">
+            <CardContent className="flex flex-wrap items-center justify-between gap-4 py-5">
+              <div>
+                <p className="font-semibold">{L('طلب انضمام الأطباء', 'Doctor application')}</p>
+                <p className="text-sm text-muted-foreground">
+                  {doctorApplication.verification_status === 'pending' && doctorApplication.cv_url
+                    ? L('طلبك قيد المراجعة من الإدارة.', 'Your application is being reviewed.')
+                    : L('أكمل الطلب برفع السيرة الذاتية بصيغة PDF.', 'Complete your application by uploading a PDF CV.')}
+                </p>
+              </div>
+              <Button variant="outline" onClick={() => navigate('/doctor-application')}>
+                {L('إدارة الطلب', 'Manage application')}
+              </Button>
+            </CardContent>
+          </Card>
+        )}
+
+        <Card className="mb-8">
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <Scale className="h-5 w-5 text-primary" />
+              {L('تطور الوزن والتوقع الأسبوعي', 'Weight progress & weekly forecast')}
+            </CardTitle>
+            <CardDescription>
+              {L('سجّل قياساتك الفعلية لمتابعة التغيّر بمرور الوقت.', 'Log actual measurements to track changes over time.')}
+            </CardDescription>
+          </CardHeader>
+          <CardContent className="space-y-6">
+            <form onSubmit={saveWeightLog} className="grid gap-3 sm:grid-cols-[1fr_1fr_auto]">
+              <div className="space-y-2">
+                <Label htmlFor="weight-log">{L('الوزن (كجم)', 'Weight (kg)')}</Label>
+                <Input
+                  id="weight-log"
+                  type="number"
+                  min="20"
+                  max="399.9"
+                  step="0.1"
+                  value={weightInput}
+                  onChange={(event) => setWeightInput(event.target.value)}
+                  placeholder={L('مثال: 72.5', 'e.g. 72.5')}
+                  required
+                />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="weight-date">{L('تاريخ القياس', 'Measurement date')}</Label>
+                <Input id="weight-date" type="date" value={weightDate} onChange={(event) => setWeightDate(event.target.value)} required />
+              </div>
+              <Button type="submit" className="self-end" disabled={isSavingWeight}>
+                {isSavingWeight ? L('جاري الحفظ...', 'Saving...') : L('حفظ القياس', 'Save measurement')}
+              </Button>
+            </form>
+
+            <div className="grid gap-4 sm:grid-cols-3">
+              <div className="rounded-lg bg-muted/50 p-4 text-center">
+                <p className="text-sm text-muted-foreground">{L('آخر وزن مسجل', 'Latest weight')}</p>
+                <p className="mt-1 text-2xl font-bold">{latestWeight ? `${latestWeight} ${L('كجم', 'kg')}` : '—'}</p>
+              </div>
+              <div className="rounded-lg bg-muted/50 p-4 text-center">
+                <p className="text-sm text-muted-foreground">{L('التغير منذ أول قياس', 'Change since first log')}</p>
+                {weightLogs.length > 1 && weightProgressPercent !== null ? (
+                  <p className={`mt-1 flex items-center justify-center gap-1 text-2xl font-bold ${weightProgressPercent < 0 ? 'text-green-600' : weightProgressPercent > 0 ? 'text-amber-600' : ''}`}>
+                    {weightProgressPercent < 0 ? <TrendingDown className="h-5 w-5" /> : <TrendingUp className="h-5 w-5" />}
+                    {weightProgressPercent > 0 ? '+' : ''}{weightProgressPercent.toFixed(1)}%
+                  </p>
+                ) : (
+                  <p className="mt-1 text-sm text-muted-foreground">{L('سجّل قياسين على الأقل', 'Log at least two measurements')}</p>
+                )}
+              </div>
+              <div className="rounded-lg bg-muted/50 p-4 text-center">
+                <p className="text-sm text-muted-foreground">{L('التوقع خلال 7 أيام', 'Expected over 7 days')}</p>
+                {weeklyChangeRange && weeklyPercentageRange ? (
+                  <p className="mt-1 text-lg font-bold">
+                    {isWeightLossGoal
+                      ? L(
+                        `انخفاض 0.45–0.9 كجم (${Math.abs(weeklyPercentageRange[1]).toFixed(2)}–${Math.abs(weeklyPercentageRange[0]).toFixed(2)}%)`,
+                        `−0.45 to −0.9 kg (${Math.abs(weeklyPercentageRange[1]).toFixed(2)}–${Math.abs(weeklyPercentageRange[0]).toFixed(2)}%)`
+                      )
+                      : `${weeklyPlanChange! > 0 ? '+' : ''}${weeklyPlanChange!.toFixed(2)} ${L('كجم', 'kg')} (${weeklyPercentageRange[0] > 0 ? '+' : ''}${weeklyPercentageRange[0].toFixed(2)}%)`}
+                  </p>
+                ) : (
+                  <p className="mt-1 text-sm text-muted-foreground">
+                    {isMinorWeightLossPlan
+                      ? L('لمن هم دون 18 سنة: التوقع يحتاج متابعة طبيب أطفال أو أخصائي تغذية.', 'For users under 18, forecasts require guidance from a pediatrician or dietitian.')
+                      : L('أنشئ خطة غذائية لعرض التوقع', 'Create a diet plan to see a forecast')}
+                  </p>
+                )}
+              </div>
+            </div>
+
+            {weightLogs.length > 0 ? (
+              <div className="h-64 w-full" aria-label={L('رسم بياني لتطور الوزن', 'Weight progress chart')}>
+                <ResponsiveContainer width="100%" height="100%">
+                  <LineChart data={weightLogs} margin={{ top: 8, right: 12, left: 0, bottom: 4 }}>
+                    <CartesianGrid strokeDasharray="3 3" />
+                    <XAxis
+                      dataKey="measured_on"
+                      tickFormatter={(value: string) => new Date(`${value}T00:00:00`).toLocaleDateString()}
+                    />
+                    <YAxis domain={['dataMin - 1', 'dataMax + 1']} width={48} />
+                    <Tooltip
+                      labelFormatter={(value) => new Date(`${value}T00:00:00`).toLocaleDateString()}
+                      formatter={(value: number) => [`${value} ${L('كجم', 'kg')}`, L('الوزن', 'Weight')]}
+                    />
+                    <Line type="monotone" dataKey="weight_kg" name={L('الوزن', 'Weight')} stroke="hsl(var(--primary))" strokeWidth={3} dot={{ r: 4 }} />
+                  </LineChart>
+                </ResponsiveContainer>
+              </div>
+            ) : (
+              <div className="rounded-lg border border-dashed py-8 text-center text-sm text-muted-foreground">
+                {L('أضف أول قياس لبدء متابعة تطور وزنك هنا.', 'Add your first measurement to start tracking your progress here.')}
+              </div>
+            )}
+
+            <p className="text-xs text-muted-foreground">
+              {isWeightLossGoal && !isMinorWeightLossPlan
+                ? L('نطاق فقدان الوزن تدريجيًا 0.45–0.9 كجم أسبوعيًا وفق إرشادات CDC؛ النسبة محسوبة من آخر وزن مسجل والتوقع ليس ضمانًا طبيًا.', 'The gradual 0.45–0.9 kg/week weight-loss range follows CDC guidance; percentages use your latest weight, and forecasts are not medical guarantees.')
+                : L('التوقع مأخوذ من خطتك الغذائية الأخيرة ويُعرض كتقدير لا كضمان. الوزن يتذبذب طبيعيًا؛ استشر مختصًا عند وجود حالة صحية.', 'The estimate comes from your latest diet plan and is not a guarantee. Weight naturally fluctuates; consult a clinician if you have a medical condition.')}
+              {' '}
+              {!isMinorWeightLossPlan && (
+                <a href="https://www.cdc.gov/healthy-weight-growth/losing-weight/index.html" target="_blank" rel="noopener noreferrer" className="text-primary underline">
+                  {L('مصدر CDC', 'CDC source')}
+                </a>
+              )}
+            </p>
           </CardContent>
         </Card>
 

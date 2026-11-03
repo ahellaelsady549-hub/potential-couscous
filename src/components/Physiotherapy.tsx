@@ -95,6 +95,26 @@ export const Physiotherapy = () => {
           </p>
         </div>
 
+        <figure className="mx-auto mb-10 max-w-4xl overflow-hidden rounded-xl border bg-card shadow-card">
+          <img
+            src="https://thumb.wikimedia.org/wikipedia/commons/thumb/f/f9/Spangdahlem_physical_therapy_rehabilitates_Airmen_after_injury_%287270862%29.jpg/1280px-Spangdahlem_physical_therapy_rehabilitates_Airmen_after_injury_%287270862%29.jpg"
+            alt={L('تمرين تأهيلي باستخدام جهاز مقاومة في عيادة علاج طبيعي', 'A patient using resistance equipment for rehabilitation in a physical therapy clinic')}
+            loading="lazy"
+            className="max-h-[28rem] w-full object-cover"
+          />
+          <figcaption className="flex flex-wrap items-center justify-between gap-2 p-3 text-xs text-muted-foreground">
+            <span>{L('صورة علاج طبيعي حقيقية — تصوير الرقيب تشانس ناردوني، القوات الجوية الأمريكية', 'Real physical therapy photo — Staff Sgt. Chance Nardone, U.S. Air Force')}</span>
+            <span className="flex gap-3">
+              <a href="https://www.dvidshub.net/image/7270862" target="_blank" rel="noopener noreferrer" className="text-primary underline">
+                DVIDS
+              </a>
+              <a href="https://commons.wikimedia.org/wiki/File:Spangdahlem_physical_therapy_rehabilitates_Airmen_after_injury_(7270862).jpg" target="_blank" rel="noopener noreferrer" className="text-primary underline">
+                Wikimedia Commons (Public Domain)
+              </a>
+            </span>
+          </figcaption>
+        </figure>
+
         <Card className="mx-auto mb-10 max-w-3xl shadow-card">
           <CardHeader>
             <CardTitle className="flex items-center gap-2 text-lg">

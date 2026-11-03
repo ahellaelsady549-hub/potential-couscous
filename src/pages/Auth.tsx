@@ -10,14 +10,13 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Textarea } from '@/components/ui/textarea';
 import { useToast } from '@/hooks/use-toast';
-import { Heart, Mail, Lock, User, Home, KeyRound, Stethoscope, FileText, Loader2, RefreshCw, Moon, Sun, Eye, EyeOff } from 'lucide-react';
+import { Heart, Mail, Lock, User, Home, KeyRound, Stethoscope, FileText, Loader2, RefreshCw } from 'lucide-react';
 import { z } from 'zod';
 import { InputOTP, InputOTPGroup, InputOTPSlot } from '@/components/ui/input-otp';
 import { supabase } from '@/integrations/supabase/client';
 import { lovable } from '@/integrations/lovable/index';
 import { medicalSpecialties } from '@/data/specialties';
 import QuickBotTest from '@/components/QuickBotTest';
-import { useTheme } from '@/contexts/ThemeContext';
 
 const emailSchema = z.string().email('البريد الإلكتروني غير صالح / Invalid email address');
 const passwordSchema = z.string().min(6, 'كلمة المرور 6 أحرف على الأقل / Password must be at least 6 characters');
@@ -26,18 +25,15 @@ const nameSchema = z.string().min(2, 'الاسم حرفين على الأقل / 
 const Auth = () => {
   const { user, signIn, loading } = useAuth();
   const { L } = useLanguage();
-  const { theme, toggleTheme } = useTheme();
   const navigate = useNavigate();
   const { toast } = useToast();
   
   const [isLoading, setIsLoading] = useState(false);
   const [loginEmail, setLoginEmail] = useState('');
   const [loginPassword, setLoginPassword] = useState('');
-  const [showLoginPassword, setShowLoginPassword] = useState(false);
   const [signupName, setSignupName] = useState('');
   const [signupEmail, setSignupEmail] = useState('');
   const [signupPassword, setSignupPassword] = useState('');
-  const [showSignupPassword, setShowSignupPassword] = useState(false);
   
   // User type selection
   const [userType, setUserType] = useState<'user' | 'doctor'>('user');
@@ -46,6 +42,7 @@ const Auth = () => {
   const [doctorSpecialty, setDoctorSpecialty] = useState('');
   const [doctorBio, setDoctorBio] = useState('');
   const [doctorCvUrl, setDoctorCvUrl] = useState('');
+  const [doctorCvFile, setDoctorCvFile] = useState<File | null>(null);
   const [doctorPortfolioUrl, setDoctorPortfolioUrl] = useState('');
   
   // AI CV Review
@@ -204,11 +201,17 @@ const Auth = () => {
         });
 
         if (userType === 'doctor') {
+          let cvValue = doctorCvUrl;
+          if (doctorCvFile && data.session) {
+            const path = `${data.user.id}/${Date.now()}-${doctorCvFile.name.replace(/[^\w.-]/g, '_')}`;
+            const { error: upErr } = await supabase.storage.from('doctor-cvs').upload(path, doctorCvFile);
+            if (!upErr) cvValue = `storage:${path}`;
+          }
           await supabase.from('doctors').insert({
             user_id: data.user.id,
             specialty: doctorSpecialty,
             bio: doctorBio,
-            cv_url: doctorCvUrl,
+            cv_url: cvValue,
             portfolio_url: doctorPortfolioUrl,
             ai_cv_review: cvReview,
             is_verified: false,
@@ -332,15 +335,6 @@ const Auth = () => {
     <div className="min-h-screen flex flex-col items-center justify-center bg-gradient-to-br from-background via-background to-primary/5 p-4">
       <Button
         variant="ghost"
-        size="icon"
-        onClick={toggleTheme}
-        aria-label={theme === 'light' ? L('تفعيل الوضع الداكن', 'Enable dark mode') : L('تفعيل الوضع الفاتح', 'Enable light mode')}
-        className="absolute top-4 left-4"
-      >
-        {theme === 'light' ? <Moon className="h-4 w-4" /> : <Sun className="h-4 w-4" />}
-      </Button>
-      <Button
-        variant="ghost"
         size="sm"
         onClick={() => navigate('/')}
         className="absolute top-4 right-4"
@@ -446,23 +440,13 @@ const Auth = () => {
                       <Lock className="absolute right-3 top-3 h-4 w-4 text-muted-foreground" />
                       <Input
                         id="login-password"
-                        type={showLoginPassword ? 'text' : 'password'}
+                        type="password"
                         placeholder="••••••••"
                         value={loginPassword}
                         onChange={(e) => setLoginPassword(e.target.value)}
-                        className="pr-10 pl-10"
+                        className="pr-10"
                         required
                       />
-                      <Button
-                        type="button"
-                        variant="ghost"
-                        size="icon"
-                        onClick={() => setShowLoginPassword((visible) => !visible)}
-                        aria-label={showLoginPassword ? L('إخفاء كلمة المرور', 'Hide password') : L('إظهار كلمة المرور', 'Show password')}
-                        className="absolute left-1 top-1/2 h-8 w-8 -translate-y-1/2"
-                      >
-                        {showLoginPassword ? <EyeOff /> : <Eye />}
-                      </Button>
                     </div>
                   </div>
                   <Button 
@@ -536,23 +520,13 @@ const Auth = () => {
                       <Lock className="absolute right-3 top-3 h-4 w-4 text-muted-foreground" />
                       <Input
                         id="signup-password"
-                        type={showSignupPassword ? 'text' : 'password'}
+                        type="password"
                         placeholder="••••••••"
                         value={signupPassword}
                         onChange={(e) => setSignupPassword(e.target.value)}
-                        className="pr-10 pl-10"
+                        className="pr-10"
                         required
                       />
-                      <Button
-                        type="button"
-                        variant="ghost"
-                        size="icon"
-                        onClick={() => setShowSignupPassword((visible) => !visible)}
-                        aria-label={showSignupPassword ? L('إخفاء كلمة المرور', 'Hide password') : L('إظهار كلمة المرور', 'Show password')}
-                        className="absolute left-1 top-1/2 h-8 w-8 -translate-y-1/2"
-                      >
-                        {showSignupPassword ? <EyeOff /> : <Eye />}
-                      </Button>
                     </div>
                   </div>
 
@@ -609,6 +583,8 @@ const Auth = () => {
                             {isReviewingCv ? <Loader2 className="w-4 h-4 animate-spin" /> : L('مراجعة','Review')}
                           </Button>
                         </div>
+                        <Label className="text-sm">{L('أو ارفع ملف السيرة الذاتية (PDF أو صورة، حتى 10 ميجا)','Or upload your CV file (PDF or image, up to 10MB)')}</Label>
+                        <Input type="file" accept=".pdf,.doc,.docx,image/*" className="h-12" onChange={(e) => setDoctorCvFile(e.target.files?.[0] ?? null)} />
                         {cvReview && (
                           <p className="text-sm text-muted-foreground bg-muted p-2 rounded">
                             {cvReview}

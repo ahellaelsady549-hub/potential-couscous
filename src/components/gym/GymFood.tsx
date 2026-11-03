@@ -5,7 +5,7 @@ import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Badge } from '@/components/ui/badge';
 import { toast } from 'sonner';
-import { Utensils, Camera, Sparkles, Loader2, Trash2 } from 'lucide-react';
+import { Utensils, Camera, Sparkles, Loader2, Trash2, ImagePlus, X } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
 import { useLanguage } from '@/contexts/LanguageContext';
@@ -86,11 +86,31 @@ export const GymFood = () => {
     }
   };
 
+  const [preview, setPreview] = useState<string | null>(null);
+  const cameraRef = useRef<HTMLInputElement>(null);
+
+  // Downscale to keep uploads fast and under limits
   const handleImage = async (file: File) => {
-    if (file.size > 8 * 1024 * 1024) { toast.error(L('حجم الصورة كبير (الحد 8 ميجا)','Image too large (8 MB limit)')); return; }
-    const reader = new FileReader();
-    reader.onload = () => analyze({ mode: 'image', imageBase64: reader.result, note: name }, 'image');
-    reader.readAsDataURL(file);
+    if (!file.type.startsWith('image/')) { toast.error(L('اختار صورة','Choose an image')); return; }
+    if (file.size > 25 * 1024 * 1024) { toast.error(L('حجم الصورة كبير (الحد 25 ميجا)','Image too large (25 MB limit)')); return; }
+    const url = URL.createObjectURL(file);
+    const img = new Image();
+    img.onload = () => {
+      const max = 1280;
+      const s = Math.min(1, max / Math.max(img.width, img.height));
+      const c = document.createElement('canvas');
+      c.width = Math.round(img.width * s); c.height = Math.round(img.height * s);
+      c.getContext('2d')?.drawImage(img, 0, 0, c.width, c.height);
+      URL.revokeObjectURL(url);
+      setPreview(c.toDataURL('image/jpeg', 0.85));
+    };
+    img.onerror = () => { URL.revokeObjectURL(url); toast.error(L('تعذّر قراءة الصورة','Could not read image')); };
+    img.src = url;
+  };
+
+  const analyzePhoto = () => {
+    if (!preview) return;
+    analyze({ mode: 'image', imageBase64: preview, note: name, ingredients, quantityGrams: quantity }, 'image');
   };
 
   const ask = async () => {
@@ -133,26 +153,45 @@ export const GymFood = () => {
             rows={3}
           />
           <Input type="number" placeholder={L('الكمية الإجمالية بالجرام (اختياري)','Total weight in grams (optional)')} value={quantity} onChange={(e) => setQuantity(e.target.value)} />
-          <div className="flex flex-wrap gap-2">
-            <Button
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+            <Button size="lg" className="h-14 text-base"
               onClick={() => analyze({ mode: 'text', name, ingredients, quantityGrams: quantity }, 'manual')}
               disabled={loading || (!name && !ingredients)}
             >
-              {loading ? <Loader2 className="h-4 w-4 animate-spin ms-2" /> : <Sparkles className="h-4 w-4 ms-2" />}
-              {L('حلّل الوجبة','Analyze meal')}
+              {loading ? <Loader2 className="h-5 w-5 animate-spin ms-2" /> : <Sparkles className="h-5 w-5 ms-2" />}
+              {L('حلّل من الكتابة','Analyze from text')}
             </Button>
-            <Button variant="outline" onClick={() => fileRef.current?.click()} disabled={loading}>
-              <Camera className="h-4 w-4 ms-2" />
-              {L('تحليل من صورة الأكل','Analyze from food photo')}
+            <Button size="lg" variant="outline" className="h-14 text-base" onClick={() => cameraRef.current?.click()} disabled={loading}>
+              <Camera className="h-5 w-5 ms-2" />
+              {L('التقط صورة','Take a photo')}
             </Button>
-            <input
-              ref={fileRef}
-              type="file"
-              accept="image/*"
-              className="hidden"
-              onChange={(e) => { const f = e.target.files?.[0]; if (f) handleImage(f); e.target.value = ''; }}
-            />
+            <Button size="lg" variant="outline" className="h-14 text-base" onClick={() => fileRef.current?.click()} disabled={loading}>
+              <ImagePlus className="h-5 w-5 ms-2" />
+              {L('ارفع صورة','Upload a photo')}
+            </Button>
+            <input ref={cameraRef} type="file" accept="image/*" capture="environment" className="hidden"
+              onChange={(e) => { const f = e.target.files?.[0]; if (f) handleImage(f); e.target.value = ''; }} />
+            <input ref={fileRef} type="file" accept="image/*" className="hidden"
+              onChange={(e) => { const f = e.target.files?.[0]; if (f) handleImage(f); e.target.value = ''; }} />
           </div>
+
+          {preview && (
+            <div className="rounded-xl border border-border p-3 space-y-3">
+              <img src={preview} alt={L('صورة الوجبة','Meal photo')} className="w-full max-h-72 object-contain rounded-lg" />
+              <p className="text-sm text-muted-foreground">
+                {L('للدقة: اكتب فوق محتويات الوجبة وكمياتها (مثلاً 200 جم فراخ، 150 جم أرز، معلقة زيت) قبل التحليل.','For accuracy: write the meal contents and amounts above before analyzing.')}
+              </p>
+              <div className="grid grid-cols-2 gap-3">
+                <Button size="lg" className="h-14 text-base" onClick={analyzePhoto} disabled={loading}>
+                  {loading ? <Loader2 className="h-5 w-5 animate-spin ms-2" /> : <Sparkles className="h-5 w-5 ms-2" />}
+                  {L('حلّل الصورة','Analyze photo')}
+                </Button>
+                <Button size="lg" variant="ghost" className="h-14 text-base" onClick={() => setPreview(null)} disabled={loading}>
+                  <X className="h-5 w-5 ms-2" />{L('إلغاء','Cancel')}
+                </Button>
+              </div>
+            </div>
+          )}
 
           {result && (
             <div className="rounded-lg border border-border p-4 space-y-2">

@@ -155,6 +155,7 @@ export type Database = {
           parent_id: string | null
           updated_at: string
           user_id: string
+          video_url: string | null
           voice_url: string | null
         }
         Insert: {
@@ -166,6 +167,7 @@ export type Database = {
           parent_id?: string | null
           updated_at?: string
           user_id: string
+          video_url?: string | null
           voice_url?: string | null
         }
         Update: {
@@ -177,6 +179,7 @@ export type Database = {
           parent_id?: string | null
           updated_at?: string
           user_id?: string
+          video_url?: string | null
           voice_url?: string | null
         }
         Relationships: [
@@ -810,6 +813,30 @@ export type Database = {
         }
         Relationships: []
       }
+      user_weight_logs: {
+        Row: {
+          created_at: string
+          id: string
+          measured_on: string
+          user_id: string
+          weight_kg: number
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          measured_on?: string
+          user_id: string
+          weight_kg: number
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          measured_on?: string
+          user_id?: string
+          weight_kg?: number
+        }
+        Relationships: []
+      }
     }
     Views: {
       doctors_public: {
@@ -890,6 +917,21 @@ export type Database = {
           specialty: string
           updated_at: string
           user_id: string
+        }[]
+      }
+      get_pending_doctors: {
+        Args: never
+        Returns: {
+          bio: string | null
+          created_at: string
+          cv_url: string | null
+          email: string | null
+          full_name: string | null
+          id: string
+          is_verified: boolean | null
+          specialty: string
+          user_id: string
+          verification_status: string | null
         }[]
       }
       get_profile_public: {

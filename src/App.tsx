@@ -12,6 +12,8 @@ import Index from "./pages/Index";
 const About = lazy(() => import("./pages/About"));
 const Auth = lazy(() => import("./pages/Auth"));
 const Dashboard = lazy(() => import("./pages/Dashboard"));
+const AdminPage = lazy(() => import("./pages/AdminPage"));
+const DoctorApplication = lazy(() => import("./pages/DoctorApplication"));
 const FindDoctor = lazy(() => import("./pages/FindDoctor"));
 const Chat = lazy(() => import("./pages/Chat"));
 const DietPlanPage = lazy(() => import("./pages/DietPlanPage"));
@@ -60,6 +62,8 @@ const AnimatedRoutes = () => {
         <Route path="/about" element={<About />} />
         <Route path="/auth" element={<Auth />} />
         <Route path="/dashboard" element={<Dashboard />} />
+        <Route path="/admin" element={<AdminPage />} />
+        <Route path="/doctor-application" element={<DoctorApplication />} />
         <Route path="/find-doctor" element={<FindDoctor />} />
         <Route path="/chat/:id" element={<Chat />} />
         <Route path="/diet-plan" element={<DietPlanPage />} />

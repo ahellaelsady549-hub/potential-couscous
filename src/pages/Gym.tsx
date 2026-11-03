@@ -106,10 +106,10 @@ const GymPage = () => {
         ) : (
           <Tabs defaultValue="programs" className="w-full">
             <TabsList className="grid h-auto w-full grid-cols-2 gap-2 p-2 sm:grid-cols-4">
-              <TabsTrigger value="programs" className="h-auto flex-col gap-1 py-3 text-sm font-semibold data-[state=active]:shadow-md sm:flex-row sm:py-2"><Dumbbell className="h-5 w-5" />{L('التمارين','Workouts')}</TabsTrigger>
-              <TabsTrigger value="food" className="h-auto flex-col gap-1 py-3 text-sm font-semibold data-[state=active]:shadow-md sm:flex-row sm:py-2"><Utensils className="h-5 w-5" />{L('الأكل','Food')}</TabsTrigger>
-              <TabsTrigger value="video" className="h-auto flex-col gap-1 py-3 text-sm font-semibold data-[state=active]:shadow-md sm:flex-row sm:py-2"><Video className="h-5 w-5" />{L('تحليل الفيديو','Video review')}</TabsTrigger>
-              <TabsTrigger value="nearby" className="h-auto flex-col gap-1 py-3 text-sm font-semibold data-[state=active]:shadow-md sm:flex-row sm:py-2"><MapPin className="h-5 w-5" />{L('أقرب جيم','Nearby gyms')}</TabsTrigger>
+              <TabsTrigger value="programs" className="h-auto flex-col gap-1 min-h-14 py-4 text-base font-bold data-[state=active]:shadow-md sm:flex-row sm:py-3"><Dumbbell className="h-6 w-6" />{L('التمارين','Workouts')}</TabsTrigger>
+              <TabsTrigger value="food" className="h-auto flex-col gap-1 min-h-14 py-4 text-base font-bold data-[state=active]:shadow-md sm:flex-row sm:py-3"><Utensils className="h-6 w-6" />{L('الأكل','Food')}</TabsTrigger>
+              <TabsTrigger value="video" className="h-auto flex-col gap-1 min-h-14 py-4 text-base font-bold data-[state=active]:shadow-md sm:flex-row sm:py-3"><Video className="h-6 w-6" />{L('تحليل الفيديو','Video review')}</TabsTrigger>
+              <TabsTrigger value="nearby" className="h-auto flex-col gap-1 min-h-14 py-4 text-base font-bold data-[state=active]:shadow-md sm:flex-row sm:py-3"><MapPin className="h-6 w-6" />{L('أقرب جيم','Nearby gyms')}</TabsTrigger>
             </TabsList>
             <TabsContent value="programs" className="mt-6"><GymPrograms /></TabsContent>
             <TabsContent value="food" className="mt-6"><GymFood /></TabsContent>

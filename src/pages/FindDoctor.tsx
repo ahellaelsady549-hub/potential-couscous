@@ -324,10 +324,12 @@ const FindDoctor = () => {
                   )}
 
                   {/* Verified Badge */}
-                  <div className="flex items-center gap-2 text-sm text-green-600">
-                    <UserCheck className="w-4 h-4" />
-                    <span>{L('طبيب موثق','Verified doctor')}</span>
-                  </div>
+                  {doctor.is_verified && (
+                    <div className="flex items-center gap-2 text-sm text-green-600">
+                      <UserCheck className="w-4 h-4" />
+                      <span>{L('تمت مراجعة الملف من إدارة المنصة','Profile reviewed by the platform admin')}</span>
+                    </div>
+                  )}
 
                   {/* Actions */}
                   <div className="flex gap-2 pt-2">

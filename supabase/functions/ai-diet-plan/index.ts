@@ -71,59 +71,81 @@ serve(async (req) => {
       });
     }
 
-    const { height, weight, age, gender, activityLevel, goal } = await req.json();
+    const body = await req.json();
+    const height = Number(body.height), weight = Number(body.weight), age = Number(body.age);
+    const gender = body.gender === 'female' ? 'female' : 'male';
+    const activityLevel = String(body.activityLevel ?? 'moderate').slice(0, 40);
+    if (!(height > 80 && height < 260 && weight > 20 && weight < 400 && age > 5 && age < 120)) {
+      return new Response(JSON.stringify({ error: 'بيانات الطول/الوزن/العمر غير صحيحة' }), {
+        status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+      });
+    }
+    const clean = (v: unknown, n = 300) => String(v ?? '').replace(/[`$<>]/g, '').slice(0, n).trim();
+    const requestedGoal = ['lose', 'maintain', 'gain', 'muscle'].includes(body.goal) ? body.goal : null;
+    const dietType = clean(body.dietType, 40) || 'regular';
+    const mealsPerDay = Math.min(6, Math.max(2, Number(body.mealsPerDay) || 3));
+    const budget = clean(body.budget, 20) || 'medium';
+    const conditions = clean(body.conditions);
+    const allergies = clean(body.allergies);
+    const dislikes = clean(body.dislikes);
+    const lang = body.lang === 'en' ? 'en' : 'ar';
+
+    // Latest mental-health test result for this user (RLS scoped)
+    const { data: mh, error: mentalHealthError } = await supabase.from('user_personality_results')
+      .select('level, score, category_scores, created_at')
+      .eq('user_id', userId).order('created_at', { ascending: false }).limit(1).maybeSingle();
+    if (mentalHealthError) {
+      throw new Error(`تعذر تحميل نتيجة تقييم الصحة النفسية: ${mentalHealthError.message}`);
+    }
+    let mentalContext = 'لا يوجد اختبار صحة نفسية محفوظ.';
+    if (mh) {
+      const cats = Object.entries((mh.category_scores ?? {}) as Record<string, number>)
+        .filter(([, v]) => Number(v) >= 2).map(([k, v]) => `${k}=${Number(v).toFixed(1)}/4`).join('، ');
+      mentalContext = `آخر نتيجة: ${mh.level} (${mh.score}%). مؤشرات مرتفعة: ${cats || 'لا شيء'}.`;
+    }
     const LOVABLE_API_KEY = Deno.env.get("LOVABLE_API_KEY");
     
     if (!LOVABLE_API_KEY) {
       throw new Error("LOVABLE_API_KEY is not configured");
     }
 
-    console.log("Generating AI diet plan for user:", userId);
-
-    // Calculate BMI and determine body type
     const bmi = weight / Math.pow(height / 100, 2);
-    let bodyType = 'normal';
-    let goalDescription = '';
-    
-    if (bmi < 18.5) {
-      bodyType = 'underweight';
-      goalDescription = 'جسمك نحيف - سنعمل على زيادة وزنك بشكل صحي للوصول للوزن المثالي';
-    } else if (bmi >= 18.5 && bmi < 25) {
-      bodyType = 'normal';
-      goalDescription = 'وزنك مثالي - سنعمل على الحفاظ عليه مع تحسين التغذية';
-    } else {
-      bodyType = 'overweight';
-      goalDescription = 'لديك وزن زائد - سنعمل على تقليله تدريجياً للوصول للوزن الصحي';
-    }
+    const bodyType = bmi < 18.5 ? 'underweight' : bmi < 25 ? 'normal' : 'overweight';
+    const goal = requestedGoal ?? (bodyType === 'underweight' ? 'gain' : bodyType === 'overweight' ? 'lose' : 'maintain');
 
-    // Calculate ideal weight using Devine formula
-    const idealWeight = gender === 'male' 
+    // Mifflin-St Jeor BMR + activity → TDEE
+    const bmr = 10 * weight + 6.25 * height - 5 * age + (gender === 'male' ? 5 : -161);
+    const actMap: Record<string, number> = { sedentary: 1.2, light: 1.375, moderate: 1.55, active: 1.725, very_active: 1.9, veryActive: 1.9 };
+    const tdee = bmr * (actMap[activityLevel] ?? 1.55);
+    const adj = goal === 'lose' ? -500 : goal === 'gain' ? 400 : goal === 'muscle' ? 250 : 0;
+    const targetCalories = Math.round(Math.max(gender === 'male' ? 1500 : 1200, tdee + adj));
+    const proteinPerKg = goal === 'muscle' ? 2 : goal === 'lose' ? 1.8 : 1.4;
+
+    const idealWeight = gender === 'male'
       ? 50 + 2.3 * ((height / 2.54) - 60)
       : 45.5 + 2.3 * ((height / 2.54) - 60);
+    const weeklyChange = goal === 'lose' ? -0.5 : goal === 'gain' ? 0.4 : goal === 'muscle' ? 0.25 : 0;
+    const predictedWeightAfterMonth = weight + weeklyChange * 4;
+    const goalLabel: Record<string, string> = { lose: 'خسارة دهون', maintain: 'ثبات الوزن', gain: 'زيادة وزن', muscle: 'بناء عضل' };
+    const goalDescription = `هدفك: ${goalLabel[goal]} — ${targetCalories} سعرة يومياً`;
 
-    // Weekly weight change prediction
-    let weeklyChange = 0;
-    if (bodyType === 'underweight') weeklyChange = 0.5;
-    else if (bodyType === 'overweight') weeklyChange = -0.5;
+    const systemPrompt = `أنت أخصائي تغذية علاجية. صمّم خطة شخصية فعلية — ممنوع الخطة العامة.
+اكتب كل النصوص بلغة: ${lang === 'en' ? 'English' : 'العربية (مصري مفهوم)'}.
 
-    const predictedWeightAfterMonth = weight + (weeklyChange * 4);
-
-    const systemPrompt = `أنت خبير تغذية معتمد. قم بإنشاء نظام غذائي دقيق بناءً على نوع الجسم.
-
-## بيانات المستخدم:
-- نوع الجسم: ${bodyType === 'underweight' ? 'نحيف' : bodyType === 'normal' ? 'طبيعي' : 'وزن زائد'}
-- BMI: ${bmi.toFixed(1)}
-- الوزن الحالي: ${weight} كجم
-- الوزن المثالي: ${Math.round(idealWeight)} كجم
-
-## القواعد:
-1. إذا كان الجسم نحيف: زد السعرات 500+ مع بروتين عالي
-2. إذا كان الجسم طبيعي: حافظ على السعرات مع توازن الماكروز
-3. إذا كان الجسم زائد: قلل السعرات 500- مع بروتين عالي للحفاظ على العضلات
+## قيود إلزامية:
+- السعرات المستهدفة بالضبط تقريباً: ${targetCalories} (±5%). البروتين ≈ ${Math.round(proteinPerKg * weight)} جم.
+- عدد الوجبات في اليوم: ${mealsPerDay}. وزّع الأكل على هذا العدد بالظبط (استخدم breakfast/lunch/dinner، والباقي في snacks).
+- نمط الأكل: ${dietType}. الميزانية: ${budget} — استخدم أكلات متاحة في مصر بأسعار مناسبة للميزانية.
+- حساسية (ممنوع نهائياً أي مكون منها أو مشتقاته): ${allergies || 'لا يوجد'}.
+- أكلات لا يحبها (لا تستخدمها): ${dislikes || 'لا يوجد'}.
+- حالات صحية (عدّل الخطة لها، مثلاً سكر: كارب منخفض المؤشر الجلايسيمي، ضغط: صوديوم قليل): ${conditions || 'لا يوجد'}.
+- نتيجة الصحة النفسية المحفوظة: ${mentalContext}
+  إذا وُجدت نتيجة، استخدم مؤشرات التقييم لتخصيص نصائح الوجبات والعادات فقط، دون تشخيص أو ادعاء أن الطعام يعالج اضطرابًا؛ اقترح دعمًا غذائيًا عامًا مناسبًا للمؤشرات، ووجّه لمختص عند الحاجة. إذا لم توجد نتيجة محفوظة، لا تفترض أعراضًا أو اضطرابًا ولا تنشئ نصائح نفسية غير مستندة إلى بيانات المستخدم.
+- كل عنصر في items يكون: "الطعام (الكمية بالجرام أو الوحدة) - السعرات".
 
 أعد JSON فقط:
 {
-  "dailyCalories": number,
+  "dailyCalories": ${targetCalories},
   "bmi": ${bmi.toFixed(1)},
   "bmiCategory": "${bmi < 18.5 ? 'نحيف' : bmi < 25 ? 'طبيعي' : bmi < 30 ? 'وزن زائد' : 'سمنة'}",
   "bodyType": "${bodyType}",
@@ -134,46 +156,17 @@ serve(async (req) => {
     "predictedWeightAfterMonth": ${predictedWeightAfterMonth.toFixed(1)},
     "weeklyChange": ${weeklyChange}
   },
-  "macros": {
-    "protein": number,
-    "carbs": number,
-    "fats": number,
-    "fiber": number
-  },
+  "macros": { "protein": number, "carbs": number, "fats": number, "fiber": number },
   "waterIntake": "X لتر",
-  "breakfast": {
-    "title": "وجبة الإفطار",
-    "items": ["طعام (كمية) - سعرات"],
-    "calories": number
-  },
-  "lunch": {
-    "title": "وجبة الغداء",
-    "items": ["..."],
-    "calories": number
-  },
-  "dinner": {
-    "title": "وجبة العشاء",
-    "items": ["..."],
-    "calories": number
-  },
-  "snacks": {
-    "title": "الوجبات الخفيفة",
-    "items": ["..."],
-    "calories": number
-  },
-  "tips": ["نصيحة 1", "نصيحة 2", "نصيحة 3"],
-  "avoid": ["طعام 1", "طعام 2"]
+  "breakfast": { "title": "...", "items": ["..."], "calories": number },
+  "lunch": { "title": "...", "items": ["..."], "calories": number },
+  "dinner": { "title": "...", "items": ["..."], "calories": number },
+  "snacks": { "title": "...", "items": ["..."], "calories": number },
+  "tips": ["..."],
+  "avoid": ["..."]
 }`;
 
-    const userPrompt = `البيانات:
-- الطول: ${height} سم
-- الوزن: ${weight} كجم
-- العمر: ${age} سنة
-- الجنس: ${gender === 'male' ? 'ذكر' : 'أنثى'}
-- مستوى النشاط: ${activityLevel}
-- نوع الجسم: ${bodyType === 'underweight' ? 'نحيف - يحتاج زيادة وزن' : bodyType === 'normal' ? 'طبيعي - للحفاظ' : 'زائد - يحتاج نقص وزن'}
-
-أنشئ نظام غذائي مناسب لنوع الجسم. أعد JSON فقط.`;
+    const userPrompt = `الطول ${height} سم، الوزن ${weight} كجم، العمر ${age}، الجنس ${gender === 'male' ? 'ذكر' : 'أنثى'}، النشاط ${activityLevel}، BMR ${Math.round(bmr)}، TDEE ${Math.round(tdee)}، الهدف ${goalLabel[goal]}. أعد JSON فقط.`;
 
     const response = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
       method: "POST",

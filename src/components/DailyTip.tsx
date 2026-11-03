@@ -3,23 +3,20 @@ import { Bell, BellOff } from 'lucide-react';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { useLanguage } from '@/contexts/LanguageContext';
-import { dailyHealthTips } from '@/data/dailyTips';
+import { getDailyHealthTip } from '@/data/dailyTips';
 import { toast } from 'sonner';
 
 export const DailyTip = () => {
   const { t, language, L } = useLanguage();
   const [notificationsEnabled, setNotificationsEnabled] = useState(false);
-  const [currentTip, setCurrentTip] = useState(dailyHealthTips[0]);
+  const [currentTip, setCurrentTip] = useState(getDailyHealthTip);
 
   useEffect(() => {
     // Check if notifications are already enabled
     const enabled = localStorage.getItem('dailyNotificationsEnabled') === 'true';
     setNotificationsEnabled(enabled);
 
-    // Get current day of month (1-30)
-    const currentDay = new Date().getDate();
-    const tipIndex = (currentDay - 1) % 30;
-    setCurrentTip(dailyHealthTips[tipIndex]);
+    setCurrentTip(getDailyHealthTip());
 
     // Check if notification was shown today
     const lastNotificationDate = localStorage.getItem('lastNotificationDate');
@@ -33,9 +30,7 @@ export const DailyTip = () => {
   }, []);
 
   const showDailyNotification = () => {
-    const currentDay = new Date().getDate();
-    const tipIndex = (currentDay - 1) % 30;
-    const tip = dailyHealthTips[tipIndex];
+    const tip = getDailyHealthTip();
     
     const notification = new Notification(
       L('نصيحة اليوم الصحية 💊', 'Daily Health Tip 💊'),

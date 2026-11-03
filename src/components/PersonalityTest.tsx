@@ -44,6 +44,30 @@ const PERSONALITY_QUESTIONS: Question[] = [
   { id: 23, textAr: 'هل تقوم بنتف شعرك أو خدش جلدك بشكل متكرر؟', category: 'trichotillomania' },
   { id: 24, textAr: 'هل تخاف من الخروج من المنزل أو الأماكن المزدحمة؟', category: 'agoraphobia' },
   { id: 25, textAr: 'هل تعاني من قلق الانفصال عن أشخاص مقربين منك؟', category: 'separation' },
+  // Second question per condition for higher accuracy (past two weeks)
+  { id: 26, textAr: 'خلال آخر أسبوعين، هل فقدت الاهتمام أو المتعة في أشياء كنت تحبها؟', category: 'depression' },
+  { id: 27, textAr: 'خلال آخر أسبوعين، هل تصحى تعبان حتى بعد نوم كافٍ أو تصحى كتير بالليل؟', category: 'insomnia' },
+  { id: 28, textAr: 'خلال آخر أسبوعين، هل صعب عليك توقف القلق أو التحكم فيه؟', category: 'anxiety' },
+  { id: 29, textAr: 'هل تخاف جداً من الكلام أمام الناس أو التعامل مع غرباء؟', category: 'social_anxiety' },
+  { id: 30, textAr: 'هل مرّت عليك أيام طاقتك فيها عالية جداً وتنام قليلاً جداً دون تعب؟', category: 'bipolar' },
+  { id: 31, textAr: 'هل تتصرف باندفاع أو تقاطع الآخرين أو تجد صعوبة في الجلوس بهدوء؟', category: 'adhd' },
+  { id: 32, textAr: 'هل يعطّلك خوف من شيء محدد (حيوان، مرتفعات، دم) عن حياتك اليومية؟', category: 'phobia' },
+  { id: 33, textAr: 'هل تتجنب أماكن أو أشخاص يذكّرونك بحدث صادم وتكون متوتراً ومتحفزاً دائماً؟', category: 'ptsd' },
+  { id: 34, textAr: 'هل ترفض فرص عمل أو علاقات خوفاً من الرفض أو النقد؟', category: 'avoidant' },
+  { id: 35, textAr: 'هل تقلق كثيراً من حدوث نوبة هلع أخرى فتتجنب أماكن بسببها؟', category: 'panic' },
+  { id: 36, textAr: 'هل تعتقد أن الناس يتآمرون عليك أو يقصدون إيذاءك؟', category: 'paranoid' },
+  { id: 37, textAr: 'هل علاقاتك متقلبة جداً بين التعلق الشديد والغضب الشديد؟', category: 'borderline' },
+  { id: 38, textAr: 'هل لديك أفكار غريبة يراها الآخرون غير منطقية أو تشعر أن أفكارك مُتحكَّم فيها؟', category: 'schizophrenia' },
+  { id: 39, textAr: 'هل تتقيأ عمداً أو تصوم بشدة أو تتمرن بإفراط بعد الأكل خوفاً من الوزن؟', category: 'eating' },
+  { id: 40, textAr: 'هل حاولت التوقف عن مادة (مخدر/كحول/حبوب) ولم تستطع؟', category: 'substance' },
+  { id: 41, textAr: 'هل تنسى فترات من الوقت أو تجد نفسك في مكان دون أن تتذكر كيف وصلت؟', category: 'dissociative' },
+  { id: 42, textAr: 'هل تشعر أنك أهم من الآخرين وتستحق معاملة خاصة؟', category: 'narcissistic' },
+  { id: 43, textAr: 'هل تخاف جداً أن تُترك وحدك وتحتاج طمأنة مستمرة؟', category: 'dependent' },
+  { id: 44, textAr: 'هل تراكم الأشياء في بيتك لدرجة تمنع استخدام الغرف؟', category: 'hoarding' },
+  { id: 45, textAr: 'هل حاولت التوقف عن نتف الشعر أو خدش الجلد ولم تستطع؟', category: 'trichotillomania' },
+  { id: 46, textAr: 'هل تحتاج مرافقاً لتخرج أو تركب المواصلات؟', category: 'agoraphobia' },
+  { id: 47, textAr: 'هل تقلق بشدة من حدوث مكروه لشخص قريب عندما يبتعد عنك؟', category: 'separation' },
+  { id: 48, textAr: 'خلال آخر أسبوعين، هل جاءتك أفكار بأنك أفضل ميتاً أو بإيذاء نفسك؟', category: 'self_harm' },
 ];
 
 const ANSWER_OPTIONS = [
@@ -252,7 +276,7 @@ export const PersonalityTest = () => {
                   <CardHeader>
                     <CardTitle className="text-lg flex items-center gap-2">
                       <Brain className="h-5 w-5 text-primary" />
-                      تحليل الذكاء الاصطناعي
+                      التحليل المفصّل
                     </CardTitle>
                   </CardHeader>
                   <CardContent>
@@ -260,6 +284,22 @@ export const PersonalityTest = () => {
                   </CardContent>
                 </Card>
               )}
+
+              {(answers[48] ?? 0) >= 1 && (
+                <div role="alert" className="rounded-xl border-2 border-destructive bg-destructive/10 p-4 space-y-3">
+                  <p className="font-bold text-destructive">أنت مش لوحدك — كلّم حد دلوقتي</p>
+                  <p className="text-sm">لو عندك أفكار بإيذاء نفسك، تواصل فوراً مع الإسعاف أو الخط الساخن للصحة النفسية.</p>
+                  <div className="flex flex-wrap gap-2">
+                    <a href="tel:123"><Button variant="destructive" size="lg">اتصل بالإسعاف 123</Button></a>
+                    <a href="tel:08008880700"><Button variant="outline" size="lg">الخط الساخن للصحة النفسية 08008880700</Button></a>
+                  </div>
+                </div>
+              )}
+
+              <a href="/diet-plan" className="block">
+                <Button size="lg" className="w-full h-14 text-base">اعمل خطة غذائية مناسبة لنتيجتك</Button>
+              </a>
+
 
               {suggestedDiseaseDetails.length > 0 && (
                 <div className="space-y-4">

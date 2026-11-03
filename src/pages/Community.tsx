@@ -15,7 +15,7 @@ import { Header as SiteHeader } from '@/components/Header';
 import {
   Home, Send, Image, Mic, MicOff, Search, Flag, Reply, Trash2, 
   Shield, BarChart3, Ban, MessageCircle, ArrowRight, Loader2, X,
-  Heart, Bell, BellDot, Check
+  Heart, Bell, BellDot, Check, Video
 } from 'lucide-react';
 
 type Post = {
@@ -24,6 +24,7 @@ type Post = {
   category: string;
   content: string | null;
   image_url: string | null;
+  video_url: string | null;
   voice_url: string | null;
   parent_id: string | null;
   created_at: string;
@@ -63,6 +64,7 @@ const Community = () => {
   const [isAdmin, setIsAdmin] = useState(false);
   const [imageFile, setImageFile] = useState<File | null>(null);
   const [imagePreview, setImagePreview] = useState<string | null>(null);
+  const [videoFile, setVideoFile] = useState<File | null>(null);
   const [isRecording, setIsRecording] = useState(false);
   const [audioBlob, setAudioBlob] = useState<Blob | null>(null);
   const [reportPostId, setReportPostId] = useState<string | null>(null);
@@ -79,6 +81,7 @@ const Community = () => {
   const [postLikes, setPostLikes] = useState<Record<string, { count: number; liked: boolean }>>({});
   
   const imageInputRef = useRef<HTMLInputElement>(null);
+  const videoInputRef = useRef<HTMLInputElement>(null);
   const mediaRecorderRef = useRef<MediaRecorder | null>(null);
   const audioChunksRef = useRef<Blob[]>([]);
 
@@ -222,6 +225,21 @@ const Community = () => {
     }
   };
 
+  const handleVideoSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    if (!file.type.startsWith('video/') || file.size > 50 * 1024 * 1024) {
+      toast({
+        title: L('فيديو غير صالح','Invalid video'),
+        description: L('اختر فيديو لا يتجاوز حجمه 50 ميجابايت.','Choose a video no larger than 50 MB.'),
+        variant: 'destructive'
+      });
+      e.target.value = '';
+      return;
+    }
+    setVideoFile(file);
+  };
+
   const toggleRecording = async () => {
     if (isRecording) {
       mediaRecorderRef.current?.stop();
@@ -258,16 +276,23 @@ const Community = () => {
   };
 
   const handleSendPost = async () => {
-    if (!user || (!newContent.trim() && !imageFile && !audioBlob)) return;
+    if (!user || (!newContent.trim() && !imageFile && !videoFile && !audioBlob)) return;
     
     setIsLoading(true);
     try {
       let imageUrl: string | null = null;
+      let videoUrl: string | null = null;
       let voiceUrl: string | null = null;
 
       if (imageFile) {
         const path = `images/${user.id}/${Date.now()}-${imageFile.name}`;
         imageUrl = await uploadFile(imageFile, path);
+      }
+
+      if (videoFile) {
+        const extension = videoFile.name.split('.').pop()?.replace(/[^a-zA-Z0-9]/g, '') || 'mp4';
+        const path = `videos/${user.id}/${crypto.randomUUID()}.${extension}`;
+        videoUrl = await uploadFile(videoFile, path);
       }
 
       if (audioBlob) {
@@ -280,6 +305,7 @@ const Community = () => {
         category: activeCategory,
         content: newContent.trim() || null,
         image_url: imageUrl,
+        video_url: videoUrl,
         voice_url: voiceUrl,
         parent_id: replyTo,
       }).select().single();
@@ -308,6 +334,8 @@ const Community = () => {
       setNewContent('');
       setImageFile(null);
       setImagePreview(null);
+      setVideoFile(null);
+      if (videoInputRef.current) videoInputRef.current.value = '';
       setAudioBlob(null);
       setReplyTo(null);
       fetchPosts();
@@ -637,6 +665,15 @@ const Community = () => {
                     </Button>
                   </div>
                 )}
+                {videoFile && (
+                  <div className="flex items-center gap-2 rounded-md bg-accent/50 p-2">
+                    <Video className="h-4 w-4 text-primary" />
+                    <span className="min-w-0 flex-1 truncate text-sm">{videoFile.name}</span>
+                    <Button size="sm" variant="ghost" onClick={() => { setVideoFile(null); if (videoInputRef.current) videoInputRef.current.value = ''; }}>
+                      <X className="h-3 w-3" />
+                    </Button>
+                  </div>
+                )}
                 {audioBlob && (
                   <div className="flex items-center gap-2 bg-accent/50 p-2 rounded-md">
                     <Mic className="h-4 w-4 text-primary" />
@@ -652,11 +689,15 @@ const Community = () => {
                     <Button size="icon" variant="ghost" onClick={() => imageInputRef.current?.click()}>
                       <Image className="h-4 w-4" />
                     </Button>
+                    <input ref={videoInputRef} type="file" accept="video/*" className="hidden" onChange={handleVideoSelect} />
+                    <Button size="icon" variant="ghost" onClick={() => videoInputRef.current?.click()} aria-label={L('إضافة فيديو','Add video')}>
+                      <Video className="h-4 w-4" />
+                    </Button>
                     <Button size="icon" variant={isRecording ? 'destructive' : 'ghost'} onClick={toggleRecording}>
                       {isRecording ? <MicOff className="h-4 w-4" /> : <Mic className="h-4 w-4" />}
                     </Button>
                   </div>
-                  <Button onClick={handleSendPost} disabled={isLoading || (!newContent.trim() && !imageFile && !audioBlob)} size="sm">
+                  <Button onClick={handleSendPost} disabled={isLoading || (!newContent.trim() && !imageFile && !videoFile && !audioBlob)} size="sm">
                     <Send className="h-4 w-4 ml-1" />
                     {L('نشر','Post')}
                   </Button>
@@ -791,6 +832,12 @@ const PostCard = ({ post, profile, isOwner, isAdmin, onReply, onDelete, onReport
         {post.image_url && (
           <img src={post.image_url} alt="post" className="rounded-lg max-h-80 w-full object-cover" />
         )}
+
+        {post.video_url && (
+          <video controls preload="metadata" className="max-h-96 w-full rounded-lg bg-black" src={post.video_url}>
+            {L('متصفحك لا يدعم تشغيل الفيديو.','Your browser does not support video playback.')}
+          </video>
+        )}
         
         {post.voice_url && (
           <audio controls className="w-full" src={post.voice_url} />
@@ -825,6 +872,7 @@ const PostCard = ({ post, profile, isOwner, isAdmin, onReply, onDelete, onReport
                   </a>
                   {reply.content && <p className="text-sm">{reply.content}</p>}
                   {reply.image_url && <img src={reply.image_url} alt="reply" className="rounded-md max-h-40" />}
+                  {reply.video_url && <video controls preload="metadata" className="max-h-64 w-full rounded-md bg-black" src={reply.video_url} />}
                   {reply.voice_url && <audio controls className="w-full h-8" src={reply.voice_url} />}
                 </div>
               );

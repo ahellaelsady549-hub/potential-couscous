@@ -16,6 +16,13 @@ interface UserData {
   age: string;
   gender: string;
   activityLevel: string;
+  goal: string;
+  dietType: string;
+  mealsPerDay: string;
+  budget: string;
+  conditions: string;
+  allergies: string;
+  dislikes: string;
 }
 
 interface DietPlanResult {
@@ -78,7 +85,14 @@ export const DietPlan = () => {
     weight: '', 
     age: '',
     gender: 'male',
-    activityLevel: 'moderate'
+    activityLevel: 'moderate',
+    goal: 'auto',
+    dietType: 'regular',
+    mealsPerDay: '3',
+    budget: 'medium',
+    conditions: '',
+    allergies: '',
+    dislikes: '',
   });
   const [dietPlan, setDietPlan] = useState<DietPlanResult | null>(null);
   const [showPlan, setShowPlan] = useState(false);
@@ -97,6 +111,7 @@ export const DietPlan = () => {
       let goal = 'maintain';
       if (bmi < 18.5) goal = 'gain';
       else if (bmi >= 25) goal = 'lose';
+      if (userData.goal !== 'auto') goal = userData.goal;
 
       await supabase.from('user_diet_plans').insert({
         user_id: user.id,
@@ -147,6 +162,7 @@ export const DietPlan = () => {
       let autoGoal = 'maintain';
       if (bmi < 18.5) autoGoal = 'gain';
       else if (bmi >= 25) autoGoal = 'lose';
+      if (userData.goal !== 'auto') autoGoal = userData.goal;
 
       const { data, error } = await supabase.functions.invoke('ai-diet-plan', {
         body: {
@@ -155,7 +171,14 @@ export const DietPlan = () => {
           age,
           gender: userData.gender,
           activityLevel: userData.activityLevel,
-          goal: autoGoal
+          goal: autoGoal,
+          dietType: userData.dietType,
+          mealsPerDay: Number(userData.mealsPerDay),
+          budget: userData.budget,
+          conditions: userData.conditions.slice(0, 300),
+          allergies: userData.allergies.slice(0, 300),
+          dislikes: userData.dislikes.slice(0, 300),
+          lang: L('ar', 'en'),
         }
       });
 
@@ -297,6 +320,72 @@ export const DietPlan = () => {
                       ))}
                     </SelectContent>
                   </Select>
+                </div>
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div className="space-y-2">
+                  <Label>{L('هدفك', 'Your goal')}</Label>
+                  <Select value={userData.goal} onValueChange={(value) => setUserData({ ...userData, goal: value })}>
+                    <SelectTrigger><SelectValue /></SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="auto">{L('تلقائي حسب وزني', 'Automatic from my weight')}</SelectItem>
+                      <SelectItem value="lose">{L('خسارة دهون', 'Lose fat')}</SelectItem>
+                      <SelectItem value="maintain">{L('الحفاظ على الوزن', 'Maintain weight')}</SelectItem>
+                      <SelectItem value="gain">{L('زيادة وزن', 'Gain weight')}</SelectItem>
+                      <SelectItem value="muscle">{L('بناء عضل', 'Build muscle')}</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+                <div className="space-y-2">
+                  <Label>{L('نوع الأكل', 'Eating style')}</Label>
+                  <Select value={userData.dietType} onValueChange={(value) => setUserData({ ...userData, dietType: value })}>
+                    <SelectTrigger><SelectValue /></SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="regular">{L('عادي', 'Regular')}</SelectItem>
+                      <SelectItem value="vegetarian">{L('نباتي', 'Vegetarian')}</SelectItem>
+                      <SelectItem value="vegan">{L('نباتي صرف', 'Vegan')}</SelectItem>
+                      <SelectItem value="keto">{L('كيتو', 'Keto')}</SelectItem>
+                      <SelectItem value="low_carb">{L('قليل الكارب', 'Low carb')}</SelectItem>
+                      <SelectItem value="high_protein">{L('عالي البروتين', 'High protein')}</SelectItem>
+                      <SelectItem value="fasting">{L('صيام متقطع', 'Intermittent fasting')}</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+                <div className="space-y-2">
+                  <Label>{L('عدد الوجبات يوميًا', 'Meals per day')}</Label>
+                  <Select value={userData.mealsPerDay} onValueChange={(value) => setUserData({ ...userData, mealsPerDay: value })}>
+                    <SelectTrigger><SelectValue /></SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="2">{L('2', '2')}</SelectItem>
+                      <SelectItem value="3">{L('3', '3')}</SelectItem>
+                      <SelectItem value="4">{L('4', '4')}</SelectItem>
+                      <SelectItem value="5">{L('5', '5')}</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+                <div className="space-y-2">
+                  <Label>{L('الميزانية', 'Budget')}</Label>
+                  <Select value={userData.budget} onValueChange={(value) => setUserData({ ...userData, budget: value })}>
+                    <SelectTrigger><SelectValue /></SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="low">{L('اقتصادية', 'Low')}</SelectItem>
+                      <SelectItem value="medium">{L('متوسطة', 'Medium')}</SelectItem>
+                      <SelectItem value="high">{L('مرتفعة', 'High')}</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="conditions">{L('أمراض أو حالات صحية', 'Health conditions')}</Label>
+                  <Input id="conditions" maxLength={300} value={userData.conditions} placeholder={L('مثال: سكر، ضغط، حمل', 'e.g. diabetes, blood pressure')} onChange={(e) => setUserData({ ...userData, conditions: e.target.value })} />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="allergies">{L('حساسية من أطعمة', 'Food allergies')}</Label>
+                  <Input id="allergies" maxLength={300} value={userData.allergies} placeholder={L('مثال: لاكتوز، فول سوداني', 'e.g. lactose, peanuts')} onChange={(e) => setUserData({ ...userData, allergies: e.target.value })} />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="dislikes">{L('أكلات مش بتحبها', 'Foods you dislike')}</Label>
+                  <Input id="dislikes" maxLength={300} value={userData.dislikes} placeholder={L('مثال: سمك، باذنجان', 'e.g. fish, eggplant')} onChange={(e) => setUserData({ ...userData, dislikes: e.target.value })} />
                 </div>
               </div>
 
