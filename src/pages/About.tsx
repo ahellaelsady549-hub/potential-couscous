@@ -3,7 +3,7 @@ import { treatments } from "@/data/treatments";
 import { firstAidTips } from "@/data/firstAidTips";
 import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
-import { Heart, Stethoscope, Brain, Cross, Users, Target, Award } from "lucide-react";
+import { Heart, Stethoscope, Brain, Cross, Users, Target, Award, CalendarDays, UserRound, ShieldCheck } from "lucide-react";
 import { useLanguage } from "@/contexts/LanguageContext";
 
 const mentalHealthDiseaseIds = [
@@ -65,9 +65,45 @@ const About = () => {
             {L('من نحن', 'About Us')}
           </h1>
           <p className="text-xl text-muted-foreground max-w-3xl mx-auto leading-relaxed">
-            {L('إسعفني هو منصة صحية شاملة مصممة خصيصاً لخدمة المجتمع المصري، نقدم معلومات طبية موثوقة وإرشادات للإسعافات الأولية والصحة النفسية.', 'Es3efny is a comprehensive health platform designed specifically to serve the Egyptian community, providing reliable medical information and guidance on first aid and mental health.')}
+            {L('إسعفني شركة ومنصة طبية رقمية تهدف إلى خدمة المجتمع المصري بمعلومات صحية وإرشادات للإسعافات الأولية والصحة النفسية.', 'Es3efny is a digital medical company and platform serving the Egyptian community with health information and first-aid and mental-health guidance.')}
           </p>
         </div>
+
+        <section className="mb-16" aria-labelledby="about-company">
+          <h2 id="about-company" className="mb-8 text-center text-3xl font-bold text-foreground">
+            {L('عن الشركة', 'About the Company')}
+          </h2>
+          <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
+            {[
+              {
+                icon: CalendarDays,
+                title: L('سنة التأسيس', 'Founded'),
+                description: L('تأسست عام 2024، منذ نحو عامين.', 'Founded in 2024, about two years ago.'),
+              },
+              {
+                icon: UserRound,
+                title: L('مؤسس الموقع', 'Founder'),
+                description: L('أنشأ الموقع محمد عبد العزيز.', 'The website was created by Mohamed Abdelaziz.'),
+              },
+              {
+                icon: ShieldCheck,
+                title: L('المراجعة الطبية', 'Medical Review'),
+                description: L('تمت مراجعة المحتوى من قبل أطباء معتمدين.', 'The content has been reviewed by accredited doctors.'),
+              },
+              {
+                icon: Stethoscope,
+                title: L('مراجعة وزارة الصحة', 'Ministry of Health Review'),
+                description: L('الموقع قيد المراجعة من قبل وزارة الصحة، ولم تصدر الموافقة النهائية بعد.', 'The website is under review by the Ministry of Health; final approval has not yet been issued.'),
+              },
+            ].map(({ icon: Icon, title, description }) => (
+              <div key={title} className="rounded-2xl border border-border bg-card p-6 text-center">
+                <Icon className="mx-auto mb-3 h-8 w-8 text-primary" aria-hidden="true" />
+                <h3 className="mb-2 font-bold text-foreground">{title}</h3>
+                <p className="text-sm leading-7 text-muted-foreground">{description}</p>
+              </div>
+            ))}
+          </div>
+        </section>
 
         {/* Statistics Section */}
         <div className="mb-16">

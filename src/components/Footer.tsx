@@ -15,6 +15,7 @@ export const Footer = () => {
     { to: '/find-doctor', label: L('ابحث عن طبيب', 'Find a doctor') },
     { to: '/ask-me', label: L('اسألني', 'Ask me') },
     { to: '/articles', label: L('المقالات الصحية', 'Health articles') },
+    { to: '/about', label: L('من نحن', 'About us') },
   ];
 
   return (

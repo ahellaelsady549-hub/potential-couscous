@@ -8,6 +8,7 @@ import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
 import { toast } from 'sonner';
 import { useLanguage } from '@/contexts/LanguageContext';
+import { announceAiResponse } from '@/lib/aiResponse';
 
 type Msg = { role: 'user' | 'assistant'; content: string };
 type Row = { id: string; question: string; answer: string; created_at: string; conversation_id: string | null; conversation_title: string | null };
@@ -85,6 +86,7 @@ export const AskMe = ({ standalone = false }: { standalone?: boolean }) => {
       if (error) throw error;
       if (data?.error) throw new Error(data.error);
       const answer = data.answer as string;
+      announceAiResponse(answer);
       const { data: saved, error: saveErr } = await supabase
         .from('ask_me_history')
         .insert({ user_id: user.id, question: q, answer, conversation_id: cid, conversation_title: title })

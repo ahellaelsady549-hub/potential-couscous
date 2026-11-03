@@ -30,6 +30,7 @@ const items: Item[] = [
   { kind: 'route', to: '/gym', labelKey: 'nav.gym', icon: Dumbbell },
   { kind: 'route', to: '/nutrition-goals', labelKey: 'nav.goals', icon: Target, auth: true },
   { kind: 'route', to: '/articles', labelKey: 'nav.articles', icon: Newspaper },
+  { kind: 'route', to: '/about', labelKey: 'nav.about', icon: HeartPulse },
   { kind: 'route', to: '/find-doctor', labelKey: 'nav.findDoctor', icon: Stethoscope },
   { kind: 'route', to: '/personal-diagnosis', labelKey: 'nav.diagnose', icon: UserRound, auth: true },
   { kind: 'route', to: '/ask-me', labelKey: 'nav.askMe', icon: MessageCircle, auth: true },

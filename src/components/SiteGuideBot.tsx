@@ -5,6 +5,7 @@ import { Card } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
+import { announceAiResponse } from '@/lib/aiResponse';
 
 interface Message {
   text: string;
@@ -155,6 +156,7 @@ export const SiteGuideBot = ({ onOpenChange }: SiteGuideBotProps = {}) => {
       const botResponse = data?.response || 'عذراً، حدث خطأ. يرجى المحاولة مرة أخرى.';
       const botMessage: Message = { text: botResponse, isBot: true };
       setMessages(prev => [...prev, botMessage]);
+      announceAiResponse(botResponse);
 
       if (isGuest) incrementGuestMessageCount();
     } catch (error) {
