@@ -9,6 +9,7 @@ import { useAuth } from '@/contexts/AuthContext';
 import { toast } from 'sonner';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { announceAiResponse } from '@/lib/aiResponse';
+import { getRegisteredUserName, getSiteCreatorReply } from '@/lib/siteIdentity';
 
 type Msg = { role: 'user' | 'assistant'; content: string };
 type Row = { id: string; question: string; answer: string; created_at: string; conversation_id: string | null; conversation_title: string | null };
@@ -80,12 +81,19 @@ export const AskMe = ({ standalone = false }: { standalone?: boolean }) => {
     const title = active?.title || q.slice(0, 60);
     setActiveId(cid);
     try {
-      const { data, error } = await supabase.functions.invoke('ask-anything', {
-        body: { question: q, history: messages.slice(-10), lang: language },
-      });
-      if (error) throw error;
-      if (data?.error) throw new Error(data.error);
-      const answer = data.answer as string;
+      let creatorReply = getSiteCreatorReply(q);
+      if (creatorReply) creatorReply = getSiteCreatorReply(q, await getRegisteredUserName(user)) ?? creatorReply;
+      let answer: string;
+      if (creatorReply) {
+        answer = creatorReply;
+      } else {
+        const { data, error } = await supabase.functions.invoke('ask-anything', {
+          body: { question: q, history: messages.slice(-10), lang: language },
+        });
+        if (error) throw error;
+        if (data?.error) throw new Error(data.error);
+        answer = data.answer as string;
+      }
       announceAiResponse(answer);
       const { data: saved, error: saveErr } = await supabase
         .from('ask_me_history')

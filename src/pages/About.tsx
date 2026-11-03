@@ -1,27 +1,55 @@
-import { diseases } from "@/data/diseases";
+import { addedCareOptionsCount, physicalConditionCatalog, mentalConditionCatalog } from "@/data/conditionCatalog";
 import { treatments } from "@/data/treatments";
 import { firstAidTips } from "@/data/firstAidTips";
 import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
 import { Heart, Stethoscope, Brain, Cross, Users, Target, Award, CalendarDays, UserRound, ShieldCheck } from "lucide-react";
+import { useEffect, useRef, useState } from "react";
 import { useLanguage } from "@/contexts/LanguageContext";
 
-const mentalHealthDiseaseIds = [
-  'depression', 'bipolar', 'schizophrenia', 'ocd', 'ptsd', 
-  'panic_disorder', 'social_anxiety', 'eating_disorder', 'adhd', 
-  'autism', 'personality_disorder', 'substance_abuse', 'insomnia', 
-  'phobia', 'dissociative', 'generalized_anxiety', 'seasonal_depression',
-  'hoarding_disorder', 'body_dysmorphia', 'intermittent_explosive',
-  'trichotillomania', 'dermatillomania', 'agoraphobia', 'adjustment_disorder',
-  'somatoform', 'avoidant_personality', 'narcissistic_personality',
-  'dependent_personality', 'paranoid_personality'
-];
+const AnimatedCount = ({ value }: { value: number }) => {
+  const [count, setCount] = useState(0);
+  const countRef = useRef<HTMLSpanElement>(null);
+
+  useEffect(() => {
+    const element = countRef.current;
+    if (!element) return;
+
+    const showValue = () => setCount(value);
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches || !('IntersectionObserver' in window)) {
+      showValue();
+      return;
+    }
+
+    let frame = 0;
+    const observer = new IntersectionObserver(([entry]) => {
+      if (!entry.isIntersecting) return;
+      observer.disconnect();
+
+      const start = performance.now();
+      const duration = 1100;
+      const animate = (now: number) => {
+        const progress = Math.min((now - start) / duration, 1);
+        setCount(Math.round(value * (1 - (1 - progress) ** 3)));
+        if (progress < 1) frame = requestAnimationFrame(animate);
+      };
+      frame = requestAnimationFrame(animate);
+    }, { threshold: 0.3 });
+
+    observer.observe(element);
+    return () => {
+      observer.disconnect();
+      cancelAnimationFrame(frame);
+    };
+  }, [value]);
+
+  return <span ref={countRef} aria-label={String(value)}>{count}</span>;
+};
 
 const About = () => {
   const { L } = useLanguage();
-  // Calculate statistics
-  const physicalDiseases = diseases.filter(d => !mentalHealthDiseaseIds.includes(d.id));
-  const mentalDiseases = diseases.filter(d => mentalHealthDiseaseIds.includes(d.id));
+  const physicalDiseases = physicalConditionCatalog;
+  const mentalDiseases = mentalConditionCatalog;
   
   const stats = [
     {
@@ -33,8 +61,8 @@ const About = () => {
     },
     {
       icon: Cross,
-      count: treatments.length,
-      label: L("علاج", "treatment"),
+      count: treatments.length + addedCareOptionsCount,
+      label: L("خيار علاج ورعاية", "treatment and care option"),
       color: "text-green-500",
       bgColor: "bg-green-500/10"
     },
@@ -119,7 +147,7 @@ const About = () => {
                 <div className={`w-16 h-16 ${stat.bgColor} rounded-full flex items-center justify-center mx-auto mb-4`}>
                   <stat.icon className={`w-8 h-8 ${stat.color}`} />
                 </div>
-                <div className="text-4xl font-bold text-foreground mb-2">{stat.count}</div>
+                <div className="text-4xl font-bold text-foreground mb-2"><AnimatedCount value={stat.count} /></div>
                 <div className="text-muted-foreground font-medium">{stat.label}</div>
               </div>
             ))}
@@ -163,7 +191,7 @@ const About = () => {
         <div className="bg-gradient-to-r from-primary/10 to-primary/5 rounded-2xl p-8 text-center">
           <h2 className="text-2xl font-bold text-foreground mb-4">{L('ماذا نقدم؟', 'What We Offer?')}</h2>
           <p className="text-muted-foreground max-w-2xl mx-auto">
-            {L(`نقدم قاعدة بيانات شاملة تضم ${physicalDiseases.length} مرض جسدي و${treatments.length} علاج و${firstAidTips.length} إسعاف أولي و${mentalDiseases.length} مرض نفسي، بالإضافة إلى أرقام الطوارئ وحاسبة BMI وخطط النظام الغذائي والبحث عن أقرب المستشفيات والصيدليات.`, `We offer a comprehensive database including ${physicalDiseases.length} physical diseases, ${treatments.length} treatments, ${firstAidTips.length} first aid tips and ${mentalDiseases.length} mental illnesses, in addition to emergency numbers, a BMI calculator, diet plans, and search for the nearest hospitals and pharmacies.`)}
+            {L(`نقدم قاعدة بيانات شاملة تضم ${physicalDiseases.length} مرض جسدي و${treatments.length + addedCareOptionsCount} خيار علاج ورعاية و${firstAidTips.length} إرشاد إسعاف أولي و${mentalDiseases.length} مرض نفسي، بالإضافة إلى أرقام الطوارئ وحاسبة BMI وخطط النظام الغذائي والبحث عن أقرب المستشفيات والصيدليات.`, `We offer a comprehensive database including ${physicalDiseases.length} physical diseases, ${treatments.length + addedCareOptionsCount} treatment and care options, ${firstAidTips.length} first-aid guides, and ${mentalDiseases.length} mental health conditions, in addition to emergency numbers, a BMI calculator, diet plans, and nearby facility search.`)}
           </p>
         </div>
       </main>

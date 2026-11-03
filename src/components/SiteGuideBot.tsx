@@ -6,11 +6,19 @@ import { Input } from '@/components/ui/input';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
 import { announceAiResponse } from '@/lib/aiResponse';
+import { getRegisteredUserName, getSiteCreatorReply } from '@/lib/siteIdentity';
 
 interface Message {
   text: string;
   isBot: boolean;
   imageUrl?: string;
+}
+
+interface ChatRequest {
+  message: string;
+  history: Array<{ role: 'user' | 'assistant'; content: string }>;
+  imageBase64?: string;
+  imageType?: string;
 }
 
 const SUGGESTED_QUESTIONS = [
@@ -35,7 +43,10 @@ export const SiteGuideBot = ({ onOpenChange }: SiteGuideBotProps = {}) => {
   const [messages, setMessages] = useState<Message[]>(() => {
     const saved = localStorage.getItem(STORAGE_KEY);
     if (saved) {
-      try { return JSON.parse(saved); } catch { return []; }
+      try { return JSON.parse(saved) as Message[]; } catch (error) {
+        console.warn('Could not restore the site guide conversation:', error);
+        return [];
+      }
     }
     return [{ text: 'أهلًا! أنا طمّني 😊 دليل إسعفني، وهساعدك تلاقي الخدمة المناسبة وتفهم تستخدمها إزاي.\n\nتحب تعرف عن أنهي جزء في الموقع؟ 🏥', isBot: true }];
   });
@@ -49,7 +60,9 @@ export const SiteGuideBot = ({ onOpenChange }: SiteGuideBotProps = {}) => {
   const scrollToBottom = () => messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   useEffect(() => { scrollToBottom(); }, [messages]);
   useEffect(() => {
-    try { localStorage.setItem(STORAGE_KEY, JSON.stringify(messages)); } catch {}
+    try { localStorage.setItem(STORAGE_KEY, JSON.stringify(messages)); } catch (error) {
+      console.warn('Could not save the site guide conversation:', error);
+    }
   }, [messages]);
   useEffect(() => { onOpenChange?.(isOpen); }, [isOpen, onOpenChange]);
 
@@ -111,12 +124,26 @@ export const SiteGuideBot = ({ onOpenChange }: SiteGuideBotProps = {}) => {
         }
       }
 
-      const conversationHistory = messages.slice(-10).map(m => ({
+      let creatorReply = getSiteCreatorReply(textToSend);
+      if (creatorReply) {
+        creatorReply = getSiteCreatorReply(
+          textToSend,
+          await getRegisteredUserName(session?.user ?? null),
+        ) ?? creatorReply;
+      }
+      if (creatorReply) {
+        setMessages(prev => [...prev, { text: creatorReply, isBot: true }]);
+        announceAiResponse(creatorReply);
+        if (isGuest) incrementGuestMessageCount();
+        return;
+      }
+
+      const conversationHistory: ChatRequest['history'] = messages.slice(-10).map(m => ({
         role: m.isBot ? 'assistant' : 'user',
         content: m.text
       }));
 
-      const body: any = {
+      const body: ChatRequest = {
         message: textToSend || (currentImage ? "ما هذا؟ اشرح لي هذه الصورة من الناحية الطبية." : ''),
         history: conversationHistory
       };
@@ -180,7 +207,9 @@ export const SiteGuideBot = ({ onOpenChange }: SiteGuideBotProps = {}) => {
   const clearHistory = () => {
     const initialMessage: Message = { text: 'أهلًا! أنا طمّني 😊 دليل إسعفني، وهساعدك تلاقي الخدمة المناسبة وتفهم تستخدمها إزاي.\n\nتحب تعرف عن أنهي جزء في الموقع؟ 🏥', isBot: true };
     setMessages([initialMessage]);
-    try { localStorage.removeItem(STORAGE_KEY); } catch {}
+    try { localStorage.removeItem(STORAGE_KEY); } catch (error) {
+      console.warn('Could not clear the saved site guide conversation:', error);
+    }
     toast({ title: "تم مسح المحادثة", description: "تم حذف سجل المحادثة من هذا الجهاز" });
   };
 

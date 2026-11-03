@@ -7,6 +7,7 @@ import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { MedicalSources } from '@/components/MedicalSources';
+import { MedicalSourceLinks } from '@/components/MedicalSourceLinks';
 import { normalizeSearchText } from '@/lib/search';
 
 const categories = [
@@ -178,6 +179,7 @@ export const FirstAid = () => {
                         </li>
                       ))}
                     </ol>
+                    <MedicalSourceLinks sources={tip.sources} />
                   </div>
                 )}
               </Card>

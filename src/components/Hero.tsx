@@ -6,15 +6,17 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { useLanguage } from '@/contexts/LanguageContext';
 import { normalizeSearchText } from '@/lib/search';
 import { useState } from 'react';
-import { diseases } from '@/data/diseases';
+import { conditionCatalog, type ConditionRecord } from '@/data/conditionCatalog';
 import { treatments } from '@/data/treatments';
+import { ConditionCauses } from '@/components/ConditionCauses';
+import { MedicinePrice, MedicineUseNotice } from '@/components/MedicinePrice';
 
 export const Hero = () => {
   const { t, language, L } = useLanguage();
   const [searchQuery, setSearchQuery] = useState('');
   const [searchType, setSearchType] = useState<'symptoms' | 'disease'>('symptoms');
   const [selectedDisease, setSelectedDisease] = useState('');
-  const [searchResults, setSearchResults] = useState<typeof diseases>([]);
+  const [searchResults, setSearchResults] = useState<ConditionRecord[]>([]);
   const [showResults, setShowResults] = useState(false);
 
   const handleSearch = () => {
@@ -23,14 +25,14 @@ export const Hero = () => {
       let results;
       
       if (selectedDisease) {
-        results = diseases.filter(disease => disease.id === selectedDisease);
+        results = conditionCatalog.filter(disease => disease.id === selectedDisease);
       } else if (searchType === 'symptoms') {
-        results = diseases.filter(disease => {
+        results = conditionCatalog.filter(disease => {
           const symptoms = language === 'ar' ? disease.symptomsAr : disease.symptomsEn;
           return symptoms.some(symptom => normalizeSearchText(symptom).includes(query));
         });
       } else {
-        results = diseases.filter(disease => {
+        results = conditionCatalog.filter(disease => {
           const name = language === 'ar' ? disease.nameAr : disease.nameEn;
           return normalizeSearchText(name).includes(query);
         });
@@ -128,7 +130,7 @@ export const Hero = () => {
                   <SelectValue placeholder={L('اختر المرض', 'Select Disease')} />
                 </SelectTrigger>
                 <SelectContent className="max-h-80">
-                  {diseases.map((disease) => (
+                  {conditionCatalog.map((disease) => (
                     <SelectItem key={disease.id} value={disease.id}>
                       {language === 'ar' ? disease.nameAr : disease.nameEn}
                     </SelectItem>
@@ -189,6 +191,7 @@ export const Hero = () => {
                 <div className="space-y-4 max-h-96 overflow-y-auto">
                   {searchResults.map((disease) => {
                     const diseaseTreatments = treatments.filter(t => t.diseaseId === disease.id);
+                    const careOptions = language === 'ar' ? disease.treatmentsAr : disease.treatmentsEn;
                     
                     return (
                       <Card key={disease.id} className="p-5 shadow-card">
@@ -208,13 +211,34 @@ export const Hero = () => {
                             ))}
                           </ul>
                         </div>
+                        <ConditionCauses causesAr={disease.causesAr} causesEn={disease.causesEn} sources={disease.sources} />
                         
-                        {diseaseTreatments.length > 0 && (
+                        {careOptions?.length ? (
+                          <div className="mt-4 border-t border-border pt-4">
+                            <div className="mb-2 flex items-center gap-2">
+                              <Pill className="h-5 w-5 text-secondary" />
+                              <p className="font-medium text-secondary">
+                                {L('خيارات رعاية عامة (ليست وصفة علاجية):', 'General care options (not a prescription):')}
+                              </p>
+                            </div>
+                            <ul className="space-y-2 text-sm">
+                              {careOptions.slice(0, 3).map((option, index) => (
+                                <li key={index} className="flex items-start gap-2">
+                                  <span className="text-primary">•</span>
+                                  <span>{option}</span>
+                                </li>
+                              ))}
+                            </ul>
+                            <p className="mt-3 text-xs text-muted-foreground">
+                              {L('اختيار الرعاية يعتمد على تقييم الطبيب والحالة الصحية. لا تبدأ أو توقف علاجًا بناءً على هذه المعلومات وحدها.', 'Care choices depend on a clinician’s assessment and individual health. Do not start or stop treatment based on this information alone.')}
+                            </p>
+                          </div>
+                        ) : diseaseTreatments.length > 0 && (
                           <div className="mt-4 pt-4 border-t border-border">
                             <div className="flex items-center gap-2 mb-3">
                               <Pill className="h-5 w-5 text-secondary" />
                               <p className="font-medium text-secondary">
-                                {L('أفضل 3 علاجات:', 'Best 3 Treatments:')}
+                                {L('معلومات علاجية:', 'Treatment information:')}
                               </p>
                             </div>
                             <div className="space-y-3">
@@ -223,11 +247,8 @@ export const Hero = () => {
                                   <p className="font-semibold text-sm mb-1">
                                     {language === 'ar' ? treatment.nameAr : treatment.nameEn}
                                   </p>
-                                  <div className="flex flex-wrap gap-3 text-xs text-muted-foreground">
-                                    <span>{L('السعر:', 'Price:')} {treatment.price} {L('جنيه', 'EGP')}</span>
-                                    <span>•</span>
-                                    <span>{L('الجرعة:', 'Dosage:')} {language === 'ar' ? treatment.dosageAr : treatment.dosageEn}</span>
-                                  </div>
+                                  <MedicinePrice price={treatment.price} verifiedAt={treatment.priceVerifiedAt} sourceUrl={treatment.priceSourceUrl} />
+                                  <MedicineUseNotice />
                                 </div>
                               ))}
                             </div>

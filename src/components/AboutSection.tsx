@@ -1,25 +1,13 @@
-import { diseases } from "@/data/diseases";
+import { addedCareOptionsCount, physicalConditionCatalog, mentalConditionCatalog } from "@/data/conditionCatalog";
 import { treatments } from "@/data/treatments";
 import { firstAidTips } from "@/data/firstAidTips";
 import { Heart, Stethoscope, Brain, Cross } from "lucide-react";
 import { useLanguage } from "@/contexts/LanguageContext";
 
-const mentalHealthDiseaseIds = [
-  'depression', 'bipolar', 'schizophrenia', 'ocd', 'ptsd', 
-  'panic_disorder', 'social_anxiety', 'eating_disorder', 'adhd', 
-  'autism', 'personality_disorder', 'substance_abuse', 'insomnia', 
-  'phobia', 'dissociative', 'generalized_anxiety', 'seasonal_depression',
-  'hoarding_disorder', 'body_dysmorphia', 'intermittent_explosive',
-  'trichotillomania', 'dermatillomania', 'agoraphobia', 'adjustment_disorder',
-  'somatoform', 'avoidant_personality', 'narcissistic_personality',
-  'dependent_personality', 'paranoid_personality'
-];
-
 export const AboutSection = () => {
   const { L } = useLanguage();
-  const physicalDiseases = diseases.filter(d => !mentalHealthDiseaseIds.includes(d.id));
-  const mentalDiseases = diseases.filter(d => mentalHealthDiseaseIds.includes(d.id));
-  
+  const physicalDiseases = physicalConditionCatalog;
+  const mentalDiseases = mentalConditionCatalog;
   const stats = [
     {
       icon: Stethoscope,
@@ -30,8 +18,8 @@ export const AboutSection = () => {
     },
     {
       icon: Cross,
-      count: treatments.length,
-      label: L("علاج", "Treatment"),
+      count: treatments.length + addedCareOptionsCount,
+      label: L("خيار علاج ورعاية", "Treatment and care option"),
       color: "text-green-500",
       bgColor: "bg-green-500/10"
     },
@@ -82,8 +70,8 @@ export const AboutSection = () => {
           <h3 className="text-xl md:text-2xl font-bold text-foreground mb-3">{L('ماذا نقدم؟', 'What do we offer?')}</h3>
           <p className="text-muted-foreground max-w-2xl mx-auto text-sm md:text-base">
             {L(
-              `نقدم قاعدة بيانات شاملة تضم ${physicalDiseases.length} مرض جسدي و${treatments.length} علاج و${firstAidTips.length} إسعاف أولي و${mentalDiseases.length} مرض نفسي، بالإضافة إلى أرقام الطوارئ وحاسبة BMI وخطط النظام الغذائي والبحث عن أقرب المستشفيات والصيدليات.`,
-              `We offer a comprehensive database of ${physicalDiseases.length} physical diseases, ${treatments.length} treatments, ${firstAidTips.length} first aid tips, and ${mentalDiseases.length} mental disorders, in addition to emergency numbers, a BMI calculator, diet plans, and a search for the nearest hospitals and pharmacies.`,
+              `نقدم قاعدة بيانات شاملة تضم ${physicalDiseases.length} مرض جسدي و${treatments.length + addedCareOptionsCount} خيار علاج ورعاية و${firstAidTips.length} إرشاد إسعاف أولي و${mentalDiseases.length} مرض نفسي، بالإضافة إلى أرقام الطوارئ وحاسبة BMI وخطط النظام الغذائي والبحث عن أقرب المستشفيات والصيدليات.`,
+              `We offer a comprehensive database of ${physicalDiseases.length} physical diseases, ${treatments.length + addedCareOptionsCount} treatment and care options, ${firstAidTips.length} first-aid guides, and ${mentalDiseases.length} mental health conditions, in addition to emergency numbers, a BMI calculator, diet plans, and nearby facility search.`,
             )}
           </p>
         </div>

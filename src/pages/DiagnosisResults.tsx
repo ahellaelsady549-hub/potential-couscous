@@ -6,12 +6,20 @@ import { Footer } from '@/components/Footer';
 import { Button } from '@/components/ui/button';
 import { useAuth } from '@/contexts/AuthContext';
 import { isAssessment } from '../../supabase/functions/ai-diagnosis/assessment';
+import { announceAiResponse } from '@/lib/aiResponse';
 
 export default function DiagnosisResults() {
   const { user, loading } = useAuth();
   const location = useLocation();
   const heading = useRef<HTMLHeadingElement>(null);
+  const announcedSummary = useRef<string | null>(null);
   const assessment: unknown = location.state?.assessment;
+  useEffect(() => {
+    if (!loading && user && isAssessment(assessment) && announcedSummary.current !== assessment.summary) {
+      announcedSummary.current = assessment.summary;
+      announceAiResponse(assessment.summary);
+    }
+  }, [assessment, loading, user]);
   useEffect(() => { heading.current?.focus(); window.scrollTo(0, 0); }, [loading]);
   if (loading) return <div className="min-h-screen flex items-center justify-center" role="status">جاري التحميل…</div>;
   if (!user) return <Navigate to="/auth" replace />;

@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useLanguage } from '@/contexts/LanguageContext';
+import { announceAiResponse } from '@/lib/aiResponse';
 import { useAuth } from '@/contexts/AuthContext';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -129,6 +130,7 @@ const Auth = () => {
 
       if (error) throw error;
       setCvReview(data?.response || L('تم استلام السيرة الذاتية وسيتم مراجعتها','CV received and will be reviewed'));
+      if (typeof data?.response === 'string' && data.response) announceAiResponse(data.response);
     } catch (error) {
       console.error('Error reviewing CV:', error);
       setCvReview(L('تم استلام السيرة الذاتية وسيتم مراجعتها من قبل الإدارة','CV received and will be reviewed by our team'));

@@ -10,6 +10,7 @@ import { supabase } from '@/integrations/supabase/client';
 import { diseases } from '@/data/diseases';
 import { treatments } from '@/data/treatments';
 import { useToast } from '@/hooks/use-toast';
+import { announceAiResponse } from '@/lib/aiResponse';
 
 interface Question {
   id: number;
@@ -200,6 +201,7 @@ export const PersonalityTest = () => {
         setAiAnalysis(null);
       } else {
         setAiAnalysis(data?.analysis || null);
+        if (typeof data?.analysis === 'string' && data.analysis) announceAiResponse(data.analysis);
         
         // Auto-save results for logged-in users
         if (user) {

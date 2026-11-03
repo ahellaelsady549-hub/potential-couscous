@@ -4,6 +4,8 @@ export interface Treatment {
   nameEn: string;
   nameAr: string;
   price: string;
+  priceVerifiedAt?: string;
+  priceSourceUrl?: string;
   dosageEn: string;
   dosageAr: string;
 }

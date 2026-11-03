@@ -9,6 +9,7 @@ import { Apple, Calculator, Loader2, Droplets, Dumbbell, Flame, Wheat, Clock, Do
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
+import { announceAiResponse } from '@/lib/aiResponse';
 
 interface UserData {
   height: string;
@@ -193,6 +194,7 @@ export const DietPlan = () => {
       if (data?.dietPlan) {
         setDietPlan(data.dietPlan);
         setShowPlan(true);
+        announceAiResponse(L('تم تجهيز خطتك الغذائية المخصصة بنجاح.', 'Your personalized meal plan is ready.'));
         localStorage.setItem('dietUserData', JSON.stringify(userData));
         // Auto-save for logged-in users
         if (user) {

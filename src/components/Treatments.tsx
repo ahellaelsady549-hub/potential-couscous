@@ -7,7 +7,9 @@ import { useState } from 'react';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { Checkbox } from '@/components/ui/checkbox';
-import { diseases } from '@/data/diseases';
+import { physicalConditionCatalog } from '@/data/conditionCatalog';
+import { ConditionCauses } from '@/components/ConditionCauses';
+import { MedicinePrice, MedicineUseNotice } from '@/components/MedicinePrice';
 import { Badge } from '@/components/ui/badge';
 
 // الأعراض الشائعة للبحث
@@ -253,20 +255,6 @@ const medicationNamesEn: Record<string, string> = {
   'أفاميس بخاخ': 'Avamys Nasal Spray',
 };
 
-const dosageEn = (dosage: string) => dosage
-  .replace('عند بداية النوبة', 'at the start of an attack')
-  .replace('عند الحاجة', 'as needed')
-  .replace('على الريق', 'on an empty stomach')
-  .replace('قبل الأكل', 'before food')
-  .replace('بعد الأكل', 'after food')
-  .replace('لمدة 3 أيام', 'for 3 days')
-  .replace('في كل فتحة أنف', 'in each nostril')
-  .replace('صباحاً ومساءً', 'morning and evening')
-  .replace('أسبوعياً', 'weekly').replace('يومياً', 'daily').replace('صباحاً', 'in the morning').replace('مساءً', 'in the evening')
-  .replace('مرتين', 'twice').replace('مرات', 'times').replace('مرة', 'time')
-  .replace('كل', 'every').replace('قرصين', '2 tablets').replace('قرص', 'tablet').replace('كبسولة', 'capsule')
-  .replace('كيس', 'sachet').replace('بخة واحدة', 'one puff').replace('بخة', 'puff').replace('مل', 'ml').replace('ساعات', 'hours').replace('ساعة', 'hour');
-
 export const Treatments = () => {
   const { t, L, language } = useLanguage();
   const [searchQuery, setSearchQuery] = useState('');
@@ -276,21 +264,8 @@ export const Treatments = () => {
   const [showSymptomResults, setShowSymptomResults] = useState(false);
 
   // البحث عن الأمراض بالأعراض
-  const physicalDiseases = diseases.filter(d => 
-    !['depression', 'bipolar', 'schizophrenia', 'ocd', 'ptsd', 'panic_disorder', 
-      'social_anxiety', 'eating_disorder', 'adhd', 'autism', 'personality_disorder',
-      'substance_abuse', 'insomnia', 'phobia', 'dissociative', 'generalized_anxiety',
-      'seasonal_depression', 'hoarding_disorder', 'body_dysmorphia', 'intermittent_explosive',
-      'trichotillomania', 'dermatillomania', 'agoraphobia', 'adjustment_disorder',
-      'somatoform', 'avoidant_personality', 'narcissistic_personality', 'dependent_personality',
-      'paranoid_personality', 'borderline_personality', 'cyclothymia', 'selective_mutism',
-      'reactive_attachment', 'excoriation', 'gambling_disorder', 'illness_anxiety',
-      'binge_eating', 'rumination', 'separation_anxiety', 'conversion_disorder'
-    ].includes(d.id)
-  );
-
   const matchedDiseases = selectedSymptoms.length > 0
-    ? physicalDiseases
+    ? physicalConditionCatalog
         .map(disease => ({
           ...disease,
           matchCount: selectedSymptoms.filter(symptom =>
@@ -386,6 +361,19 @@ export const Treatments = () => {
                     <span className="font-medium">{language === 'en' ? disease.nameEn : disease.nameAr}</span>
                     <Badge variant="secondary">{disease.matchCount} {L('أعراض متطابقة', 'matching symptoms')}</Badge>
                   </div>
+                  <ConditionCauses causesAr={disease.causesAr} causesEn={disease.causesEn} sources={disease.sources} />
+                  {(language === 'ar' ? disease.treatmentsAr : disease.treatmentsEn)?.length ? (
+                    <div className="mt-3 border-t border-border pt-3">
+                      <p className="mb-2 text-xs font-medium">
+                        {L('خيارات رعاية عامة وليست وصفة علاجية:', 'General care options, not a prescription:')}
+                      </p>
+                      <ul className="list-inside list-disc space-y-1 text-xs text-muted-foreground">
+                        {(language === 'ar' ? disease.treatmentsAr : disease.treatmentsEn)?.slice(0, 3).map((option, index) => (
+                          <li key={index}>{option}</li>
+                        ))}
+                      </ul>
+                    </div>
+                  ) : null}
                 </div>
               ))}
             </div>
@@ -430,14 +418,9 @@ export const Treatments = () => {
                         <p className="font-semibold text-lg">{language === 'en' ? medicationNamesEn[med.nameAr] ?? med.nameAr : med.nameAr}</p>
                         <p className="text-sm text-muted-foreground">{t(med.category)}</p>
                       </div>
-                      <p className="font-bold text-primary">{med.price} {L('جنيه', 'EGP')}</p>
+                      <MedicinePrice price={med.price} />
                     </div>
-                    <div className="mt-2 pt-2 border-t border-border/50">
-                      <p className="text-sm">
-                        <span className="font-medium">{L('الجرعة: ', 'Dosage: ')}</span>
-                        {language === 'en' ? dosageEn(med.dosageAr) : med.dosageAr}
-                      </p>
-                    </div>
+                    <MedicineUseNotice />
                   </div>
                 ))
               ) : (
@@ -461,8 +444,8 @@ export const Treatments = () => {
                 {treatment.medications.map((med, idx) => (
                   <div key={idx} className="p-3 bg-accent/30 rounded-lg">
                     <p className="font-medium text-sm mb-1">{language === 'en' ? medicationNamesEn[med.nameAr] ?? med.nameAr : med.nameAr}</p>
-                    <p className="text-xs text-muted-foreground mb-1">{med.price} {L('جنيه', 'EGP')}</p>
-                    <p className="text-xs text-primary">{language === 'en' ? dosageEn(med.dosageAr) : med.dosageAr}</p>
+                    <MedicinePrice price={med.price} />
+                    <MedicineUseNotice />
                   </div>
                 ))}
               </div>

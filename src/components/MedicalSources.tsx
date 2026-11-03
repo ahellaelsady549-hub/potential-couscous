@@ -4,7 +4,7 @@ import { useLanguage } from '@/contexts/LanguageContext';
 type Source = { ar: string; en: string; url: string };
 type TopicSources = { reviewed?: string; items: Source[] };
 
-export const MEDICAL_SOURCES: Record<'mental' | 'physio' | 'firstAid', TopicSources> = {
+const MEDICAL_SOURCES: Record<'mental' | 'physio' | 'firstAid', TopicSources> = {
   mental: {
     reviewed: '2026-10-16',
     items: [

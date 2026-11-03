@@ -6,25 +6,16 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { useState, useMemo } from 'react';
-import { diseases } from '@/data/diseases';
+import { mentalConditionCatalog, type ConditionRecord } from '@/data/conditionCatalog';
 import { treatments } from '@/data/treatments';
+import { ConditionCauses } from '@/components/ConditionCauses';
+import { MedicinePrice, MedicineUseNotice } from '@/components/MedicinePrice';
 import {
   Popover,
   PopoverContent,
   PopoverTrigger,
 } from '@/components/ui/popover';
 import { Checkbox } from '@/components/ui/checkbox';
-
-const mentalHealthDiseaseIds = [
-  'depression', 'bipolar', 'schizophrenia', 'ocd', 'ptsd', 
-  'panic_disorder', 'social_anxiety', 'eating_disorder', 'adhd', 
-  'autism', 'personality_disorder', 'substance_abuse', 'insomnia', 
-  'phobia', 'dissociative', 'generalized_anxiety', 'seasonal_depression',
-  'hoarding_disorder', 'body_dysmorphia', 'intermittent_explosive',
-  'trichotillomania', 'dermatillomania', 'agoraphobia', 'adjustment_disorder',
-  'somatoform', 'avoidant_personality', 'narcissistic_personality',
-  'dependent_personality', 'paranoid_personality'
-];
 
 export const MentalHealth = () => {
   const { language } = useLanguage();
@@ -34,9 +25,7 @@ export const MentalHealth = () => {
   const [selectedSymptoms, setSelectedSymptoms] = useState<string[]>([]);
   const [isSymptomSearchOpen, setIsSymptomSearchOpen] = useState(false);
 
-  const mentalHealthDiseases = diseases.filter(d => 
-    mentalHealthDiseaseIds.includes(d.id)
-  );
+  const mentalHealthDiseases = mentalConditionCatalog;
 
   // Get all unique symptoms for the filter
   const allSymptoms = useMemo(() => {
@@ -111,7 +100,7 @@ export const MentalHealth = () => {
     setSelectedSymptoms([]);
   };
 
-  const getMatchingSymptomCount = (disease: typeof diseases[0]) => {
+  const getMatchingSymptomCount = (disease: ConditionRecord) => {
     if (selectedSymptoms.length === 0) return 0;
     const symptoms = language === 'ar' ? disease.symptomsAr : disease.symptomsEn;
     return selectedSymptoms.filter(sel => 
@@ -271,6 +260,7 @@ export const MentalHealth = () => {
           {displayedDiseases.map((disease) => {
             const isExpanded = expandedCards.has(disease.id);
             const diseaseTimeTreatments = getDiseaseTimeTreatments(disease.id);
+            const careOptions = language === 'ar' ? disease.treatmentsAr : disease.treatmentsEn;
             const matchCount = getMatchingSymptomCount(disease);
             
             return (
@@ -315,26 +305,47 @@ export const MentalHealth = () => {
                   </ul>
                 </div>
 
-                {isExpanded && diseaseTimeTreatments.length > 0 && (
+                <ConditionCauses causesAr={disease.causesAr} causesEn={disease.causesEn} sources={disease.sources} />
+
+                {isExpanded && (careOptions?.length || diseaseTimeTreatments.length > 0) && (
                   <div className="mt-4 pt-4 border-t border-border">
-                    <h4 className="font-medium mb-3 text-sm">
-                      {language === 'ar' ? 'العلاجات المتاحة:' : 'Available Treatments:'}
-                    </h4>
-                    <div className="space-y-2">
-                      {diseaseTimeTreatments.map((treatment) => (
-                        <div key={treatment.id} className="p-3 bg-accent/50 rounded-lg">
-                          <p className="font-medium text-sm mb-1">
-                            {language === 'ar' ? treatment.nameAr : treatment.nameEn}
-                          </p>
-                          <p className="text-xs text-muted-foreground mb-1">
-                            {treatment.price} {language === 'ar' ? 'جنيه' : 'EGP'}
-                          </p>
-                          <p className="text-xs text-primary">
-                            {language === 'ar' ? treatment.dosageAr : treatment.dosageEn}
-                          </p>
+                    {careOptions?.length ? (
+                      <>
+                        <h4 className="mb-3 text-sm font-medium">
+                          {language === 'ar' ? 'خيارات رعاية عامة (ليست وصفة علاجية):' : 'General care options (not a prescription):'}
+                        </h4>
+                        <ul className="space-y-2 text-sm">
+                          {careOptions.slice(0, 3).map((option, index) => (
+                            <li key={index} className="flex gap-2">
+                              <span className="text-primary">•</span>
+                              <span>{option}</span>
+                            </li>
+                          ))}
+                        </ul>
+                        <p className="mt-3 text-xs text-muted-foreground">
+                          {language === 'ar'
+                            ? 'اختيار الرعاية يعتمد على تقييم الطبيب والحالة الصحية. لا تبدأ أو توقف علاجًا بناءً على هذه المعلومات وحدها.'
+                            : 'Care choices depend on a clinician’s assessment and individual health. Do not start or stop treatment based on this information alone.'}
+                        </p>
+                      </>
+                    ) : (
+                      <>
+                        <h4 className="mb-3 text-sm font-medium">
+                          {language === 'ar' ? 'معلومات علاجية:' : 'Treatment information:'}
+                        </h4>
+                        <div className="space-y-2">
+                          {diseaseTimeTreatments.map((treatment) => (
+                            <div key={treatment.id} className="rounded-lg bg-accent/50 p-3">
+                              <p className="mb-1 text-sm font-medium">
+                                {language === 'ar' ? treatment.nameAr : treatment.nameEn}
+                              </p>
+                              <MedicinePrice price={treatment.price} verifiedAt={treatment.priceVerifiedAt} sourceUrl={treatment.priceSourceUrl} />
+                              <MedicineUseNotice />
+                            </div>
+                          ))}
                         </div>
-                      ))}
-                    </div>
+                      </>
+                    )}
                   </div>
                 )}
               </Card>

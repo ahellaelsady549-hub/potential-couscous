@@ -13,6 +13,8 @@ import { Header } from '@/components/Header';
 import { Footer } from '@/components/Footer';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { isAssessment } from '../../supabase/functions/ai-diagnosis/assessment';
+import { getRegisteredUserName, getSiteCreatorReply } from '@/lib/siteIdentity';
+import { announceAiResponse } from '@/lib/aiResponse';
 
 const PersonalDiagnosis = () => {
   const navigate = useNavigate();
@@ -24,6 +26,7 @@ const PersonalDiagnosis = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [image, setImage] = useState<string | null>(null);
   const [imageName, setImageName] = useState('');
+  const [siteCreatorReply, setSiteCreatorReply] = useState<string | null>(null);
   const fileRef = React.useRef<HTMLInputElement>(null);
 
   /** Accepts images up to 100MB and downscales them locally before sending. */
@@ -62,9 +65,18 @@ const PersonalDiagnosis = () => {
       });
       navigate('/auth');
     }
-  }, [user, authLoading, navigate, toast]);
+  }, [user, authLoading, navigate, toast, L]);
 
   const handleDiagnosis = async () => {
+    let creatorReply = getSiteCreatorReply(symptoms);
+    if (creatorReply) {
+      creatorReply = getSiteCreatorReply(symptoms, await getRegisteredUserName(user)) ?? creatorReply;
+      setSiteCreatorReply(creatorReply);
+      announceAiResponse(creatorReply);
+      return;
+    }
+    setSiteCreatorReply(null);
+
     if (!symptoms.trim() || symptoms.trim().length < 10) {
       toast({
         title: L("خطأ","Error"),
@@ -251,7 +263,7 @@ const PersonalDiagnosis = () => {
                 id="symptoms"
                 placeholder={L('مثال: أشعر بصداع شديد في الجانب الأيمن من الرأس منذ 3 أيام، مع غثيان وحساسية للضوء...','e.g. I have had a severe headache on the right side of my head for 3 days, with nausea and light sensitivity...')}
                 value={symptoms}
-                onChange={(e) => setSymptoms(e.target.value)}
+                onChange={(e) => { setSymptoms(e.target.value); setSiteCreatorReply(null); }}
                 className="min-h-[150px] text-base"
                 maxLength={2000}
               />
@@ -285,6 +297,11 @@ const PersonalDiagnosis = () => {
                   >
                     <X className="h-4 w-4" />
                   </Button>
+                  {siteCreatorReply && (
+                    <div role="status" className="rounded-lg border border-primary/20 bg-primary/5 p-4 text-sm leading-7 text-foreground">
+                      {siteCreatorReply}
+                    </div>
+                  )}
                 </div>
               )}
             </div>
