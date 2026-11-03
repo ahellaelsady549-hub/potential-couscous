@@ -1,194 +1,107 @@
-import { useEffect, useState } from 'react';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
-import { Checkbox } from '@/components/ui/checkbox';
-import { Input } from '@/components/ui/input';
-import { toast } from 'sonner';
-import { Dumbbell, CheckCircle2, Loader2, Save } from 'lucide-react';
+import { useEffect, useMemo, useState } from 'react';
+import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Loader2, TrendingUp, TrendingDown, Minus } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
-import { gymPrograms, getProgram } from '@/data/gymPrograms';
 import { useAuth } from '@/contexts/AuthContext';
 import { useLanguage } from '@/contexts/LanguageContext';
 
-const todayISO = () => new Date().toISOString().slice(0, 10);
+type Log = { exercise_name: string; log_date: string; weight_kg: number | null; reps: number | null; sets: number | null };
 
-export const GymPrograms = () => {
+export const WorkoutProgress = () => {
   const { user } = useAuth();
-  const { L, language } = useLanguage();
-  const [selected, setSelected] = useState<string | null>(null);
-  const [activeDay, setActiveDay] = useState<string | null>(null);
-  const [done, setDone] = useState<Set<string>>(new Set());
+  const { L } = useLanguage();
+  const [logs, setLogs] = useState<Log[]>([]);
   const [loading, setLoading] = useState(true);
-  type Entry = { weight: string; reps: string; sets: string };
-  const [entries, setEntries] = useState<Record<string, Entry>>({});
-  const [last, setLast] = useState<Record<string, number>>({});
+  const [exercise, setExercise] = useState<string>('');
 
   useEffect(() => {
-    if (!user) { setLoading(false); return; }
-    const load = async () => {
-      const [{ data: prog }, { data: logs }, { data: hist }] = await Promise.all([
-        supabase.from('gym_user_program').select('program_key').eq('user_id', user.id).maybeSingle(),
-        supabase.from('gym_workout_logs').select('day_key, exercise_name, completed, weight_kg, reps, sets').eq('user_id', user.id).eq('log_date', todayISO()),
-        supabase.from('gym_workout_logs').select('exercise_name, weight_kg, log_date').eq('user_id', user.id).lt('log_date', todayISO()).not('weight_kg', 'is', null).order('log_date', { ascending: true }),
-      ]);
-      if (prog?.program_key) {
-        setSelected(prog.program_key);
-        setActiveDay(getProgram(prog.program_key)?.days[0]?.key ?? null);
-      }
-      setDone(new Set((logs ?? []).filter((l) => l.completed).map((l) => `${l.day_key}|${l.exercise_name}`)));
-      const e: Record<string, Entry> = {};
-      (logs ?? []).forEach((l) => { e[`${l.day_key}|${l.exercise_name}`] = { weight: l.weight_kg?.toString() ?? '', reps: l.reps?.toString() ?? '', sets: l.sets?.toString() ?? '' }; });
-      setEntries(e);
-      const lw: Record<string, number> = {};
-      (hist ?? []).forEach((h) => { lw[h.exercise_name] = Number(h.weight_kg); });
-      setLast(lw);
-      setLoading(false);
-    };
-    load();
+    if (!user) return;
+    supabase.from('gym_workout_logs')
+      .select('exercise_name, log_date, weight_kg, reps, sets')
+      .eq('user_id', user.id).not('weight_kg', 'is', null)
+      .order('log_date', { ascending: true })
+      .then(({ data }) => {
+        const rows = (data ?? []) as Log[];
+        setLogs(rows);
+        if (rows.length) setExercise(rows[rows.length - 1].exercise_name);
+        setLoading(false);
+      });
   }, [user]);
 
-  const chooseProgram = async (key: string) => {
-    if (!user) return;
-    setSelected(key);
-    setActiveDay(getProgram(key)?.days[0]?.key ?? null);
-    const { error } = await supabase
-      .from('gym_user_program')
-      .upsert({ user_id: user.id, program_key: key }, { onConflict: 'user_id' });
-    if (error) toast.error(L('تعذّر حفظ النظام','Could not save the program'));
-    else toast.success(L('تم اختيار النظام','Program selected'));
-  };
+  const exercises = useMemo(() => Array.from(new Set(logs.map((l) => l.exercise_name))), [logs]);
 
-  const toggleExercise = async (dayKey: string, exercise: string, checked: boolean) => {
-    if (!user || !selected) return;
-    const id = `${dayKey}|${exercise}`;
-    const next = new Set(done);
-    checked ? next.add(id) : next.delete(id);
-    setDone(next);
-    if (checked) {
-      const { error } = await supabase.from('gym_workout_logs').upsert({
-        user_id: user.id, program_key: selected, day_key: dayKey,
-        exercise_name: exercise, log_date: todayISO(), completed: true,
-      }, { onConflict: 'user_id,log_date,day_key,exercise_name' });
-      if (error) toast.error(L('تعذّر حفظ التمرين','Could not save the exercise'));
-    } else {
-      await supabase.from('gym_workout_logs').delete()
-        .eq('user_id', user.id).eq('log_date', todayISO())
-        .eq('day_key', dayKey).eq('exercise_name', exercise);
-    }
-  };
+  const series = useMemo(() => {
+    const byDate = new Map<string, number>();
+    logs.filter((l) => l.exercise_name === exercise).forEach((l) => {
+      byDate.set(l.log_date, Math.max(byDate.get(l.log_date) ?? 0, Number(l.weight_kg)));
+    });
+    return Array.from(byDate, ([date, weight]) => ({ date: date.slice(5), weight }));
+  }, [logs, exercise]);
 
-  const saveEntry = async (dayKey: string, exercise: string) => {
-    if (!user || !selected) return;
-    const id = `${dayKey}|${exercise}`;
-    const en = entries[id] ?? { weight: '', reps: '', sets: '' };
-    const w = parseFloat(en.weight);
-    if (!(w > 0) || w > 1000) { toast.error(L('اكتب وزن صحيح بالكيلو','Enter a valid weight in kg')); return; }
-    const reps = parseInt(en.reps) || null; const sets = parseInt(en.sets) || null;
-    const { error } = await supabase.from('gym_workout_logs').upsert({
-      user_id: user.id, program_key: selected, day_key: dayKey, exercise_name: exercise,
-      log_date: todayISO(), completed: true, weight_kg: w, reps, sets,
-    }, { onConflict: 'user_id,log_date,day_key,exercise_name' });
-    if (error) { toast.error(L('تعذّر حفظ الوزن','Could not save the weight')); return; }
-    setDone(new Set(done).add(id));
-    const prev = last[exercise];
-    if (prev !== undefined && w > prev) toast.success(L(`تطور! +${w - prev} كجم عن آخر مرة`, `Progress! +${w - prev} kg since last time`));
-    else toast.success(L('تم حفظ الوزن','Weight saved'));
-  };
+  const latest = series[series.length - 1]?.weight ?? 0;
+  const prev = series[series.length - 2]?.weight;
+  const first = series[0]?.weight ?? 0;
+  const best = series.reduce((m, p) => Math.max(m, p.weight), 0);
+  const diff = prev !== undefined ? latest - prev : 0;
+  const totalPct = first ? Math.round(((latest - first) / first) * 100) : 0;
+  // Expected next week: observed weekly rate, clamped to the typical safe progressive-overload range (1–5%/week).
+  const rows = logs.filter((l) => l.exercise_name === exercise);
+  const days = rows.length > 1 ? (new Date(rows[rows.length - 1].log_date).getTime() - new Date(rows[0].log_date).getTime()) / 86400000 : 0;
+  const observedWeekly = first && days >= 7 ? ((latest - first) / first) / (days / 7) : 0.025;
+  const weeklyRate = Math.min(0.05, Math.max(0.01, observedWeekly));
+  const expected = Math.round(latest * (1 + weeklyRate) * 2) / 2;
 
-  const setField = (id: string, k: keyof Entry, v: string) =>
-    setEntries((p) => ({ ...p, [id]: { ...(p[id] ?? { weight: '', reps: '', sets: '' }), [k]: v } }));
-
-  const program = selected ? getProgram(selected) : null;
-  const day = program?.days.find((d) => d.key === activeDay) ?? program?.days[0];
-
-  if (loading) {
-    return <div className="flex justify-center py-10"><Loader2 className="h-6 w-6 animate-spin text-primary" /></div>;
-  }
+  if (loading) return <div className="flex justify-center py-10"><Loader2 className="h-6 w-6 animate-spin text-primary" /></div>;
 
   return (
-    <div className="space-y-6">
-      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-        {gymPrograms.map((p) => (
-          <Card
-            key={p.key}
-            className={`cursor-pointer transition-all hover:shadow-lg ${selected === p.key ? 'border-primary ring-2 ring-primary/30' : ''}`}
-            onClick={() => chooseProgram(p.key)}
-          >
-            <CardHeader className="pb-2">
-              <CardTitle className="text-base flex items-start justify-between gap-2">
-                <span>{language === 'en' ? p.nameEn : p.name}</span>
-                {selected === p.key && <CheckCircle2 className="h-5 w-5 text-primary shrink-0" />}
-              </CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-2">
-              <div className="flex flex-wrap gap-2">
-                <Badge variant="secondary">{language === 'en' ? p.levelEn : p.level}</Badge>
-                <Badge variant="outline">{language === 'en' ? p.daysPerWeekEn : p.daysPerWeek}</Badge>
-              </div>
-              <p className="text-sm text-muted-foreground">{language === 'en' ? p.bestForEn : p.bestFor}</p>
-            </CardContent>
-          </Card>
-        ))}
-      </div>
-
-      {program && day && (
-        <Card>
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2 text-lg">
-              <Dumbbell className="h-5 w-5 text-primary" />
-              {L('جدول','Plan')} {language === 'en' ? program.nameEn : program.name}
-            </CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-4">
-            <div className="flex flex-wrap gap-2">
-              {program.days.map((d) => (
-                <Button
-                  key={d.key}
-                  size="sm"
-                  variant={d.key === day.key ? 'default' : 'outline'}
-                  onClick={() => setActiveDay(d.key)}
-                >
-                  {language === 'en' ? d.nameEn : d.name}
-                </Button>
-              ))}
+    <Card>
+      <CardHeader>
+        <CardTitle className="flex items-center gap-2"><TrendingUp className="h-5 w-5 text-primary" />{L('تطور الأوزان', 'Weight progress')}</CardTitle>
+        <CardDescription>{L('سجّل أوزانك من صفحة الجيم وتابع تطورك هنا', 'Log your weights on the gym page and track progress here')}</CardDescription>
+      </CardHeader>
+      <CardContent className="space-y-4">
+        {exercises.length === 0 ? (
+          <p className="text-center text-muted-foreground py-8">{L('لا توجد أوزان مسجلة بعد', 'No weights logged yet')}</p>
+        ) : (
+          <>
+            <Select value={exercise} onValueChange={setExercise}>
+              <SelectTrigger className="w-full sm:w-72"><SelectValue /></SelectTrigger>
+              <SelectContent>{exercises.map((e) => <SelectItem key={e} value={e}>{e}</SelectItem>)}</SelectContent>
+            </Select>
+            <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 text-center">
+              <Stat label={L('آخر وزن', 'Latest')} value={`${latest} kg`} />
+              <Stat label={L('أفضل وزن', 'Best')} value={`${best} kg`} />
+              <Stat label={L('مقارنة بالمرة السابقة', 'vs last time')} value={`${diff > 0 ? '+' : ''}${diff} kg`}
+                icon={diff > 0 ? <TrendingUp className="h-4 w-4 text-primary" /> : diff < 0 ? <TrendingDown className="h-4 w-4 text-destructive" /> : <Minus className="h-4 w-4" />} />
+              <Stat label={L('التطور الكلي', 'Total change')} value={`${totalPct > 0 ? '+' : ''}${totalPct}%`} />
             </div>
-
-            <div className="rounded-lg border border-border p-4 space-y-3">
-              <div>
-                <h3 className="font-semibold">{language === 'en' ? day.nameEn : day.name}</h3>
-                <p className="text-sm text-muted-foreground">{L('العضلات','Muscles')}: {language === 'en' ? day.musclesEn : day.muscles}</p>
-              </div>
-              <div className="space-y-2">
-                {day.exercises.map((ex, idx) => {
-                  const id = `${day.key}|${ex}`;
-                  const checked = done.has(id);
-                  const label = language === 'en' ? (day.exercisesEn[idx] ?? ex) : ex;
-                  const en = entries[id] ?? { weight: '', reps: '', sets: '' };
-                  return (
-                    <div key={ex} className="rounded-md bg-muted/40 px-3 py-2 space-y-2">
-                      <label className="flex items-center gap-3 cursor-pointer">
-                        <Checkbox checked={checked} onCheckedChange={(v) => toggleExercise(day.key, ex, Boolean(v))} />
-                        <span className={`text-sm flex-1 ${checked ? 'line-through text-muted-foreground' : ''}`}>{label}</span>
-                        {last[ex] !== undefined && <Badge variant="outline" className="text-xs">{L('آخر مرة','Last')}: {last[ex]} kg</Badge>}
-                      </label>
-                      <div className="flex flex-wrap items-center gap-2">
-                        <Input type="number" inputMode="decimal" min={0} placeholder={L('الوزن كجم','Weight kg')} value={en.weight} onChange={(e) => setField(id, 'weight', e.target.value)} className="h-9 w-28" />
-                        <Input type="number" inputMode="numeric" min={0} placeholder={L('عدّات','Reps')} value={en.reps} onChange={(e) => setField(id, 'reps', e.target.value)} className="h-9 w-24" />
-                        <Input type="number" inputMode="numeric" min={0} placeholder={L('مجموعات','Sets')} value={en.sets} onChange={(e) => setField(id, 'sets', e.target.value)} className="h-9 w-28" />
-                        <Button size="sm" onClick={() => saveEntry(day.key, ex)}><Save className="h-4 w-4 me-1" />{L('حفظ','Save')}</Button>
-                      </div>
-                    </div>
-                  );
-                })}
-              </div>
-              <p className="text-xs text-muted-foreground">
-                {L('يتم حفظ تشيك تمارين اليوم تلقائياً','Today\u2019s checked exercises are saved automatically')} ({todayISO()}).
-              </p>
+            <div className="rounded-lg border border-primary/30 bg-primary/5 p-3 text-sm">
+              <div className="font-bold">{L('المتوقع خلال أسبوع', 'Expected in one week')}: {expected} kg (+{(weeklyRate * 100).toFixed(1)}%)</div>
+              <div className="text-xs text-muted-foreground">{L('محسوب من معدل تطورك الفعلي، في حدود الزيادة الآمنة المعتادة 1–5% أسبوعيًا.', 'Based on your actual rate, kept within the usual safe 1–5% weekly increase.')}</div>
             </div>
-          </CardContent>
-        </Card>
-      )}
-    </div>
+            <div className="h-64 w-full" dir="ltr">
+              <ResponsiveContainer>
+                <LineChart data={series}>
+                  <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" />
+                  <XAxis dataKey="date" stroke="hsl(var(--muted-foreground))" fontSize={12} />
+                  <YAxis stroke="hsl(var(--muted-foreground))" fontSize={12} unit="kg" />
+                  <Tooltip contentStyle={{ background: 'hsl(var(--card))', border: '1px solid hsl(var(--border))' }} />
+                  <Line type="monotone" dataKey="weight" stroke="hsl(var(--primary))" strokeWidth={2} dot={{ r: 4 }} />
+                </LineChart>
+              </ResponsiveContainer>
+            </div>
+          </>
+        )}
+      </CardContent>
+    </Card>
   );
 };
+
+const Stat = ({ label, value, icon }: { label: string; value: string; icon?: React.ReactNode }) => (
+  <div className="rounded-lg bg-muted/50 p-3">
+    <div className="text-xs text-muted-foreground">{label}</div>
+    <div className="font-bold flex items-center justify-center gap-1">{icon}{value}</div>
+  </div>
+);
