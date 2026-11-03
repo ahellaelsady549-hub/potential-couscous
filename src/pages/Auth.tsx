@@ -10,7 +10,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Textarea } from '@/components/ui/textarea';
 import { useToast } from '@/hooks/use-toast';
-import { Heart, Mail, Lock, User, Home, KeyRound, Stethoscope, FileText, Loader2, RefreshCw } from 'lucide-react';
+import { Heart, Mail, Lock, User, Home, KeyRound, Stethoscope, FileText, Loader2, RefreshCw, Eye, EyeOff } from 'lucide-react';
 import { z } from 'zod';
 import { InputOTP, InputOTPGroup, InputOTPSlot } from '@/components/ui/input-otp';
 import { supabase } from '@/integrations/supabase/client';
@@ -34,6 +34,7 @@ const Auth = () => {
   const [signupName, setSignupName] = useState('');
   const [signupEmail, setSignupEmail] = useState('');
   const [signupPassword, setSignupPassword] = useState('');
+  const [showSignupPassword, setShowSignupPassword] = useState(false);
   
   // User type selection
   const [userType, setUserType] = useState<'user' | 'doctor'>('user');
@@ -520,13 +521,23 @@ const Auth = () => {
                       <Lock className="absolute right-3 top-3 h-4 w-4 text-muted-foreground" />
                       <Input
                         id="signup-password"
-                        type="password"
+                        type={showSignupPassword ? 'text' : 'password'}
                         placeholder="••••••••"
                         value={signupPassword}
                         onChange={(e) => setSignupPassword(e.target.value)}
-                        className="pr-10"
+                        className="pr-10 pl-10"
                         required
                       />
+                      <Button
+                        type="button"
+                        variant="ghost"
+                        size="icon"
+                        onClick={() => setShowSignupPassword((visible) => !visible)}
+                        aria-label={showSignupPassword ? L('إخفاء كلمة المرور', 'Hide password') : L('إظهار كلمة المرور', 'Show password')}
+                        className="absolute left-1 top-1/2 h-8 w-8 -translate-y-1/2"
+                      >
+                        {showSignupPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                      </Button>
                     </div>
                   </div>
 
