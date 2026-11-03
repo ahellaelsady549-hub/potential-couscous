@@ -20,7 +20,7 @@ const AskMePage = () => {
   return (
     <div className="min-h-screen bg-background">
       <Header />
-      <main className="container mx-auto max-w-4xl px-4 py-6 sm:py-10">
+      <main className="container mx-auto w-full max-w-4xl px-2 py-3 sm:px-4 sm:py-10">
         <AskMe standalone />
       </main>
       <Footer />

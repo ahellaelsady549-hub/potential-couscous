@@ -124,14 +124,14 @@ export const AskMe = ({ standalone = false }: { standalone?: boolean }) => {
       <CardHeader>
         <Title className="flex items-center gap-2 text-xl">
           <MessagesSquare className="h-5 w-5 text-primary" />
-          {standalone ? <h1 className="text-3xl font-bold">{L('اسألني', 'Ask me')}</h1> : L('اسألني', 'Ask me')}
+          {standalone ? <h1 className="text-2xl font-bold sm:text-3xl">{L('اسألني', 'Ask me')}</h1> : L('اسألني', 'Ask me')}
         </Title>
-        <p className="text-sm text-muted-foreground">
+        <p className="text-xs text-muted-foreground sm:text-sm">
           {L('كل محادثة بتتحفظ لوحدها — تقدر ترجع لها، تغيّر اسمها أو تدوّر فيها.', 'Each conversation is saved separately — reopen, rename or search it anytime.')}
         </p>
       </CardHeader>
-      <CardContent className="grid gap-4 md:grid-cols-[240px_1fr]">
-        <aside className="space-y-2 rounded-lg border border-border p-2">
+      <CardContent className="grid min-w-0 gap-3 px-3 pb-4 sm:gap-4 sm:px-6 sm:pb-6 md:grid-cols-[240px_minmax(0,1fr)]">
+        <aside className="min-w-0 space-y-2 rounded-lg border border-border p-2">
           <Button className="w-full gap-2" size="sm" onClick={() => setActiveId(null)}>
             <Plus className="h-4 w-4" />{L('محادثة جديدة', 'New conversation')}
           </Button>
@@ -139,10 +139,10 @@ export const AskMe = ({ standalone = false }: { standalone?: boolean }) => {
             <Search className="absolute start-2 top-2.5 h-4 w-4 text-muted-foreground" />
             <Input value={search} onChange={(e) => setSearch(e.target.value)} placeholder={L('بحث...', 'Search...')} className="ps-8" aria-label={L('بحث في المحادثات', 'Search conversations')} />
           </div>
-          <ul className="max-h-[360px] space-y-1 overflow-y-auto">
+          <ul className="max-h-36 space-y-1 overflow-y-auto sm:max-h-[360px]">
             {conversations.length === 0 && <li className="py-4 text-center text-xs text-muted-foreground">{L('لا توجد محادثات', 'No conversations')}</li>}
             {conversations.map((c) => (
-              <li key={c.id} className={`group flex items-center gap-1 rounded-md px-2 py-1 text-sm ${c.id === activeId ? 'bg-accent text-accent-foreground' : 'hover:bg-muted'}`}>
+              <li key={c.id} className={`group flex min-w-0 items-center gap-1 rounded-md px-2 py-1 text-sm ${c.id === activeId ? 'bg-accent text-accent-foreground' : 'hover:bg-muted'}`}>
                 {editing === c.id ? (
                   <>
                     <Input autoFocus value={editTitle} onChange={(e) => setEditTitle(e.target.value)} onKeyDown={(e) => e.key === 'Enter' && rename(c.id)} className="h-7" />
@@ -160,7 +160,7 @@ export const AskMe = ({ standalone = false }: { standalone?: boolean }) => {
           </ul>
         </aside>
 
-        <section className="space-y-4">
+        <section className="min-w-0 space-y-3 sm:space-y-4">
           {messages.length === 0 ? (
             <div className="motion-stagger grid grid-cols-1 gap-2 sm:grid-cols-2">
               {SUGGESTIONS.map((s) => (
@@ -170,7 +170,7 @@ export const AskMe = ({ standalone = false }: { standalone?: boolean }) => {
               ))}
             </div>
           ) : (
-            <div aria-live="polite" aria-busy={loading} className="max-h-[460px] space-y-3 overflow-y-auto rounded-lg border border-border p-3">
+            <div aria-live="polite" aria-busy={loading} className="max-h-[48dvh] space-y-3 overflow-y-auto rounded-lg border border-border p-3 sm:max-h-[460px]">
               {messages.map((m, i) => (
                 <div key={i} className={`motion-message break-words ${m.role === 'user' ? 'text-end' : 'text-start'}`}>
                   <div className={m.role === 'user' ? 'inline-block max-w-[90%] rounded-2xl bg-primary px-4 py-2 text-sm text-primary-foreground' : 'inline-block max-w-full whitespace-pre-wrap text-sm leading-relaxed text-foreground'}>
@@ -193,10 +193,10 @@ export const AskMe = ({ standalone = false }: { standalone?: boolean }) => {
               onKeyDown={(e) => { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); ask(input); } }}
               placeholder={L('اكتب أي سؤال...', 'Type any question...')}
               rows={2}
-              className="flex-1 resize-none"
+              className="min-w-0 flex-1 resize-none"
               disabled={loading}
             />
-            <Button onClick={() => ask(input)} disabled={loading} className="gap-2 sm:self-end">
+            <Button onClick={() => ask(input)} disabled={loading} className="w-full gap-2 sm:w-auto sm:self-end">
               <Send className="h-4 w-4" />{L('إرسال', 'Send')}
             </Button>
           </div>
