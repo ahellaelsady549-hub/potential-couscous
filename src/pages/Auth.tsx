@@ -32,6 +32,7 @@ const Auth = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [loginEmail, setLoginEmail] = useState('');
   const [loginPassword, setLoginPassword] = useState('');
+  const [showLoginPassword, setShowLoginPassword] = useState(false);
   const [signupName, setSignupName] = useState('');
   const [signupEmail, setSignupEmail] = useState('');
   const [signupPassword, setSignupPassword] = useState('');
@@ -443,13 +444,23 @@ const Auth = () => {
                       <Lock className="absolute right-3 top-3 h-4 w-4 text-muted-foreground" />
                       <Input
                         id="login-password"
-                        type="password"
+                        type={showLoginPassword ? 'text' : 'password'}
                         placeholder="••••••••"
                         value={loginPassword}
                         onChange={(e) => setLoginPassword(e.target.value)}
-                        className="pr-10"
+                        className="pr-10 pl-10"
                         required
                       />
+                      <Button
+                        type="button"
+                        variant="ghost"
+                        size="icon"
+                        onClick={() => setShowLoginPassword((visible) => !visible)}
+                        aria-label={showLoginPassword ? L('إخفاء كلمة المرور', 'Hide password') : L('إظهار كلمة المرور', 'Show password')}
+                        className="absolute left-1 top-1/2 h-8 w-8 -translate-y-1/2"
+                      >
+                        {showLoginPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                      </Button>
                     </div>
                   </div>
                   <Button 

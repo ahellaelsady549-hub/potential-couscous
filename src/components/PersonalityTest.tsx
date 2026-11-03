@@ -11,6 +11,7 @@ import { diseases } from '@/data/diseases';
 import { treatments } from '@/data/treatments';
 import { useToast } from '@/hooks/use-toast';
 import { announceAiResponse } from '@/lib/aiResponse';
+import { MedicinePrice } from '@/components/MedicinePrice';
 
 interface Question {
   id: number;
@@ -330,9 +331,17 @@ export const PersonalityTest = () => {
                                 <p className="text-sm font-medium mb-1">العلاجات المقترحة:</p>
                                 <div className="flex flex-wrap gap-1">
                                   {diseaseTreatments.slice(0, 3).map(treatment => (
-                                    <Badge key={treatment.id} className="text-xs bg-primary/80">
-                                      {treatment.nameAr} ({treatment.price} ج.م)
-                                    </Badge>
+                                    <div key={treatment.id} className="space-y-1">
+                                      <Badge className="text-xs bg-primary/80">{treatment.nameAr}</Badge>
+                                      <MedicinePrice
+                                        searchTerm={treatment.nameAr}
+                                        price={treatment.price}
+                                        packageDescription={treatment.pricePackage}
+                                        sourceType={treatment.priceSourceType}
+                                        verifiedAt={treatment.priceVerifiedAt}
+                                        sourceUrl={treatment.priceSourceUrl}
+                                      />
+                                    </div>
                                   ))}
                                 </div>
                               </div>

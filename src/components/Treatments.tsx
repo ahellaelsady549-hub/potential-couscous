@@ -39,9 +39,9 @@ const treatments = [
     nameKey: 'treatments.headache',
     category: 'pain',
     medications: [
-      { nameAr: 'بنادول اكسترا', price: '15-20', dosageAr: '2 قرص كل 6 ساعات' },
-      { nameAr: 'نوفالدول', price: '10-15', dosageAr: '1-2 قرص كل 4-6 ساعات' },
-      { nameAr: 'سيتال', price: '8-12', dosageAr: '1 قرص 3 مرات يومياً' }
+      { nameAr: 'بنادول اكسترا', dosageAr: '2 قرص كل 6 ساعات' },
+      { nameAr: 'نوفالدول', dosageAr: '1-2 قرص كل 4-6 ساعات' },
+      { nameAr: 'سيتال', dosageAr: '1 قرص 3 مرات يومياً' }
     ]
   },
   {
@@ -49,9 +49,9 @@ const treatments = [
     nameKey: 'treatments.bonePain',
     category: 'pain',
     medications: [
-      { nameAr: 'فولتارين', price: '25-35', dosageAr: '1 قرص 2-3 مرات يومياً' },
-      { nameAr: 'كتافلام', price: '20-30', dosageAr: '1 قرص 2-3 مرات يومياً بعد الأكل' },
-      { nameAr: 'بروفين', price: '15-25', dosageAr: '1-2 قرص 3 مرات يومياً' }
+      { nameAr: 'فولتارين', dosageAr: '1 قرص 2-3 مرات يومياً' },
+      { nameAr: 'كتافلام', dosageAr: '1 قرص 2-3 مرات يومياً بعد الأكل' },
+      { nameAr: 'بروفين', dosageAr: '1-2 قرص 3 مرات يومياً' }
     ]
   },
   {
@@ -59,9 +59,9 @@ const treatments = [
     nameKey: 'treatments.fever',
     category: 'general',
     medications: [
-      { nameAr: 'بنادول', price: '12-18', dosageAr: '1-2 قرص كل 4-6 ساعات' },
-      { nameAr: 'فيفادول', price: '10-15', dosageAr: '2 قرص كل 6 ساعات' },
-      { nameAr: 'ابيمول', price: '8-12', dosageAr: '1 قرص 3-4 مرات يومياً' }
+      { nameAr: 'بنادول', dosageAr: '1-2 قرص كل 4-6 ساعات' },
+      { nameAr: 'فيفادول', dosageAr: '2 قرص كل 6 ساعات' },
+      { nameAr: 'ابيمول', dosageAr: '1 قرص 3-4 مرات يومياً' }
     ]
   },
   {
@@ -69,9 +69,9 @@ const treatments = [
     nameKey: 'treatments.cough',
     category: 'respiratory',
     medications: [
-      { nameAr: 'ميوكوسولفان', price: '30-40', dosageAr: '10 مل 3 مرات يومياً' },
-      { nameAr: 'توبلكسيل', price: '25-35', dosageAr: '15 مل 3 مرات يومياً' },
-      { nameAr: 'بروسبان', price: '35-45', dosageAr: '5 مل 3 مرات يومياً' }
+      { nameAr: 'ميوكوسولفان', dosageAr: '10 مل 3 مرات يومياً' },
+      { nameAr: 'توبلكسيل', dosageAr: '15 مل 3 مرات يومياً' },
+      { nameAr: 'بروسبان', dosageAr: '5 مل 3 مرات يومياً' }
     ]
   },
   {
@@ -79,9 +79,9 @@ const treatments = [
     nameKey: 'treatments.flu',
     category: 'respiratory',
     medications: [
-      { nameAr: 'كونجستال', price: '20-28', dosageAr: '1 قرص 3 مرات يومياً' },
-      { nameAr: '123', price: '18-25', dosageAr: '2 قرص 3 مرات يومياً' },
-      { nameAr: 'فلورست', price: '15-22', dosageAr: '1 قرص كل 6 ساعات' }
+      { nameAr: 'كونجستال', dosageAr: '1 قرص 3 مرات يومياً' },
+      { nameAr: '123', dosageAr: '2 قرص 3 مرات يومياً' },
+      { nameAr: 'فلورست', dosageAr: '1 قرص كل 6 ساعات' }
     ]
   },
   {
@@ -89,9 +89,9 @@ const treatments = [
     nameKey: 'treatments.covid19',
     category: 'general',
     medications: [
-      { nameAr: 'فيتامين سي 1000', price: '40-60', dosageAr: '1 قرص يومياً' },
-      { nameAr: 'فيتامين د', price: '35-50', dosageAr: '1 كبسولة أسبوعياً' },
-      { nameAr: 'زنك', price: '30-45', dosageAr: '1 قرص يومياً' }
+      { nameAr: 'فيتامين سي 1000', dosageAr: '1 قرص يومياً' },
+      { nameAr: 'فيتامين د', dosageAr: '1 كبسولة أسبوعياً' },
+      { nameAr: 'زنك', dosageAr: '1 قرص يومياً' }
     ]
   },
   {
@@ -99,9 +99,9 @@ const treatments = [
     nameKey: 'treatments.diabetes',
     category: 'chronic',
     medications: [
-      { nameAr: 'جلوكوفاج', price: '25-35', dosageAr: '1 قرص مرتين يومياً' },
-      { nameAr: 'اماريل', price: '30-45', dosageAr: '1 قرص صباحاً' },
-      { nameAr: 'دياميكرون', price: '35-50', dosageAr: '1 قرص يومياً' }
+      { nameAr: 'جلوكوفاج', dosageAr: '1 قرص مرتين يومياً' },
+      { nameAr: 'اماريل', dosageAr: '1 قرص صباحاً' },
+      { nameAr: 'دياميكرون', dosageAr: '1 قرص يومياً' }
     ]
   },
   {
@@ -109,9 +109,9 @@ const treatments = [
     nameKey: 'treatments.hypertension',
     category: 'chronic',
     medications: [
-      { nameAr: 'كونكور', price: '40-60', dosageAr: '1 قرص صباحاً' },
-      { nameAr: 'نورفاسك', price: '35-50', dosageAr: '1 قرص يومياً' },
-      { nameAr: 'كوفرسيل', price: '45-65', dosageAr: '1 قرص صباحاً' }
+      { nameAr: 'كونكور', dosageAr: '1 قرص صباحاً' },
+      { nameAr: 'نورفاسك', dosageAr: '1 قرص يومياً' },
+      { nameAr: 'كوفرسيل', dosageAr: '1 قرص صباحاً' }
     ]
   },
   {
@@ -119,9 +119,9 @@ const treatments = [
     nameKey: 'treatments.asthma',
     category: 'respiratory',
     medications: [
-      { nameAr: 'فنتولين بخاخ', price: '60-80', dosageAr: 'بخة واحدة عند الحاجة' },
-      { nameAr: 'سيريتايد بخاخ', price: '180-220', dosageAr: 'بخة صباحاً ومساءً' },
-      { nameAr: 'سينجولير', price: '120-150', dosageAr: '1 قرص مساءً' }
+      { nameAr: 'فنتولين بخاخ', dosageAr: 'بخة واحدة عند الحاجة' },
+      { nameAr: 'سيريتايد بخاخ', dosageAr: 'بخة صباحاً ومساءً' },
+      { nameAr: 'سينجولير', dosageAr: '1 قرص مساءً' }
     ]
   },
   {
@@ -129,9 +129,9 @@ const treatments = [
     nameKey: 'treatments.anemia',
     category: 'general',
     medications: [
-      { nameAr: 'فيروجلوبين', price: '45-60', dosageAr: '1 كبسولة يومياً' },
-      { nameAr: 'هيموجيت', price: '35-50', dosageAr: '1 قرص مرتين يومياً' },
-      { nameAr: 'فيتاترون', price: '50-70', dosageAr: '1 كبسولة يومياً' }
+      { nameAr: 'فيروجلوبين', dosageAr: '1 كبسولة يومياً' },
+      { nameAr: 'هيموجيت', dosageAr: '1 قرص مرتين يومياً' },
+      { nameAr: 'فيتاترون', dosageAr: '1 كبسولة يومياً' }
     ]
   },
   {
@@ -139,9 +139,9 @@ const treatments = [
     nameKey: 'treatments.migraine',
     category: 'pain',
     medications: [
-      { nameAr: 'ميجرانيل', price: '30-45', dosageAr: '1 قرص عند بداية النوبة' },
-      { nameAr: 'اميجران', price: '80-120', dosageAr: '1 قرص عند الحاجة' },
-      { nameAr: 'باراسيتامول 500', price: '10-15', dosageAr: '2 قرص كل 6 ساعات' }
+      { nameAr: 'ميجرانيل', dosageAr: '1 قرص عند بداية النوبة' },
+      { nameAr: 'اميجران', dosageAr: '1 قرص عند الحاجة' },
+      { nameAr: 'باراسيتامول 500', dosageAr: '2 قرص كل 6 ساعات' }
     ]
   },
   {
@@ -149,9 +149,9 @@ const treatments = [
     nameKey: 'treatments.gastritis',
     category: 'digestive',
     medications: [
-      { nameAr: 'كونترولوك', price: '35-50', dosageAr: '1 قرص صباحاً قبل الأكل' },
-      { nameAr: 'نيكسيوم', price: '45-65', dosageAr: '1 قرص يومياً' },
-      { nameAr: 'جافيسكون', price: '25-35', dosageAr: '10 مل بعد الأكل' }
+      { nameAr: 'كونترولوك', dosageAr: '1 قرص صباحاً قبل الأكل' },
+      { nameAr: 'نيكسيوم', dosageAr: '1 قرص يومياً' },
+      { nameAr: 'جافيسكون', dosageAr: '10 مل بعد الأكل' }
     ]
   },
   {
@@ -159,9 +159,9 @@ const treatments = [
     nameKey: 'treatments.arthritis',
     category: 'pain',
     medications: [
-      { nameAr: 'سيليبريكس', price: '50-70', dosageAr: '1 كبسولة مرتين يومياً' },
-      { nameAr: 'موبيك', price: '40-60', dosageAr: '1 قرص يومياً' },
-      { nameAr: 'ارثروفاست', price: '35-50', dosageAr: '1 كيس مرتين يومياً' }
+      { nameAr: 'سيليبريكس', dosageAr: '1 كبسولة مرتين يومياً' },
+      { nameAr: 'موبيك', dosageAr: '1 قرص يومياً' },
+      { nameAr: 'ارثروفاست', dosageAr: '1 كيس مرتين يومياً' }
     ]
   },
   {
@@ -169,9 +169,9 @@ const treatments = [
     nameKey: 'treatments.bronchitis',
     category: 'respiratory',
     medications: [
-      { nameAr: 'اوجمنتين', price: '60-85', dosageAr: '1 قرص مرتين يومياً' },
-      { nameAr: 'ازيثروميسين', price: '45-65', dosageAr: '1 قرص يومياً لمدة 3 أيام' },
-      { nameAr: 'كلافوكس', price: '50-70', dosageAr: '1 قرص 3 مرات يومياً' }
+      { nameAr: 'اوجمنتين', dosageAr: '1 قرص مرتين يومياً' },
+      { nameAr: 'ازيثروميسين', dosageAr: '1 قرص يومياً لمدة 3 أيام' },
+      { nameAr: 'كلافوكس', dosageAr: '1 قرص 3 مرات يومياً' }
     ]
   },
   {
@@ -179,9 +179,9 @@ const treatments = [
     nameKey: 'treatments.sinusitis',
     category: 'respiratory',
     medications: [
-      { nameAr: 'سينوكلير', price: '30-45', dosageAr: 'بخة في كل فتحة أنف مرتين يومياً' },
-      { nameAr: 'تلفاست', price: '40-55', dosageAr: '1 قرص يومياً' },
-      { nameAr: 'رينوكورت', price: '85-110', dosageAr: 'بخة واحدة يومياً' }
+      { nameAr: 'سينوكلير', dosageAr: 'بخة في كل فتحة أنف مرتين يومياً' },
+      { nameAr: 'تلفاست', dosageAr: '1 قرص يومياً' },
+      { nameAr: 'رينوكورت', dosageAr: 'بخة واحدة يومياً' }
     ]
   },
   {
@@ -189,9 +189,9 @@ const treatments = [
     nameKey: 'treatments.urinaryInfection',
     category: 'general',
     medications: [
-      { nameAr: 'سيبروفلوكساسين', price: '25-40', dosageAr: '1 قرص مرتين يومياً' },
-      { nameAr: 'يوريفين', price: '15-25', dosageAr: '1 كيس 3 مرات يومياً' },
-      { nameAr: 'فلاجيل', price: '20-30', dosageAr: '1 قرص 3 مرات يومياً' }
+      { nameAr: 'سيبروفلوكساسين', dosageAr: '1 قرص مرتين يومياً' },
+      { nameAr: 'يوريفين', dosageAr: '1 كيس 3 مرات يومياً' },
+      { nameAr: 'فلاجيل', dosageAr: '1 قرص 3 مرات يومياً' }
     ]
   },
   {
@@ -199,9 +199,9 @@ const treatments = [
     nameKey: 'treatments.thyroidDisorder',
     category: 'chronic',
     medications: [
-      { nameAr: 'يوثيروكس', price: '30-45', dosageAr: '1 قرص صباحاً على الريق' },
-      { nameAr: 'ثيروكسين', price: '25-40', dosageAr: '1 قرص يومياً' },
-      { nameAr: 'كاربيمازول', price: '35-50', dosageAr: '1 قرص مرتين يومياً' }
+      { nameAr: 'يوثيروكس', dosageAr: '1 قرص صباحاً على الريق' },
+      { nameAr: 'ثيروكسين', dosageAr: '1 قرص يومياً' },
+      { nameAr: 'كاربيمازول', dosageAr: '1 قرص مرتين يومياً' }
     ]
   },
   {
@@ -209,9 +209,9 @@ const treatments = [
     nameKey: 'treatments.anxiety',
     category: 'mental',
     medications: [
-      { nameAr: 'زولام', price: '25-40', dosageAr: '1 قرص عند الحاجة' },
-      { nameAr: 'ليكسوتانيل', price: '30-45', dosageAr: '1 قرص مساءً' },
-      { nameAr: 'اندرال', price: '15-25', dosageAr: '1 قرص مرتين يومياً' }
+      { nameAr: 'زولام', dosageAr: '1 قرص عند الحاجة' },
+      { nameAr: 'ليكسوتانيل', dosageAr: '1 قرص مساءً' },
+      { nameAr: 'اندرال', dosageAr: '1 قرص مرتين يومياً' }
     ]
   },
   {
@@ -219,9 +219,9 @@ const treatments = [
     nameKey: 'treatments.allergicRhinitis',
     category: 'allergy',
     medications: [
-      { nameAr: 'كلاريتين', price: '45-60', dosageAr: '1 قرص يومياً' },
-      { nameAr: 'زيرتك', price: '40-55', dosageAr: '1 قرص مساءً' },
-      { nameAr: 'أفاميس بخاخ', price: '90-120', dosageAr: 'بخة واحدة يومياً' }
+      { nameAr: 'كلاريتين', dosageAr: '1 قرص يومياً' },
+      { nameAr: 'زيرتك', dosageAr: '1 قرص مساءً' },
+      { nameAr: 'أفاميس بخاخ', dosageAr: 'بخة واحدة يومياً' }
     ]
   }
 ];
@@ -418,7 +418,7 @@ export const Treatments = () => {
                         <p className="font-semibold text-lg">{language === 'en' ? medicationNamesEn[med.nameAr] ?? med.nameAr : med.nameAr}</p>
                         <p className="text-sm text-muted-foreground">{t(med.category)}</p>
                       </div>
-                      <MedicinePrice price={med.price} />
+                      <MedicinePrice searchTerm={med.nameAr} />
                     </div>
                     <MedicineUseNotice />
                   </div>
@@ -444,7 +444,7 @@ export const Treatments = () => {
                 {treatment.medications.map((med, idx) => (
                   <div key={idx} className="p-3 bg-accent/30 rounded-lg">
                     <p className="font-medium text-sm mb-1">{language === 'en' ? medicationNamesEn[med.nameAr] ?? med.nameAr : med.nameAr}</p>
-                    <MedicinePrice price={med.price} />
+                    <MedicinePrice searchTerm={med.nameAr} />
                     <MedicineUseNotice />
                   </div>
                 ))}

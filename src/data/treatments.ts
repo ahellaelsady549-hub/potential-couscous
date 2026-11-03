@@ -3,7 +3,9 @@ export interface Treatment {
   diseaseId: string;
   nameEn: string;
   nameAr: string;
-  price: string;
+  price?: string;
+  pricePackage?: string;
+  priceSourceType?: 'official' | 'retail';
   priceVerifiedAt?: string;
   priceSourceUrl?: string;
   dosageEn: string;
@@ -17,7 +19,6 @@ export const treatments: Treatment[] = [
     diseaseId: 'flu',
     nameEn: 'Congestal',
     nameAr: 'كونجستال',
-    price: '20-28',
     dosageEn: '1 tablet 3 times daily',
     dosageAr: '1 قرص 3 مرات يومياً'
   },
@@ -26,7 +27,6 @@ export const treatments: Treatment[] = [
     diseaseId: 'flu',
     nameEn: '123 Cold',
     nameAr: '123',
-    price: '18-25',
     dosageEn: '2 tablets 3 times daily',
     dosageAr: '2 قرص 3 مرات يومياً'
   },
@@ -35,7 +35,6 @@ export const treatments: Treatment[] = [
     diseaseId: 'flu',
     nameEn: 'Flurest',
     nameAr: 'فلورست',
-    price: '15-22',
     dosageEn: '1 tablet every 6 hours',
     dosageAr: '1 قرص كل 6 ساعات'
   },
@@ -46,7 +45,6 @@ export const treatments: Treatment[] = [
     diseaseId: 'covid19',
     nameEn: 'Vitamin C 1000',
     nameAr: 'فيتامين سي 1000',
-    price: '40-60',
     dosageEn: '1 tablet daily',
     dosageAr: '1 قرص يومياً'
   },
@@ -55,7 +53,6 @@ export const treatments: Treatment[] = [
     diseaseId: 'covid19',
     nameEn: 'Vitamin D',
     nameAr: 'فيتامين د',
-    price: '35-50',
     dosageEn: '1 capsule weekly',
     dosageAr: '1 كبسولة أسبوعياً'
   },
@@ -64,7 +61,6 @@ export const treatments: Treatment[] = [
     diseaseId: 'covid19',
     nameEn: 'Zinc',
     nameAr: 'زنك',
-    price: '30-45',
     dosageEn: '1 tablet daily',
     dosageAr: '1 قرص يومياً'
   },
@@ -75,7 +71,6 @@ export const treatments: Treatment[] = [
     diseaseId: 'diabetes',
     nameEn: 'Glucophage',
     nameAr: 'جلوكوفاج',
-    price: '25-35',
     dosageEn: '1 tablet twice daily',
     dosageAr: '1 قرص مرتين يومياً'
   },
@@ -84,7 +79,6 @@ export const treatments: Treatment[] = [
     diseaseId: 'diabetes',
     nameEn: 'Amaryl',
     nameAr: 'اماريل',
-    price: '30-45',
     dosageEn: '1 tablet in the morning',
     dosageAr: '1 قرص صباحاً'
   },
@@ -93,7 +87,6 @@ export const treatments: Treatment[] = [
     diseaseId: 'diabetes',
     nameEn: 'Diamicron',
     nameAr: 'دياميكرون',
-    price: '35-50',
     dosageEn: '1 tablet daily',
     dosageAr: '1 قرص يومياً'
   },
@@ -104,7 +97,6 @@ export const treatments: Treatment[] = [
     diseaseId: 'hypertension',
     nameEn: 'Concor',
     nameAr: 'كونكور',
-    price: '40-60',
     dosageEn: '1 tablet in the morning',
     dosageAr: '1 قرص صباحاً'
   },
@@ -113,7 +105,6 @@ export const treatments: Treatment[] = [
     diseaseId: 'hypertension',
     nameEn: 'Norvasc',
     nameAr: 'نورفاسك',
-    price: '35-50',
     dosageEn: '1 tablet daily',
     dosageAr: '1 قرص يومياً'
   },
@@ -122,7 +113,6 @@ export const treatments: Treatment[] = [
     diseaseId: 'hypertension',
     nameEn: 'Coversyl',
     nameAr: 'كوفرسيل',
-    price: '45-65',
     dosageEn: '1 tablet in the morning',
     dosageAr: '1 قرص صباحاً'
   },
@@ -133,7 +123,6 @@ export const treatments: Treatment[] = [
     diseaseId: 'asthma',
     nameEn: 'Ventolin Inhaler',
     nameAr: 'فنتولين بخاخ',
-    price: '60-80',
     dosageEn: '1 puff as needed',
     dosageAr: 'بخة واحدة عند الحاجة'
   },
@@ -142,7 +131,6 @@ export const treatments: Treatment[] = [
     diseaseId: 'asthma',
     nameEn: 'Seretide Inhaler',
     nameAr: 'سيريتايد بخاخ',
-    price: '180-220',
     dosageEn: '1 puff morning and evening',
     dosageAr: 'بخة صباحاً ومساءً'
   },
@@ -151,7 +139,6 @@ export const treatments: Treatment[] = [
     diseaseId: 'asthma',
     nameEn: 'Singulair',
     nameAr: 'سينجولير',
-    price: '120-150',
     dosageEn: '1 tablet in the evening',
     dosageAr: '1 قرص مساءً'
   },
@@ -162,7 +149,6 @@ export const treatments: Treatment[] = [
     diseaseId: 'anemia',
     nameEn: 'Feroglobin',
     nameAr: 'فيروجلوبين',
-    price: '45-60',
     dosageEn: '1 capsule daily',
     dosageAr: '1 كبسولة يومياً'
   },
@@ -171,7 +157,6 @@ export const treatments: Treatment[] = [
     diseaseId: 'anemia',
     nameEn: 'Haemojet',
     nameAr: 'هيموجيت',
-    price: '35-50',
     dosageEn: '1 tablet twice daily',
     dosageAr: '1 قرص مرتين يومياً'
   },
@@ -180,7 +165,6 @@ export const treatments: Treatment[] = [
     diseaseId: 'anemia',
     nameEn: 'Vitatron',
     nameAr: 'فيتاترون',
-    price: '50-70',
     dosageEn: '1 capsule daily',
     dosageAr: '1 كبسولة يومياً'
   },
@@ -191,7 +175,6 @@ export const treatments: Treatment[] = [
     diseaseId: 'migraine',
     nameEn: 'Migranil',
     nameAr: 'ميجرانيل',
-    price: '30-45',
     dosageEn: '1 tablet at onset of attack',
     dosageAr: '1 قرص عند بداية النوبة'
   },
@@ -200,7 +183,6 @@ export const treatments: Treatment[] = [
     diseaseId: 'migraine',
     nameEn: 'Imigran',
     nameAr: 'اميجران',
-    price: '80-120',
     dosageEn: '1 tablet as needed',
     dosageAr: '1 قرص عند الحاجة'
   },
@@ -209,7 +191,6 @@ export const treatments: Treatment[] = [
     diseaseId: 'migraine',
     nameEn: 'Paracetamol 500',
     nameAr: 'باراسيتامول 500',
-    price: '10-15',
     dosageEn: '2 tablets every 6 hours',
     dosageAr: '2 قرص كل 6 ساعات'
   },
@@ -220,7 +201,6 @@ export const treatments: Treatment[] = [
     diseaseId: 'gastritis',
     nameEn: 'Controloc',
     nameAr: 'كونترولوك',
-    price: '35-50',
     dosageEn: '1 tablet in the morning before meals',
     dosageAr: '1 قرص صباحاً قبل الأكل'
   },
@@ -229,7 +209,6 @@ export const treatments: Treatment[] = [
     diseaseId: 'gastritis',
     nameEn: 'Nexium',
     nameAr: 'نيكسيوم',
-    price: '45-65',
     dosageEn: '1 tablet daily',
     dosageAr: '1 قرص يومياً'
   },
@@ -238,7 +217,6 @@ export const treatments: Treatment[] = [
     diseaseId: 'gastritis',
     nameEn: 'Gaviscon',
     nameAr: 'جافيسكون',
-    price: '25-35',
     dosageEn: '10ml after meals',
     dosageAr: '10 مل بعد الأكل'
   },
@@ -249,7 +227,6 @@ export const treatments: Treatment[] = [
     diseaseId: 'arthritis',
     nameEn: 'Celebrex',
     nameAr: 'سيليبريكس',
-    price: '50-70',
     dosageEn: '1 capsule twice daily',
     dosageAr: '1 كبسولة مرتين يومياً'
   },
@@ -258,7 +235,6 @@ export const treatments: Treatment[] = [
     diseaseId: 'arthritis',
     nameEn: 'Mobic',
     nameAr: 'موبيك',
-    price: '40-60',
     dosageEn: '1 tablet daily',
     dosageAr: '1 قرص يومياً'
   },
@@ -267,7 +243,6 @@ export const treatments: Treatment[] = [
     diseaseId: 'arthritis',
     nameEn: 'Arthrofast',
     nameAr: 'ارثروفاست',
-    price: '35-50',
     dosageEn: '1 sachet twice daily',
     dosageAr: '1 كيس مرتين يومياً'
   },
@@ -278,7 +253,6 @@ export const treatments: Treatment[] = [
     diseaseId: 'bronchitis',
     nameEn: 'Augmentin',
     nameAr: 'اوجمنتين',
-    price: '60-85',
     dosageEn: '1 tablet twice daily',
     dosageAr: '1 قرص مرتين يومياً'
   },
@@ -287,7 +261,6 @@ export const treatments: Treatment[] = [
     diseaseId: 'bronchitis',
     nameEn: 'Azithromycin',
     nameAr: 'ازيثروميسين',
-    price: '45-65',
     dosageEn: '1 tablet daily for 3 days',
     dosageAr: '1 قرص يومياً لمدة 3 أيام'
   },
@@ -296,7 +269,6 @@ export const treatments: Treatment[] = [
     diseaseId: 'bronchitis',
     nameEn: 'Clavox',
     nameAr: 'كلافوكس',
-    price: '50-70',
     dosageEn: '1 tablet 3 times daily',
     dosageAr: '1 قرص 3 مرات يومياً'
   },
@@ -307,7 +279,6 @@ export const treatments: Treatment[] = [
     diseaseId: 'sinusitis',
     nameEn: 'Sinoclear',
     nameAr: 'سينوكلير',
-    price: '30-45',
     dosageEn: '1 spray in each nostril twice daily',
     dosageAr: 'بخة في كل فتحة أنف مرتين يومياً'
   },
@@ -316,7 +287,6 @@ export const treatments: Treatment[] = [
     diseaseId: 'sinusitis',
     nameEn: 'Telfast',
     nameAr: 'تلفاست',
-    price: '40-55',
     dosageEn: '1 tablet daily',
     dosageAr: '1 قرص يومياً'
   },
@@ -325,7 +295,6 @@ export const treatments: Treatment[] = [
     diseaseId: 'sinusitis',
     nameEn: 'Rhinocort',
     nameAr: 'رينوكورت',
-    price: '85-110',
     dosageEn: '1 spray daily',
     dosageAr: 'بخة واحدة يومياً'
   },
@@ -336,7 +305,6 @@ export const treatments: Treatment[] = [
     diseaseId: 'urinary_infection',
     nameEn: 'Ciprofloxacin',
     nameAr: 'سيبروفلوكساسين',
-    price: '25-40',
     dosageEn: '1 tablet twice daily',
     dosageAr: '1 قرص مرتين يومياً'
   },
@@ -345,7 +313,6 @@ export const treatments: Treatment[] = [
     diseaseId: 'urinary_infection',
     nameEn: 'Urivin',
     nameAr: 'يوريفين',
-    price: '15-25',
     dosageEn: '1 sachet 3 times daily',
     dosageAr: '1 كيس 3 مرات يومياً'
   },
@@ -354,7 +321,6 @@ export const treatments: Treatment[] = [
     diseaseId: 'urinary_infection',
     nameEn: 'Flagyl',
     nameAr: 'فلاجيل',
-    price: '20-30',
     dosageEn: '1 tablet 3 times daily',
     dosageAr: '1 قرص 3 مرات يومياً'
   },
@@ -365,7 +331,6 @@ export const treatments: Treatment[] = [
     diseaseId: 'thyroid_disorder',
     nameEn: 'Euthyrox',
     nameAr: 'يوثيروكس',
-    price: '30-45',
     dosageEn: '1 tablet in the morning on empty stomach',
     dosageAr: '1 قرص صباحاً على الريق'
   },
@@ -374,7 +339,6 @@ export const treatments: Treatment[] = [
     diseaseId: 'thyroid_disorder',
     nameEn: 'Thyroxine',
     nameAr: 'ثيروكسين',
-    price: '25-40',
     dosageEn: '1 tablet daily',
     dosageAr: '1 قرص يومياً'
   },
@@ -383,7 +347,6 @@ export const treatments: Treatment[] = [
     diseaseId: 'thyroid_disorder',
     nameEn: 'Carbimazole',
     nameAr: 'كاربيمازول',
-    price: '35-50',
     dosageEn: '1 tablet twice daily',
     dosageAr: '1 قرص مرتين يومياً'
   },
@@ -394,7 +357,6 @@ export const treatments: Treatment[] = [
     diseaseId: 'anxiety',
     nameEn: 'Xanax',
     nameAr: 'زولام',
-    price: '25-40',
     dosageEn: '1 tablet as needed',
     dosageAr: '1 قرص عند الحاجة'
   },
@@ -403,7 +365,6 @@ export const treatments: Treatment[] = [
     diseaseId: 'anxiety',
     nameEn: 'Lexotanil',
     nameAr: 'ليكسوتانيل',
-    price: '30-45',
     dosageEn: '1 tablet in the evening',
     dosageAr: '1 قرص مساءً'
   },
@@ -412,7 +373,6 @@ export const treatments: Treatment[] = [
     diseaseId: 'anxiety',
     nameEn: 'Inderal',
     nameAr: 'اندرال',
-    price: '15-25',
     dosageEn: '1 tablet twice daily',
     dosageAr: '1 قرص مرتين يومياً'
   },
@@ -423,7 +383,6 @@ export const treatments: Treatment[] = [
     diseaseId: 'allergic_rhinitis',
     nameEn: 'Claritin',
     nameAr: 'كلاريتين',
-    price: '45-60',
     dosageEn: '1 tablet daily',
     dosageAr: '1 قرص يومياً'
   },
@@ -432,7 +391,6 @@ export const treatments: Treatment[] = [
     diseaseId: 'allergic_rhinitis',
     nameEn: 'Zyrtec',
     nameAr: 'زيرتك',
-    price: '40-55',
     dosageEn: '1 tablet in the evening',
     dosageAr: '1 قرص مساءً'
   },
@@ -441,7 +399,6 @@ export const treatments: Treatment[] = [
     diseaseId: 'allergic_rhinitis',
     nameEn: 'Avamys Spray',
     nameAr: 'أفاميس بخاخ',
-    price: '90-120',
     dosageEn: '1 spray daily',
     dosageAr: 'بخة واحدة يومياً'
   },
@@ -452,7 +409,6 @@ export const treatments: Treatment[] = [
     diseaseId: 'cholesterol',
     nameEn: 'Lipitor',
     nameAr: 'ليبيتور',
-    price: '80-110',
     dosageEn: '1 tablet in the evening',
     dosageAr: '1 قرص مساءً'
   },
@@ -461,7 +417,6 @@ export const treatments: Treatment[] = [
     diseaseId: 'cholesterol',
     nameEn: 'Crestor',
     nameAr: 'كريستور',
-    price: '90-120',
     dosageEn: '1 tablet daily',
     dosageAr: '1 قرص يومياً'
   },
@@ -470,7 +425,6 @@ export const treatments: Treatment[] = [
     diseaseId: 'cholesterol',
     nameEn: 'Atorvastatin',
     nameAr: 'اتورفاستاتين',
-    price: '40-60',
     dosageEn: '1 tablet at bedtime',
     dosageAr: '1 قرص قبل النوم'
   },
@@ -481,7 +435,6 @@ export const treatments: Treatment[] = [
     diseaseId: 'kidney_stones',
     nameEn: 'Rowatinex',
     nameAr: 'روتينكس',
-    price: '120-150',
     dosageEn: '1-2 capsules 3 times daily',
     dosageAr: '1-2 كبسولة 3 مرات يومياً'
   },
@@ -490,7 +443,6 @@ export const treatments: Treatment[] = [
     diseaseId: 'kidney_stones',
     nameEn: 'Cystone',
     nameAr: 'سيستون',
-    price: '60-80',
     dosageEn: '2 tablets twice daily',
     dosageAr: '2 قرص مرتين يومياً'
   },
@@ -499,7 +451,6 @@ export const treatments: Treatment[] = [
     diseaseId: 'kidney_stones',
     nameEn: 'Epimag',
     nameAr: 'ابيماج',
-    price: '35-50',
     dosageEn: '1 sachet twice daily',
     dosageAr: '1 كيس مرتين يومياً'
   },
@@ -510,7 +461,6 @@ export const treatments: Treatment[] = [
     diseaseId: 'gout',
     nameEn: 'Colchicine',
     nameAr: 'كولشيسين',
-    price: '30-45',
     dosageEn: '1 tablet at onset then 1 after hour',
     dosageAr: '1 قرص عند بداية النوبة ثم 1 بعد ساعة'
   },
@@ -519,7 +469,6 @@ export const treatments: Treatment[] = [
     diseaseId: 'gout',
     nameEn: 'Allopurinol',
     nameAr: 'الوبيورينول',
-    price: '20-35',
     dosageEn: '1 tablet daily',
     dosageAr: '1 قرص يومياً'
   },
@@ -528,7 +477,6 @@ export const treatments: Treatment[] = [
     diseaseId: 'gout',
     nameEn: 'Zyloric',
     nameAr: 'زيلوريك',
-    price: '35-50',
     dosageEn: '1 tablet daily after meals',
     dosageAr: '1 قرص يومياً بعد الأكل'
   },
@@ -539,7 +487,6 @@ export const treatments: Treatment[] = [
     diseaseId: 'hepatitis',
     nameEn: 'Hepamerz',
     nameAr: 'هيباميرز',
-    price: '150-200',
     dosageEn: '1 sachet 3 times daily',
     dosageAr: '1 كيس 3 مرات يومياً'
   },
@@ -548,7 +495,6 @@ export const treatments: Treatment[] = [
     diseaseId: 'hepatitis',
     nameEn: 'Hepa-Merz',
     nameAr: 'هيبا-ميرز',
-    price: '180-220',
     dosageEn: '2 sachets twice daily',
     dosageAr: '2 كيس مرتين يومياً'
   },
@@ -557,7 +503,6 @@ export const treatments: Treatment[] = [
     diseaseId: 'hepatitis',
     nameEn: 'Silymarin',
     nameAr: 'سيليمارين',
-    price: '40-60',
     dosageEn: '1 capsule 3 times daily',
     dosageAr: '1 كبسولة 3 مرات يومياً'
   },
@@ -568,7 +513,6 @@ export const treatments: Treatment[] = [
     diseaseId: 'tuberculosis',
     nameEn: 'Rifampicin',
     nameAr: 'ريفامبيسين',
-    price: '25-40',
     dosageEn: '1 tablet daily on empty stomach',
     dosageAr: '1 قرص يومياً على الريق'
   },
@@ -577,7 +521,6 @@ export const treatments: Treatment[] = [
     diseaseId: 'tuberculosis',
     nameEn: 'Isoniazid',
     nameAr: 'ايزونيازيد',
-    price: '15-25',
     dosageEn: '1 tablet daily',
     dosageAr: '1 قرص يومياً'
   },
@@ -586,7 +529,6 @@ export const treatments: Treatment[] = [
     diseaseId: 'tuberculosis',
     nameEn: 'Ethambutol',
     nameAr: 'ايثامبوتول',
-    price: '20-35',
     dosageEn: '2 tablets daily',
     dosageAr: '2 قرص يومياً'
   },
@@ -597,7 +539,6 @@ export const treatments: Treatment[] = [
     diseaseId: 'ulcer',
     nameEn: 'Omeprazole',
     nameAr: 'اوميبرازول',
-    price: '25-40',
     dosageEn: '1 capsule before breakfast',
     dosageAr: '1 كبسولة قبل الإفطار'
   },
@@ -606,7 +547,6 @@ export const treatments: Treatment[] = [
     diseaseId: 'ulcer',
     nameEn: 'Pantoprazole',
     nameAr: 'بانتوبرازول',
-    price: '30-45',
     dosageEn: '1 tablet twice daily',
     dosageAr: '1 قرص مرتين يومياً'
   },
@@ -615,7 +555,6 @@ export const treatments: Treatment[] = [
     diseaseId: 'ulcer',
     nameEn: 'Ranitidine',
     nameAr: 'رانيتيدين',
-    price: '15-25',
     dosageEn: '1 tablet twice daily',
     dosageAr: '1 قرص مرتين يومياً'
   },
@@ -626,7 +565,6 @@ export const treatments: Treatment[] = [
     diseaseId: 'eczema',
     nameEn: 'Betnovate Cream',
     nameAr: 'بيتنوفيت كريم',
-    price: '25-35',
     dosageEn: 'Apply thin layer twice daily',
     dosageAr: 'دهان طبقة رقيقة مرتين يومياً'
   },
@@ -635,7 +573,6 @@ export const treatments: Treatment[] = [
     diseaseId: 'eczema',
     nameEn: 'Elocon Cream',
     nameAr: 'ايلوكون كريم',
-    price: '35-50',
     dosageEn: 'Apply once daily',
     dosageAr: 'دهان مرة واحدة يومياً'
   },
@@ -644,7 +581,6 @@ export const treatments: Treatment[] = [
     diseaseId: 'eczema',
     nameEn: 'Moisturex Cream',
     nameAr: 'مويستوريكس كريم',
-    price: '40-60',
     dosageEn: 'Apply 2-3 times daily',
     dosageAr: 'دهان 2-3 مرات يومياً'
   },
@@ -655,7 +591,6 @@ export const treatments: Treatment[] = [
     diseaseId: 'psoriasis',
     nameEn: 'Daivobet Gel',
     nameAr: 'دايفوبيت جل',
-    price: '200-250',
     dosageEn: 'Apply once daily',
     dosageAr: 'دهان مرة واحدة يومياً'
   },
@@ -664,7 +599,6 @@ export const treatments: Treatment[] = [
     diseaseId: 'psoriasis',
     nameEn: 'Methotrexate',
     nameAr: 'ميثوتريكسات',
-    price: '50-70',
     dosageEn: '1 tablet weekly',
     dosageAr: '1 قرص أسبوعياً'
   },
@@ -673,7 +607,6 @@ export const treatments: Treatment[] = [
     diseaseId: 'psoriasis',
     nameEn: 'Diprosone Ointment',
     nameAr: 'ديبروزون مرهم',
-    price: '30-45',
     dosageEn: 'Apply twice daily',
     dosageAr: 'دهان مرتين يومياً'
   },
@@ -684,7 +617,6 @@ export const treatments: Treatment[] = [
     diseaseId: 'varicose_veins',
     nameEn: 'Daflon',
     nameAr: 'دافلون',
-    price: '60-85',
     dosageEn: '1 tablet twice daily',
     dosageAr: '1 قرص مرتين يومياً'
   },
@@ -693,7 +625,6 @@ export const treatments: Treatment[] = [
     diseaseId: 'varicose_veins',
     nameEn: 'Venoruton',
     nameAr: 'فينوروتون',
-    price: '50-70',
     dosageEn: '1 capsule 3 times daily',
     dosageAr: '1 كبسولة 3 مرات يومياً'
   },
@@ -702,7 +633,6 @@ export const treatments: Treatment[] = [
     diseaseId: 'varicose_veins',
     nameEn: 'Cyclo 3',
     nameAr: 'سيكلو 3',
-    price: '45-65',
     dosageEn: '2 capsules daily',
     dosageAr: '2 كبسولة يومياً'
   },
@@ -713,7 +643,6 @@ export const treatments: Treatment[] = [
     diseaseId: 'ibs',
     nameEn: 'Librax',
     nameAr: 'ليبراكس',
-    price: '30-45',
     dosageEn: '1 tablet 3 times daily before meals',
     dosageAr: '1 قرص 3 مرات يومياً قبل الأكل'
   },
@@ -722,7 +651,6 @@ export const treatments: Treatment[] = [
     diseaseId: 'ibs',
     nameEn: 'Colona',
     nameAr: 'كولونا',
-    price: '25-35',
     dosageEn: '1-2 tablets 3 times daily',
     dosageAr: '1-2 قرص 3 مرات يومياً'
   },
@@ -731,7 +659,6 @@ export const treatments: Treatment[] = [
     diseaseId: 'ibs',
     nameEn: 'Spasmocanulase',
     nameAr: 'سباسموكانيوليز',
-    price: '35-50',
     dosageEn: '1 tablet 3 times daily',
     dosageAr: '1 قرص 3 مرات يومياً'
   },
@@ -742,7 +669,6 @@ export const treatments: Treatment[] = [
     diseaseId: 'pneumonia',
     nameEn: 'Augmentin 1gm',
     nameAr: 'اوجمنتين 1 جم',
-    price: '80-110',
     dosageEn: '1 tablet twice daily',
     dosageAr: '1 قرص مرتين يومياً'
   },
@@ -751,7 +677,6 @@ export const treatments: Treatment[] = [
     diseaseId: 'pneumonia',
     nameEn: 'Ceftriaxone Injection',
     nameAr: 'سيفترياكسون حقن',
-    price: '50-70',
     dosageEn: '1 injection daily',
     dosageAr: '1 حقنة يومياً'
   },
@@ -760,7 +685,6 @@ export const treatments: Treatment[] = [
     diseaseId: 'pneumonia',
     nameEn: 'Zinnat',
     nameAr: 'زينات',
-    price: '70-95',
     dosageEn: '1 tablet twice daily',
     dosageAr: '1 قرص مرتين يومياً'
   },
@@ -771,7 +695,6 @@ export const treatments: Treatment[] = [
     diseaseId: 'appendicitis',
     nameEn: 'Paracetamol for pain',
     nameAr: 'باراسيتامول للألم',
-    price: '10-15',
     dosageEn: 'Seek immediate medical attention - surgery required',
     dosageAr: 'يجب التوجه للطوارئ فوراً - تتطلب جراحة'
   },
@@ -780,7 +703,6 @@ export const treatments: Treatment[] = [
     diseaseId: 'appendicitis',
     nameEn: 'Post-surgery Antibiotics',
     nameAr: 'مضادات حيوية بعد الجراحة',
-    price: '60-90',
     dosageEn: 'As prescribed by surgeon',
     dosageAr: 'حسب وصف الجراح'
   },
@@ -789,7 +711,6 @@ export const treatments: Treatment[] = [
     diseaseId: 'appendicitis',
     nameEn: 'Anti-inflammatory',
     nameAr: 'مضاد للالتهاب',
-    price: '25-40',
     dosageEn: 'Post-surgery as needed',
     dosageAr: 'بعد الجراحة حسب الحاجة'
   },
@@ -800,7 +721,6 @@ export const treatments: Treatment[] = [
     diseaseId: 'tonsillitis',
     nameEn: 'Cefotax',
     nameAr: 'سيفوتاكس',
-    price: '40-60',
     dosageEn: '1 tablet twice daily',
     dosageAr: '1 قرص مرتين يومياً'
   },
@@ -809,7 +729,6 @@ export const treatments: Treatment[] = [
     diseaseId: 'tonsillitis',
     nameEn: 'Megamox',
     nameAr: 'ميجاموكس',
-    price: '55-75',
     dosageEn: '1 tablet twice daily',
     dosageAr: '1 قرص مرتين يومياً'
   },
@@ -818,7 +737,6 @@ export const treatments: Treatment[] = [
     diseaseId: 'tonsillitis',
     nameEn: 'Betadine Gargle',
     nameAr: 'بيتادين غرغرة',
-    price: '25-35',
     dosageEn: 'Gargle 3-4 times daily',
     dosageAr: 'غرغرة 3-4 مرات يومياً'
   },
@@ -829,7 +747,6 @@ export const treatments: Treatment[] = [
     diseaseId: 'conjunctivitis',
     nameEn: 'Tobramycin Eye Drops',
     nameAr: 'توبراميسين قطرة للعين',
-    price: '35-50',
     dosageEn: '1 drop 4 times daily',
     dosageAr: 'قطرة واحدة 4 مرات يومياً'
   },
@@ -838,7 +755,6 @@ export const treatments: Treatment[] = [
     diseaseId: 'conjunctivitis',
     nameEn: 'Optichlor Eye Drops',
     nameAr: 'اوبتيكلور قطرة للعين',
-    price: '20-30',
     dosageEn: '2 drops every 4 hours',
     dosageAr: '2 قطرة كل 4 ساعات'
   },
@@ -847,7 +763,6 @@ export const treatments: Treatment[] = [
     diseaseId: 'conjunctivitis',
     nameEn: 'Vigamox Eye Drops',
     nameAr: 'فيجاموكس قطرة للعين',
-    price: '60-80',
     dosageEn: '1 drop 3 times daily',
     dosageAr: 'قطرة واحدة 3 مرات يومياً'
   },
@@ -858,7 +773,6 @@ export const treatments: Treatment[] = [
     diseaseId: 'hemorrhoids',
     nameEn: 'Proctoglyvenol Cream',
     nameAr: 'بروكتوجليفينول كريم',
-    price: '45-65',
     dosageEn: 'Apply 2-3 times daily',
     dosageAr: 'دهان 2-3 مرات يومياً'
   },
@@ -867,7 +781,6 @@ export const treatments: Treatment[] = [
     diseaseId: 'hemorrhoids',
     nameEn: 'Procto-Glyvenol Suppositories',
     nameAr: 'بروكتوجليفينول لبوس',
-    price: '50-70',
     dosageEn: '1 suppository twice daily',
     dosageAr: 'لبوسة واحدة مرتين يومياً'
   },
@@ -876,7 +789,6 @@ export const treatments: Treatment[] = [
     diseaseId: 'hemorrhoids',
     nameEn: 'Daflon 500',
     nameAr: 'دافلون 500',
-    price: '60-85',
     dosageEn: '2 tablets twice daily',
     dosageAr: '2 قرص مرتين يومياً'
   },
@@ -887,7 +799,6 @@ export const treatments: Treatment[] = [
     diseaseId: 'osteoporosis',
     nameEn: 'Calcium + Vitamin D',
     nameAr: 'كالسيوم + فيتامين د',
-    price: '35-55',
     dosageEn: '1 tablet daily',
     dosageAr: '1 قرص يومياً'
   },
@@ -896,7 +807,6 @@ export const treatments: Treatment[] = [
     diseaseId: 'osteoporosis',
     nameEn: 'Fosamax',
     nameAr: 'فوساماكس',
-    price: '80-120',
     dosageEn: '1 tablet weekly on empty stomach',
     dosageAr: '1 قرص أسبوعياً على الريق'
   },
@@ -905,7 +815,6 @@ export const treatments: Treatment[] = [
     diseaseId: 'osteoporosis',
     nameEn: 'Osteocare',
     nameAr: 'اوستيوكير',
-    price: '60-85',
     dosageEn: '1 tablet twice daily',
     dosageAr: '1 قرص مرتين يومياً'
   },
@@ -916,7 +825,6 @@ export const treatments: Treatment[] = [
     diseaseId: 'sciatica',
     nameEn: 'Neurobion Forte',
     nameAr: 'نيوروبيون فورت',
-    price: '45-65',
     dosageEn: '1 tablet daily',
     dosageAr: '1 قرص يومياً'
   },
@@ -925,7 +833,6 @@ export const treatments: Treatment[] = [
     diseaseId: 'sciatica',
     nameEn: 'Voltaren SR',
     nameAr: 'فولتارين اس ار',
-    price: '35-55',
     dosageEn: '1 tablet twice daily',
     dosageAr: '1 قرص مرتين يومياً'
   },
@@ -934,7 +841,6 @@ export const treatments: Treatment[] = [
     diseaseId: 'sciatica',
     nameEn: 'Myolgin Capsules',
     nameAr: 'ميولجين كبسولات',
-    price: '40-60',
     dosageEn: '1 capsule twice daily',
     dosageAr: '1 كبسولة مرتين يومياً'
   },
@@ -945,7 +851,6 @@ export const treatments: Treatment[] = [
     diseaseId: 'vertigo',
     nameEn: 'Betaserc',
     nameAr: 'بيتاسيرك',
-    price: '55-75',
     dosageEn: '1 tablet 3 times daily',
     dosageAr: '1 قرص 3 مرات يومياً'
   },
@@ -954,7 +859,6 @@ export const treatments: Treatment[] = [
     diseaseId: 'vertigo',
     nameEn: 'Dramamine',
     nameAr: 'درامامين',
-    price: '20-30',
     dosageEn: '1 tablet every 6 hours',
     dosageAr: '1 قرص كل 6 ساعات'
   },
@@ -963,7 +867,6 @@ export const treatments: Treatment[] = [
     diseaseId: 'vertigo',
     nameEn: 'Stugeron',
     nameAr: 'ستوجيرون',
-    price: '25-40',
     dosageEn: '1 tablet 3 times daily',
     dosageAr: '1 قرص 3 مرات يومياً'
   },
@@ -974,7 +877,6 @@ export const treatments: Treatment[] = [
     diseaseId: 'acid_reflux',
     nameEn: 'Esomeprazole',
     nameAr: 'ايزوميبرازول',
-    price: '40-60',
     dosageEn: '1 tablet before breakfast',
     dosageAr: '1 قرص قبل الإفطار'
   },
@@ -983,7 +885,6 @@ export const treatments: Treatment[] = [
     diseaseId: 'acid_reflux',
     nameEn: 'Gaviscon Advance',
     nameAr: 'جافيسكون ادفانس',
-    price: '35-50',
     dosageEn: '10ml after meals',
     dosageAr: '10 مل بعد الأكل'
   },
@@ -992,7 +893,6 @@ export const treatments: Treatment[] = [
     diseaseId: 'acid_reflux',
     nameEn: 'Motilium',
     nameAr: 'موتيليوم',
-    price: '25-35',
     dosageEn: '1 tablet 3 times before meals',
     dosageAr: '1 قرص 3 مرات قبل الأكل'
   },
@@ -1003,7 +903,6 @@ export const treatments: Treatment[] = [
     diseaseId: 'gallstones',
     nameEn: 'Ursofalk',
     nameAr: 'يورسوفالك',
-    price: '120-160',
     dosageEn: '1 capsule twice daily',
     dosageAr: '1 كبسولة مرتين يومياً'
   },
@@ -1012,7 +911,6 @@ export const treatments: Treatment[] = [
     diseaseId: 'gallstones',
     nameEn: 'Buscopan',
     nameAr: 'بسكوبان',
-    price: '20-30',
     dosageEn: '1 tablet 3 times daily for pain',
     dosageAr: '1 قرص 3 مرات يومياً للألم'
   },
@@ -1021,7 +919,6 @@ export const treatments: Treatment[] = [
     diseaseId: 'gallstones',
     nameEn: 'Digestin',
     nameAr: 'ديجستين',
-    price: '25-40',
     dosageEn: '1 tablet after meals',
     dosageAr: '1 قرص بعد الأكل'
   },
@@ -1032,7 +929,6 @@ export const treatments: Treatment[] = [
     diseaseId: 'depression',
     nameEn: 'Prozac (Fluoxetine)',
     nameAr: 'بروزاك',
-    price: '80-120',
     dosageEn: '1 capsule daily in morning',
     dosageAr: '1 كبسولة يومياً صباحاً'
   },
@@ -1041,7 +937,6 @@ export const treatments: Treatment[] = [
     diseaseId: 'depression',
     nameEn: 'Faverin (Fluvoxamine)',
     nameAr: 'فافرين',
-    price: '90-130',
     dosageEn: '1 tablet at night',
     dosageAr: '1 قرص ليلاً'
   },
@@ -1050,7 +945,6 @@ export const treatments: Treatment[] = [
     diseaseId: 'depression',
     nameEn: 'Cipralex (Escitalopram)',
     nameAr: 'سيبرالكس',
-    price: '100-150',
     dosageEn: '1 tablet daily',
     dosageAr: '1 قرص يومياً'
   },
@@ -1061,7 +955,6 @@ export const treatments: Treatment[] = [
     diseaseId: 'bipolar',
     nameEn: 'Depakine (Valproate)',
     nameAr: 'ديباكين',
-    price: '60-90',
     dosageEn: '1 tablet twice daily',
     dosageAr: '1 قرص مرتين يومياً'
   },
@@ -1070,7 +963,6 @@ export const treatments: Treatment[] = [
     diseaseId: 'bipolar',
     nameEn: 'Lithium Carbonate',
     nameAr: 'ليثيوم كاربونات',
-    price: '40-65',
     dosageEn: '2-3 tablets daily as prescribed',
     dosageAr: '2-3 قرص يومياً حسب الوصف'
   },
@@ -1079,7 +971,6 @@ export const treatments: Treatment[] = [
     diseaseId: 'bipolar',
     nameEn: 'Tegretol (Carbamazepine)',
     nameAr: 'تجريتول',
-    price: '35-55',
     dosageEn: '1 tablet twice daily',
     dosageAr: '1 قرص مرتين يومياً'
   },
@@ -1090,7 +981,6 @@ export const treatments: Treatment[] = [
     diseaseId: 'schizophrenia',
     nameEn: 'Risperdal (Risperidone)',
     nameAr: 'ريسبردال',
-    price: '120-180',
     dosageEn: '1-2 tablets daily',
     dosageAr: '1-2 قرص يومياً'
   },
@@ -1099,7 +989,6 @@ export const treatments: Treatment[] = [
     diseaseId: 'schizophrenia',
     nameEn: 'Zyprexa (Olanzapine)',
     nameAr: 'زيبركسا',
-    price: '150-220',
     dosageEn: '1 tablet at bedtime',
     dosageAr: '1 قرص قبل النوم'
   },
@@ -1108,7 +997,6 @@ export const treatments: Treatment[] = [
     diseaseId: 'schizophrenia',
     nameEn: 'Seroquel (Quetiapine)',
     nameAr: 'سيروكويل',
-    price: '130-190',
     dosageEn: '1-2 tablets daily',
     dosageAr: '1-2 قرص يومياً'
   },
@@ -1119,7 +1007,6 @@ export const treatments: Treatment[] = [
     diseaseId: 'ocd',
     nameEn: 'Anafranil (Clomipramine)',
     nameAr: 'انافرانيل',
-    price: '70-100',
     dosageEn: '1 tablet daily, increase gradually',
     dosageAr: '1 قرص يومياً، مع الزيادة التدريجية'
   },
@@ -1128,7 +1015,6 @@ export const treatments: Treatment[] = [
     diseaseId: 'ocd',
     nameEn: 'Zoloft (Sertraline)',
     nameAr: 'زولفت',
-    price: '85-125',
     dosageEn: '1 tablet daily',
     dosageAr: '1 قرص يومياً'
   },
@@ -1137,7 +1023,6 @@ export const treatments: Treatment[] = [
     diseaseId: 'ocd',
     nameEn: 'Luvox (Fluvoxamine)',
     nameAr: 'لوفوكس',
-    price: '90-130',
     dosageEn: '1 tablet at night',
     dosageAr: '1 قرص ليلاً'
   },
@@ -1148,7 +1033,6 @@ export const treatments: Treatment[] = [
     diseaseId: 'ptsd',
     nameEn: 'Paroxetine',
     nameAr: 'باروكسيتين',
-    price: '75-110',
     dosageEn: '1 tablet daily',
     dosageAr: '1 قرص يومياً'
   },
@@ -1158,7 +1042,6 @@ export const treatments: Treatment[] = [
     nameEn: 'Prazosin',
     nameAr: 'برازوسين',
     dosageEn: '1 tablet at bedtime for nightmares',
-    price: '50-75',
     dosageAr: '1 قرص قبل النوم للكوابيس'
   },
   {
@@ -1166,7 +1049,6 @@ export const treatments: Treatment[] = [
     diseaseId: 'ptsd',
     nameEn: 'Sertraline',
     nameAr: 'سيرترالين',
-    price: '80-115',
     dosageEn: '1 tablet daily',
     dosageAr: '1 قرص يومياً'
   },
@@ -1177,7 +1059,6 @@ export const treatments: Treatment[] = [
     diseaseId: 'panic_disorder',
     nameEn: 'Xanax (Alprazolam)',
     nameAr: 'زاناكس',
-    price: '40-65',
     dosageEn: '0.5mg as needed, max 3 times daily',
     dosageAr: '0.5 ملجم عند الحاجة، بحد أقصى 3 مرات يومياً'
   },
@@ -1186,7 +1067,6 @@ export const treatments: Treatment[] = [
     diseaseId: 'panic_disorder',
     nameEn: 'Rivotril (Clonazepam)',
     nameAr: 'ريفوتريل',
-    price: '35-55',
     dosageEn: '0.5-1mg twice daily',
     dosageAr: '0.5-1 ملجم مرتين يومياً'
   },
@@ -1195,7 +1075,6 @@ export const treatments: Treatment[] = [
     diseaseId: 'panic_disorder',
     nameEn: 'Paxil (Paroxetine)',
     nameAr: 'باكسيل',
-    price: '75-110',
     dosageEn: '1 tablet daily',
     dosageAr: '1 قرص يومياً'
   },
@@ -1206,7 +1085,6 @@ export const treatments: Treatment[] = [
     diseaseId: 'social_anxiety',
     nameEn: 'Propranolol',
     nameAr: 'بروبرانولول',
-    price: '20-35',
     dosageEn: '10-40mg before social situations',
     dosageAr: '10-40 ملجم قبل المواقف الاجتماعية'
   },
@@ -1215,7 +1093,6 @@ export const treatments: Treatment[] = [
     diseaseId: 'social_anxiety',
     nameEn: 'Effexor (Venlafaxine)',
     nameAr: 'افكسور',
-    price: '95-140',
     dosageEn: '1 capsule daily',
     dosageAr: '1 كبسولة يومياً'
   },
@@ -1224,7 +1101,6 @@ export const treatments: Treatment[] = [
     diseaseId: 'social_anxiety',
     nameEn: 'Zoloft (Sertraline)',
     nameAr: 'زولفت',
-    price: '85-125',
     dosageEn: '1 tablet daily',
     dosageAr: '1 قرص يومياً'
   },
@@ -1235,7 +1111,6 @@ export const treatments: Treatment[] = [
     diseaseId: 'eating_disorder',
     nameEn: 'Fluoxetine',
     nameAr: 'فلوكسيتين',
-    price: '80-120',
     dosageEn: '1 capsule daily',
     dosageAr: '1 كبسولة يومياً'
   },
@@ -1244,7 +1119,6 @@ export const treatments: Treatment[] = [
     diseaseId: 'eating_disorder',
     nameEn: 'Multivitamin Supplements',
     nameAr: 'مكملات الفيتامينات',
-    price: '45-75',
     dosageEn: '1 tablet daily',
     dosageAr: '1 قرص يومياً'
   },
@@ -1253,7 +1127,6 @@ export const treatments: Treatment[] = [
     diseaseId: 'eating_disorder',
     nameEn: 'Psychotherapy Sessions',
     nameAr: 'جلسات العلاج النفسي',
-    price: '200-500',
     dosageEn: 'Weekly sessions recommended',
     dosageAr: 'جلسات أسبوعية موصى بها'
   },
@@ -1264,7 +1137,6 @@ export const treatments: Treatment[] = [
     diseaseId: 'adhd',
     nameEn: 'Ritalin (Methylphenidate)',
     nameAr: 'ريتالين',
-    price: '120-180',
     dosageEn: '1 tablet 2-3 times daily',
     dosageAr: '1 قرص 2-3 مرات يومياً'
   },
@@ -1273,7 +1145,6 @@ export const treatments: Treatment[] = [
     diseaseId: 'adhd',
     nameEn: 'Concerta',
     nameAr: 'كونسيرتا',
-    price: '150-220',
     dosageEn: '1 tablet once daily in morning',
     dosageAr: '1 قرص مرة واحدة صباحاً'
   },
@@ -1282,7 +1153,6 @@ export const treatments: Treatment[] = [
     diseaseId: 'adhd',
     nameEn: 'Strattera (Atomoxetine)',
     nameAr: 'ستراتيرا',
-    price: '180-250',
     dosageEn: '1 capsule daily',
     dosageAr: '1 كبسولة يومياً'
   },
@@ -1293,7 +1163,6 @@ export const treatments: Treatment[] = [
     diseaseId: 'autism',
     nameEn: 'Risperdal for irritability',
     nameAr: 'ريسبردال للتهيج',
-    price: '120-180',
     dosageEn: 'As prescribed by specialist',
     dosageAr: 'حسب وصف الطبيب المختص'
   },
@@ -1302,7 +1171,6 @@ export const treatments: Treatment[] = [
     diseaseId: 'autism',
     nameEn: 'Speech Therapy',
     nameAr: 'علاج النطق',
-    price: '150-300',
     dosageEn: '2-3 sessions weekly',
     dosageAr: '2-3 جلسات أسبوعياً'
   },
@@ -1311,7 +1179,6 @@ export const treatments: Treatment[] = [
     diseaseId: 'autism',
     nameEn: 'Behavioral Therapy (ABA)',
     nameAr: 'العلاج السلوكي',
-    price: '300-600',
     dosageEn: 'Daily intensive sessions',
     dosageAr: 'جلسات مكثفة يومية'
   },
@@ -1322,7 +1189,6 @@ export const treatments: Treatment[] = [
     diseaseId: 'personality_disorder',
     nameEn: 'Dialectical Behavior Therapy',
     nameAr: 'العلاج السلوكي الجدلي',
-    price: '250-500',
     dosageEn: 'Weekly individual and group sessions',
     dosageAr: 'جلسات فردية وجماعية أسبوعية'
   },
@@ -1331,7 +1197,6 @@ export const treatments: Treatment[] = [
     diseaseId: 'personality_disorder',
     nameEn: 'Lamictal (Lamotrigine)',
     nameAr: 'لاميكتال',
-    price: '80-130',
     dosageEn: '1 tablet daily, increase gradually',
     dosageAr: '1 قرص يومياً، مع الزيادة التدريجية'
   },
@@ -1340,7 +1205,6 @@ export const treatments: Treatment[] = [
     diseaseId: 'personality_disorder',
     nameEn: 'Quetiapine for mood',
     nameAr: 'كويتيابين للمزاج',
-    price: '130-190',
     dosageEn: '1 tablet at bedtime',
     dosageAr: '1 قرص قبل النوم'
   },
@@ -1351,7 +1215,6 @@ export const treatments: Treatment[] = [
     diseaseId: 'substance_abuse',
     nameEn: 'Naltrexone',
     nameAr: 'نالتريكسون',
-    price: '150-220',
     dosageEn: '1 tablet daily',
     dosageAr: '1 قرص يومياً'
   },
@@ -1360,7 +1223,6 @@ export const treatments: Treatment[] = [
     diseaseId: 'substance_abuse',
     nameEn: 'Addiction Counseling',
     nameAr: 'استشارات الإدمان',
-    price: '200-400',
     dosageEn: 'Weekly sessions',
     dosageAr: 'جلسات أسبوعية'
   },
@@ -1369,7 +1231,6 @@ export const treatments: Treatment[] = [
     diseaseId: 'substance_abuse',
     nameEn: 'Detox Program',
     nameAr: 'برنامج سحب السموم',
-    price: '3000-8000',
     dosageEn: 'Inpatient 7-28 days',
     dosageAr: 'إقامة داخلية 7-28 يوم'
   },
@@ -1380,7 +1241,6 @@ export const treatments: Treatment[] = [
     diseaseId: 'insomnia',
     nameEn: 'Stilnox (Zolpidem)',
     nameAr: 'ستيلنوكس',
-    price: '50-80',
     dosageEn: '1 tablet at bedtime',
     dosageAr: '1 قرص قبل النوم'
   },
@@ -1389,7 +1249,6 @@ export const treatments: Treatment[] = [
     diseaseId: 'insomnia',
     nameEn: 'Melatonin',
     nameAr: 'ميلاتونين',
-    price: '60-95',
     dosageEn: '1-3mg 30 minutes before sleep',
     dosageAr: '1-3 ملجم قبل النوم بـ30 دقيقة'
   },
@@ -1398,7 +1257,6 @@ export const treatments: Treatment[] = [
     diseaseId: 'insomnia',
     nameEn: 'Trazodone',
     nameAr: 'ترازودون',
-    price: '45-70',
     dosageEn: '50mg at bedtime',
     dosageAr: '50 ملجم قبل النوم'
   },
@@ -1409,7 +1267,6 @@ export const treatments: Treatment[] = [
     diseaseId: 'phobia',
     nameEn: 'Cognitive Behavioral Therapy',
     nameAr: 'العلاج المعرفي السلوكي',
-    price: '200-400',
     dosageEn: 'Weekly sessions',
     dosageAr: 'جلسات أسبوعية'
   },
@@ -1418,7 +1275,6 @@ export const treatments: Treatment[] = [
     diseaseId: 'phobia',
     nameEn: 'Propranolol for symptoms',
     nameAr: 'بروبرانولول للأعراض',
-    price: '20-35',
     dosageEn: '10-40mg as needed',
     dosageAr: '10-40 ملجم عند الحاجة'
   },
@@ -1427,7 +1283,6 @@ export const treatments: Treatment[] = [
     diseaseId: 'phobia',
     nameEn: 'Exposure Therapy',
     nameAr: 'العلاج بالتعرض',
-    price: '250-450',
     dosageEn: 'Gradual exposure sessions',
     dosageAr: 'جلسات تعرض تدريجي'
   },
@@ -1438,7 +1293,6 @@ export const treatments: Treatment[] = [
     diseaseId: 'dissociative',
     nameEn: 'Trauma-focused Therapy',
     nameAr: 'العلاج المركز على الصدمة',
-    price: '300-600',
     dosageEn: 'Weekly intensive sessions',
     dosageAr: 'جلسات مكثفة أسبوعية'
   },
@@ -1447,7 +1301,6 @@ export const treatments: Treatment[] = [
     diseaseId: 'dissociative',
     nameEn: 'Antidepressants',
     nameAr: 'مضادات الاكتئاب',
-    price: '80-130',
     dosageEn: '1 tablet daily',
     dosageAr: '1 قرص يومياً'
   },
@@ -1456,7 +1309,6 @@ export const treatments: Treatment[] = [
     diseaseId: 'dissociative',
     nameEn: 'EMDR Therapy',
     nameAr: 'علاج EMDR',
-    price: '350-700',
     dosageEn: 'Weekly specialized sessions',
     dosageAr: 'جلسات متخصصة أسبوعية'
   },
@@ -1467,7 +1319,6 @@ export const treatments: Treatment[] = [
     diseaseId: 'pneumonia',
     nameEn: 'Augmentin (Amoxicillin/Clavulanate)',
     nameAr: 'أوجمنتين',
-    price: '60-110',
     dosageEn: '1 tablet every 12 hours',
     dosageAr: '1 قرص كل 12 ساعة'
   },
@@ -1476,7 +1327,6 @@ export const treatments: Treatment[] = [
     diseaseId: 'pneumonia',
     nameEn: 'Azithromycin (Zithromax)',
     nameAr: 'زيثروماكس',
-    price: '75-120',
     dosageEn: '500mg once daily for 3 days',
     dosageAr: '500 ملغ مرة يومياً لمدة 3 أيام'
   },
@@ -1485,7 +1335,6 @@ export const treatments: Treatment[] = [
     diseaseId: 'pneumonia',
     nameEn: 'Ceftriaxone Injection',
     nameAr: 'سيفترياكسون حقن',
-    price: '40-80',
     dosageEn: '1g injection daily',
     dosageAr: 'حقنة 1 جم يومياً'
   },
@@ -1496,7 +1345,6 @@ export const treatments: Treatment[] = [
     diseaseId: 'kidney_disease',
     nameEn: 'Lasix (Furosemide)',
     nameAr: 'لازيكس',
-    price: '15-30',
     dosageEn: '40mg once or twice daily',
     dosageAr: '40 ملغ مرة أو مرتين يومياً'
   },
@@ -1505,7 +1353,6 @@ export const treatments: Treatment[] = [
     diseaseId: 'kidney_disease',
     nameEn: 'Erythropoietin',
     nameAr: 'إريثروبويتين',
-    price: '450-800',
     dosageEn: 'Weekly injection as prescribed',
     dosageAr: 'حقنة أسبوعية حسب الوصفة'
   },
@@ -1514,7 +1361,6 @@ export const treatments: Treatment[] = [
     diseaseId: 'kidney_disease',
     nameEn: 'Calcium Carbonate',
     nameAr: 'كربونات الكالسيوم',
-    price: '25-50',
     dosageEn: '1-2 tablets with meals',
     dosageAr: '1-2 قرص مع الوجبات'
   },
@@ -1525,7 +1371,6 @@ export const treatments: Treatment[] = [
     diseaseId: 'cirrhosis',
     nameEn: 'Spironolactone (Aldactone)',
     nameAr: 'ألداكتون',
-    price: '30-60',
     dosageEn: '100mg daily',
     dosageAr: '100 ملغ يومياً'
   },
@@ -1534,7 +1379,6 @@ export const treatments: Treatment[] = [
     diseaseId: 'cirrhosis',
     nameEn: 'Propranolol',
     nameAr: 'بروبرانولول',
-    price: '20-45',
     dosageEn: '40mg twice daily',
     dosageAr: '40 ملغ مرتين يومياً'
   },
@@ -1543,7 +1387,6 @@ export const treatments: Treatment[] = [
     diseaseId: 'cirrhosis',
     nameEn: 'Lactulose',
     nameAr: 'لاكتيلوز',
-    price: '35-70',
     dosageEn: '30ml three times daily',
     dosageAr: '30 مل 3 مرات يومياً'
   },
@@ -1554,7 +1397,6 @@ export const treatments: Treatment[] = [
     diseaseId: 'copd',
     nameEn: 'Ventolin Inhaler (Salbutamol)',
     nameAr: 'فنتولين بخاخ',
-    price: '45-85',
     dosageEn: '2 puffs as needed',
     dosageAr: 'بختان عند الحاجة'
   },
@@ -1563,7 +1405,6 @@ export const treatments: Treatment[] = [
     diseaseId: 'copd',
     nameEn: 'Spiriva (Tiotropium)',
     nameAr: 'سبيريفا',
-    price: '250-450',
     dosageEn: '1 capsule inhaled daily',
     dosageAr: 'كبسولة واحدة استنشاق يومياً'
   },
@@ -1572,7 +1413,6 @@ export const treatments: Treatment[] = [
     diseaseId: 'copd',
     nameEn: 'Prednisone',
     nameAr: 'بريدنيزون',
-    price: '15-35',
     dosageEn: '40mg daily for 5 days',
     dosageAr: '40 ملغ يومياً لمدة 5 أيام'
   },
@@ -1583,7 +1423,6 @@ export const treatments: Treatment[] = [
     diseaseId: 'celiac_disease',
     nameEn: 'Vitamin D3 Supplements',
     nameAr: 'مكملات فيتامين د3',
-    price: '40-80',
     dosageEn: '50,000 IU weekly',
     dosageAr: '50,000 وحدة أسبوعياً'
   },
@@ -1592,7 +1431,6 @@ export const treatments: Treatment[] = [
     diseaseId: 'celiac_disease',
     nameEn: 'Iron Supplements (Ferrous Sulfate)',
     nameAr: 'مكملات الحديد',
-    price: '25-50',
     dosageEn: '325mg daily',
     dosageAr: '325 ملغ يومياً'
   },
@@ -1601,7 +1439,6 @@ export const treatments: Treatment[] = [
     diseaseId: 'celiac_disease',
     nameEn: 'Multivitamin Supplements',
     nameAr: 'مكملات متعددة الفيتامينات',
-    price: '50-100',
     dosageEn: '1 tablet daily',
     dosageAr: '1 قرص يومياً'
   },
@@ -1612,7 +1449,6 @@ export const treatments: Treatment[] = [
     diseaseId: 'endometriosis',
     nameEn: 'Ibuprofen',
     nameAr: 'إيبوبروفين',
-    price: '20-40',
     dosageEn: '400mg every 6-8 hours',
     dosageAr: '400 ملغ كل 6-8 ساعات'
   },
@@ -1621,7 +1457,6 @@ export const treatments: Treatment[] = [
     diseaseId: 'endometriosis',
     nameEn: 'Oral Contraceptives',
     nameAr: 'حبوب منع الحمل',
-    price: '30-70',
     dosageEn: '1 tablet daily',
     dosageAr: '1 قرص يومياً'
   },
@@ -1630,7 +1465,6 @@ export const treatments: Treatment[] = [
     diseaseId: 'endometriosis',
     nameEn: 'Danazol',
     nameAr: 'دانازول',
-    price: '150-280',
     dosageEn: '200-400mg twice daily',
     dosageAr: '200-400 ملغ مرتين يومياً'
   },
@@ -1641,7 +1475,6 @@ export const treatments: Treatment[] = [
     diseaseId: 'sleep_apnea',
     nameEn: 'CPAP Machine Therapy',
     nameAr: 'علاج جهاز CPAP',
-    price: '5000-12000',
     dosageEn: 'Use nightly during sleep',
     dosageAr: 'استخدام ليلي أثناء النوم'
   },
@@ -1650,7 +1483,6 @@ export const treatments: Treatment[] = [
     diseaseId: 'sleep_apnea',
     nameEn: 'Weight Loss Medication',
     nameAr: 'أدوية إنقاص الوزن',
-    price: '200-500',
     dosageEn: 'As prescribed by doctor',
     dosageAr: 'حسب وصف الطبيب'
   },
@@ -1659,7 +1491,6 @@ export const treatments: Treatment[] = [
     diseaseId: 'sleep_apnea',
     nameEn: 'Modafinil (for daytime sleepiness)',
     nameAr: 'مودافينيل (للنعاس النهاري)',
-    price: '250-450',
     dosageEn: '200mg once daily',
     dosageAr: '200 ملغ مرة يومياً'
   },
@@ -1670,7 +1501,6 @@ export const treatments: Treatment[] = [
     diseaseId: 'lupus',
     nameEn: 'Hydroxychloroquine (Plaquenil)',
     nameAr: 'بلاكونيل',
-    price: '120-220',
     dosageEn: '200mg twice daily',
     dosageAr: '200 ملغ مرتين يومياً'
   },
@@ -1679,7 +1509,6 @@ export const treatments: Treatment[] = [
     diseaseId: 'lupus',
     nameEn: 'Prednisone',
     nameAr: 'بريدنيزون',
-    price: '15-35',
     dosageEn: '5-60mg daily as prescribed',
     dosageAr: '5-60 ملغ يومياً حسب الوصفة'
   },
@@ -1688,7 +1517,6 @@ export const treatments: Treatment[] = [
     diseaseId: 'lupus',
     nameEn: 'Methotrexate',
     nameAr: 'ميثوتريكسات',
-    price: '50-120',
     dosageEn: '7.5-25mg weekly',
     dosageAr: '7.5-25 ملغ أسبوعياً'
   },
@@ -1699,7 +1527,6 @@ export const treatments: Treatment[] = [
     diseaseId: 'parkinsons',
     nameEn: 'Sinemet (Carbidopa-Levodopa)',
     nameAr: 'سينيميت',
-    price: '180-350',
     dosageEn: '1 tablet 3 times daily',
     dosageAr: '1 قرص 3 مرات يومياً'
   },
@@ -1708,7 +1535,6 @@ export const treatments: Treatment[] = [
     diseaseId: 'parkinsons',
     nameEn: 'Pramipexole',
     nameAr: 'براميبيكسول',
-    price: '200-400',
     dosageEn: '0.5-1.5mg three times daily',
     dosageAr: '0.5-1.5 ملغ 3 مرات يومياً'
   },
@@ -1717,7 +1543,6 @@ export const treatments: Treatment[] = [
     diseaseId: 'parkinsons',
     nameEn: 'Rasagiline',
     nameAr: 'راساجيلين',
-    price: '300-550',
     dosageEn: '1mg once daily',
     dosageAr: '1 ملغ مرة يومياً'
   },
@@ -1728,7 +1553,6 @@ export const treatments: Treatment[] = [
     diseaseId: 'multiple_sclerosis',
     nameEn: 'Interferon Beta',
     nameAr: 'إنترفيرون بيتا',
-    price: '3500-7000',
     dosageEn: 'Injection 3 times weekly',
     dosageAr: 'حقنة 3 مرات أسبوعياً'
   },
@@ -1737,7 +1561,6 @@ export const treatments: Treatment[] = [
     diseaseId: 'multiple_sclerosis',
     nameEn: 'Glatiramer Acetate',
     nameAr: 'جلاتيرامير أسيتات',
-    price: '4000-8000',
     dosageEn: '20mg daily injection',
     dosageAr: 'حقنة 20 ملغ يومياً'
   },
@@ -1746,7 +1569,6 @@ export const treatments: Treatment[] = [
     diseaseId: 'multiple_sclerosis',
     nameEn: 'Methylprednisolone',
     nameAr: 'ميثيل بريدنيزولون',
-    price: '100-200',
     dosageEn: 'High-dose IV for flare-ups',
     dosageAr: 'جرعة عالية وريدية لنوبات التفاقم'
   },
@@ -1757,7 +1579,6 @@ export const treatments: Treatment[] = [
     diseaseId: 'fibromyalgia',
     nameEn: 'Pregabalin (Lyrica)',
     nameAr: 'ليريكا',
-    price: '150-280',
     dosageEn: '75mg twice daily',
     dosageAr: '75 ملغ مرتين يومياً'
   },
@@ -1766,7 +1587,6 @@ export const treatments: Treatment[] = [
     diseaseId: 'fibromyalgia',
     nameEn: 'Duloxetine (Cymbalta)',
     nameAr: 'سيمبالتا',
-    price: '200-380',
     dosageEn: '60mg once daily',
     dosageAr: '60 ملغ مرة يومياً'
   },
@@ -1775,7 +1595,6 @@ export const treatments: Treatment[] = [
     diseaseId: 'fibromyalgia',
     nameEn: 'Amitriptyline',
     nameAr: 'أميتريبتيلين',
-    price: '15-35',
     dosageEn: '10-25mg at bedtime',
     dosageAr: '10-25 ملغ عند النوم'
   },
@@ -1786,7 +1605,6 @@ export const treatments: Treatment[] = [
     diseaseId: 'crohns_disease',
     nameEn: 'Mesalamine (Pentasa)',
     nameAr: 'بنتاسا',
-    price: '250-450',
     dosageEn: '1g four times daily',
     dosageAr: '1 جم 4 مرات يومياً'
   },
@@ -1795,7 +1613,6 @@ export const treatments: Treatment[] = [
     diseaseId: 'crohns_disease',
     nameEn: 'Azathioprine',
     nameAr: 'أزاثيوبرين',
-    price: '60-120',
     dosageEn: '2-2.5mg/kg daily',
     dosageAr: '2-2.5 ملغ/كجم يومياً'
   },
@@ -1804,7 +1621,6 @@ export const treatments: Treatment[] = [
     diseaseId: 'crohns_disease',
     nameEn: 'Budesonide',
     nameAr: 'بوديزونيد',
-    price: '180-350',
     dosageEn: '9mg once daily',
     dosageAr: '9 ملغ مرة يومياً'
   },
@@ -1815,7 +1631,6 @@ export const treatments: Treatment[] = [
     diseaseId: 'generalized_anxiety',
     nameEn: 'Xanax (Alprazolam)',
     nameAr: 'زاناكس',
-    price: '60-120',
     dosageEn: '0.25-0.5mg three times daily',
     dosageAr: '0.25-0.5 ملغ 3 مرات يومياً'
   },
@@ -1824,7 +1639,6 @@ export const treatments: Treatment[] = [
     diseaseId: 'generalized_anxiety',
     nameEn: 'Buspirone',
     nameAr: 'بوسبيرون',
-    price: '50-90',
     dosageEn: '15mg twice daily',
     dosageAr: '15 ملغ مرتين يومياً'
   },
@@ -1833,7 +1647,6 @@ export const treatments: Treatment[] = [
     diseaseId: 'generalized_anxiety',
     nameEn: 'Lexapro (Escitalopram)',
     nameAr: 'ليكسابرو',
-    price: '120-200',
     dosageEn: '10mg once daily',
     dosageAr: '10 ملغ مرة يومياً'
   },
@@ -1844,7 +1657,6 @@ export const treatments: Treatment[] = [
     diseaseId: 'seasonal_depression',
     nameEn: 'Light Therapy Lamp',
     nameAr: 'مصباح العلاج بالضوء',
-    price: '800-1500',
     dosageEn: '30 minutes daily in morning',
     dosageAr: '30 دقيقة يومياً في الصباح'
   },
@@ -1853,7 +1665,6 @@ export const treatments: Treatment[] = [
     diseaseId: 'seasonal_depression',
     nameEn: 'Vitamin D3 High Dose',
     nameAr: 'فيتامين د3 جرعة عالية',
-    price: '60-120',
     dosageEn: '5000 IU daily',
     dosageAr: '5000 وحدة يومياً'
   },
@@ -1862,7 +1673,6 @@ export const treatments: Treatment[] = [
     diseaseId: 'seasonal_depression',
     nameEn: 'Wellbutrin (Bupropion)',
     nameAr: 'ويلبوترين',
-    price: '150-280',
     dosageEn: '150mg once daily',
     dosageAr: '150 ملغ مرة يومياً'
   },
@@ -1873,7 +1683,6 @@ export const treatments: Treatment[] = [
     diseaseId: 'hoarding_disorder',
     nameEn: 'Cognitive Behavioral Therapy',
     nameAr: 'العلاج السلوكي المعرفي',
-    price: '300-600',
     dosageEn: 'Weekly therapy sessions',
     dosageAr: 'جلسات علاجية أسبوعية'
   },
@@ -1882,7 +1691,6 @@ export const treatments: Treatment[] = [
     diseaseId: 'hoarding_disorder',
     nameEn: 'Paroxetine (Paxil)',
     nameAr: 'باكسيل',
-    price: '100-180',
     dosageEn: '20-60mg daily',
     dosageAr: '20-60 ملغ يومياً'
   },
@@ -1891,7 +1699,6 @@ export const treatments: Treatment[] = [
     diseaseId: 'hoarding_disorder',
     nameEn: 'Venlafaxine (Effexor)',
     nameAr: 'إيفكسور',
-    price: '120-220',
     dosageEn: '75-225mg daily',
     dosageAr: '75-225 ملغ يومياً'
   },
@@ -1902,7 +1709,6 @@ export const treatments: Treatment[] = [
     diseaseId: 'body_dysmorphia',
     nameEn: 'Fluoxetine (Prozac)',
     nameAr: 'بروزاك',
-    price: '80-150',
     dosageEn: '40-80mg daily',
     dosageAr: '40-80 ملغ يومياً'
   },
@@ -1911,7 +1717,6 @@ export const treatments: Treatment[] = [
     diseaseId: 'body_dysmorphia',
     nameEn: 'CBT for Body Image',
     nameAr: 'العلاج المعرفي السلوكي لصورة الجسم',
-    price: '350-700',
     dosageEn: 'Weekly specialized sessions',
     dosageAr: 'جلسات متخصصة أسبوعية'
   },
@@ -1920,7 +1725,6 @@ export const treatments: Treatment[] = [
     diseaseId: 'body_dysmorphia',
     nameEn: 'Clomipramine',
     nameAr: 'كلوميبرامين',
-    price: '70-130',
     dosageEn: '150-250mg daily',
     dosageAr: '150-250 ملغ يومياً'
   },
@@ -1931,7 +1735,6 @@ export const treatments: Treatment[] = [
     diseaseId: 'intermittent_explosive',
     nameEn: 'Anger Management Therapy',
     nameAr: 'علاج إدارة الغضب',
-    price: '300-600',
     dosageEn: 'Weekly group or individual sessions',
     dosageAr: 'جلسات جماعية أو فردية أسبوعية'
   },
@@ -1940,7 +1743,6 @@ export const treatments: Treatment[] = [
     diseaseId: 'intermittent_explosive',
     nameEn: 'Fluoxetine',
     nameAr: 'فلوكسيتين',
-    price: '80-150',
     dosageEn: '20-60mg daily',
     dosageAr: '20-60 ملغ يومياً'
   },
@@ -1949,7 +1751,6 @@ export const treatments: Treatment[] = [
     diseaseId: 'intermittent_explosive',
     nameEn: 'Carbamazepine (Tegretol)',
     nameAr: 'تجريتول',
-    price: '50-100',
     dosageEn: '200-400mg twice daily',
     dosageAr: '200-400 ملغ مرتين يومياً'
   },
@@ -1960,7 +1761,6 @@ export const treatments: Treatment[] = [
     diseaseId: 'trichotillomania',
     nameEn: 'Habit Reversal Training',
     nameAr: 'تدريب عكس العادة',
-    price: '300-600',
     dosageEn: 'Weekly behavioral therapy',
     dosageAr: 'علاج سلوكي أسبوعي'
   },
@@ -1969,7 +1769,6 @@ export const treatments: Treatment[] = [
     diseaseId: 'trichotillomania',
     nameEn: 'N-Acetylcysteine (NAC)',
     nameAr: 'إن-أسيتيل سيستين',
-    price: '100-200',
     dosageEn: '1200-2400mg daily',
     dosageAr: '1200-2400 ملغ يومياً'
   },
@@ -1978,7 +1777,6 @@ export const treatments: Treatment[] = [
     diseaseId: 'trichotillomania',
     nameEn: 'Clomipramine',
     nameAr: 'كلوميبرامين',
-    price: '70-130',
     dosageEn: '50-250mg daily',
     dosageAr: '50-250 ملغ يومياً'
   },
@@ -1989,7 +1787,6 @@ export const treatments: Treatment[] = [
     diseaseId: 'dermatillomania',
     nameEn: 'Cognitive Behavioral Therapy',
     nameAr: 'العلاج السلوكي المعرفي',
-    price: '300-600',
     dosageEn: 'Weekly therapy for habit control',
     dosageAr: 'علاج أسبوعي للتحكم في العادة'
   },
@@ -1998,7 +1795,6 @@ export const treatments: Treatment[] = [
     diseaseId: 'dermatillomania',
     nameEn: 'Fluoxetine (Prozac)',
     nameAr: 'بروزاك',
-    price: '80-150',
     dosageEn: '40-80mg daily',
     dosageAr: '40-80 ملغ يومياً'
   },
@@ -2007,7 +1803,6 @@ export const treatments: Treatment[] = [
     diseaseId: 'dermatillomania',
     nameEn: 'N-Acetylcysteine (NAC)',
     nameAr: 'إن-أسيتيل سيستين',
-    price: '100-200',
     dosageEn: '1200-2400mg daily',
     dosageAr: '1200-2400 ملغ يومياً'
   },
@@ -2020,7 +1815,6 @@ export const treatments: Treatment[] = [
     diseaseId: 'lupus',
     nameEn: 'Plaquenil (Hydroxychloroquine)',
     nameAr: 'بلاكونيل',
-    price: '80-120',
     dosageEn: '200-400mg daily',
     dosageAr: '200-400 ملغ يومياً'
   },
@@ -2029,7 +1823,6 @@ export const treatments: Treatment[] = [
     diseaseId: 'lupus',
     nameEn: 'Prednisone',
     nameAr: 'بريدنيزون',
-    price: '30-60',
     dosageEn: '5-60mg daily as prescribed',
     dosageAr: '5-60 ملغ يومياً حسب الوصفة'
   },
@@ -2038,7 +1831,6 @@ export const treatments: Treatment[] = [
     diseaseId: 'lupus',
     nameEn: 'Imuran (Azathioprine)',
     nameAr: 'إيموران',
-    price: '150-250',
     dosageEn: '50-150mg daily',
     dosageAr: '50-150 ملغ يومياً'
   },
@@ -2049,7 +1841,6 @@ export const treatments: Treatment[] = [
     diseaseId: 'fibromyalgia',
     nameEn: 'Lyrica (Pregabalin)',
     nameAr: 'ليريكا',
-    price: '120-200',
     dosageEn: '75-150mg twice daily',
     dosageAr: '75-150 ملغ مرتين يومياً'
   },
@@ -2058,7 +1849,6 @@ export const treatments: Treatment[] = [
     diseaseId: 'fibromyalgia',
     nameEn: 'Cymbalta (Duloxetine)',
     nameAr: 'سيمبالتا',
-    price: '150-250',
     dosageEn: '30-60mg daily',
     dosageAr: '30-60 ملغ يومياً'
   },
@@ -2067,7 +1857,6 @@ export const treatments: Treatment[] = [
     diseaseId: 'fibromyalgia',
     nameEn: 'Flexeril (Cyclobenzaprine)',
     nameAr: 'فليكسيريل',
-    price: '60-100',
     dosageEn: '5-10mg at bedtime',
     dosageAr: '5-10 ملغ قبل النوم'
   },
@@ -2078,7 +1867,6 @@ export const treatments: Treatment[] = [
     diseaseId: 'crohns_disease',
     nameEn: 'Pentasa (Mesalamine)',
     nameAr: 'بينتازا',
-    price: '200-350',
     dosageEn: '1g four times daily',
     dosageAr: '1 جم أربع مرات يومياً'
   },
@@ -2087,7 +1875,6 @@ export const treatments: Treatment[] = [
     diseaseId: 'crohns_disease',
     nameEn: 'Imuran (Azathioprine)',
     nameAr: 'إيموران',
-    price: '150-250',
     dosageEn: '2-2.5mg/kg daily',
     dosageAr: '2-2.5 ملغ/كغ يومياً'
   },
@@ -2096,7 +1883,6 @@ export const treatments: Treatment[] = [
     diseaseId: 'crohns_disease',
     nameEn: 'Budesonide',
     nameAr: 'بوديزونيد',
-    price: '180-280',
     dosageEn: '9mg daily',
     dosageAr: '9 ملغ يومياً'
   },
@@ -2107,7 +1893,6 @@ export const treatments: Treatment[] = [
     diseaseId: 'multiple_sclerosis',
     nameEn: 'Avonex (Interferon beta-1a)',
     nameAr: 'أفونيكس',
-    price: '2000-3500',
     dosageEn: 'Once weekly injection',
     dosageAr: 'حقنة مرة أسبوعياً'
   },
@@ -2116,7 +1901,6 @@ export const treatments: Treatment[] = [
     diseaseId: 'multiple_sclerosis',
     nameEn: 'Tecfidera (Dimethyl fumarate)',
     nameAr: 'تيكفيديرا',
-    price: '1500-2500',
     dosageEn: '240mg twice daily',
     dosageAr: '240 ملغ مرتين يومياً'
   },
@@ -2125,7 +1909,6 @@ export const treatments: Treatment[] = [
     diseaseId: 'multiple_sclerosis',
     nameEn: 'Methylprednisolone',
     nameAr: 'ميثيل بريدنيزولون',
-    price: '100-200',
     dosageEn: 'IV infusion for relapses',
     dosageAr: 'حقن وريدية للانتكاسات'
   },
@@ -2136,7 +1919,6 @@ export const treatments: Treatment[] = [
     diseaseId: 'parkinsons',
     nameEn: 'Sinemet (Levodopa/Carbidopa)',
     nameAr: 'سينيميت',
-    price: '150-250',
     dosageEn: '25/100mg three times daily',
     dosageAr: '25/100 ملغ ثلاث مرات يومياً'
   },
@@ -2145,7 +1927,6 @@ export const treatments: Treatment[] = [
     diseaseId: 'parkinsons',
     nameEn: 'Mirapex (Pramipexole)',
     nameAr: 'ميرابيكس',
-    price: '200-350',
     dosageEn: '0.125-0.5mg three times daily',
     dosageAr: '0.125-0.5 ملغ ثلاث مرات يومياً'
   },
@@ -2154,7 +1935,6 @@ export const treatments: Treatment[] = [
     diseaseId: 'parkinsons',
     nameEn: 'Artane (Trihexyphenidyl)',
     nameAr: 'أرتين',
-    price: '40-80',
     dosageEn: '2-5mg twice daily',
     dosageAr: '2-5 ملغ مرتين يومياً'
   },
@@ -2165,7 +1945,6 @@ export const treatments: Treatment[] = [
     diseaseId: 'epilepsy',
     nameEn: 'Tegretol (Carbamazepine)',
     nameAr: 'تجريتول',
-    price: '50-100',
     dosageEn: '200-400mg twice daily',
     dosageAr: '200-400 ملغ مرتين يومياً'
   },
@@ -2174,7 +1953,6 @@ export const treatments: Treatment[] = [
     diseaseId: 'epilepsy',
     nameEn: 'Depakine (Valproic Acid)',
     nameAr: 'ديباكين',
-    price: '80-150',
     dosageEn: '250-500mg twice daily',
     dosageAr: '250-500 ملغ مرتين يومياً'
   },
@@ -2183,7 +1961,6 @@ export const treatments: Treatment[] = [
     diseaseId: 'epilepsy',
     nameEn: 'Keppra (Levetiracetam)',
     nameAr: 'كيبرا',
-    price: '150-280',
     dosageEn: '500-1500mg twice daily',
     dosageAr: '500-1500 ملغ مرتين يومياً'
   },
@@ -2194,7 +1971,6 @@ export const treatments: Treatment[] = [
     diseaseId: 'pancreatitis',
     nameEn: 'Creon (Pancrelipase)',
     nameAr: 'كريون',
-    price: '200-350',
     dosageEn: '1-2 capsules with meals',
     dosageAr: '1-2 كبسولة مع الوجبات'
   },
@@ -2203,7 +1979,6 @@ export const treatments: Treatment[] = [
     diseaseId: 'pancreatitis',
     nameEn: 'Omeprazole',
     nameAr: 'أوميبرازول',
-    price: '30-60',
     dosageEn: '20-40mg daily',
     dosageAr: '20-40 ملغ يومياً'
   },
@@ -2212,7 +1987,6 @@ export const treatments: Treatment[] = [
     diseaseId: 'pancreatitis',
     nameEn: 'Tramadol',
     nameAr: 'ترامادول',
-    price: '40-80',
     dosageEn: '50-100mg every 6 hours as needed',
     dosageAr: '50-100 ملغ كل 6 ساعات عند الحاجة'
   },
@@ -2223,7 +1997,6 @@ export const treatments: Treatment[] = [
     diseaseId: 'endocarditis',
     nameEn: 'Penicillin G',
     nameAr: 'بنسلين جي',
-    price: '100-200',
     dosageEn: 'IV every 4 hours for 4-6 weeks',
     dosageAr: 'وريدياً كل 4 ساعات لمدة 4-6 أسابيع'
   },
@@ -2232,7 +2005,6 @@ export const treatments: Treatment[] = [
     diseaseId: 'endocarditis',
     nameEn: 'Gentamicin',
     nameAr: 'جنتاميسين',
-    price: '50-100',
     dosageEn: '3mg/kg daily IV',
     dosageAr: '3 ملغ/كغ يومياً وريدياً'
   },
@@ -2241,7 +2013,6 @@ export const treatments: Treatment[] = [
     diseaseId: 'endocarditis',
     nameEn: 'Vancomycin',
     nameAr: 'فانكوميسين',
-    price: '150-300',
     dosageEn: '15-20mg/kg every 12 hours IV',
     dosageAr: '15-20 ملغ/كغ كل 12 ساعة وريدياً'
   },
@@ -2252,7 +2023,6 @@ export const treatments: Treatment[] = [
     diseaseId: 'diverticulitis',
     nameEn: 'Metronidazole (Flagyl)',
     nameAr: 'فلاجيل',
-    price: '20-40',
     dosageEn: '500mg three times daily',
     dosageAr: '500 ملغ ثلاث مرات يومياً'
   },
@@ -2261,7 +2031,6 @@ export const treatments: Treatment[] = [
     diseaseId: 'diverticulitis',
     nameEn: 'Ciprofloxacin',
     nameAr: 'سيبروفلوكساسين',
-    price: '30-60',
     dosageEn: '500mg twice daily',
     dosageAr: '500 ملغ مرتين يومياً'
   },
@@ -2270,7 +2039,6 @@ export const treatments: Treatment[] = [
     diseaseId: 'diverticulitis',
     nameEn: 'Fiber Supplement (Psyllium)',
     nameAr: 'مكمل الألياف',
-    price: '40-80',
     dosageEn: '1 tablespoon with water daily',
     dosageAr: 'ملعقة كبيرة مع الماء يومياً'
   },
@@ -2281,7 +2049,6 @@ export const treatments: Treatment[] = [
     diseaseId: 'meningitis',
     nameEn: 'Ceftriaxone (Rocephin)',
     nameAr: 'روسيفين',
-    price: '80-150',
     dosageEn: '2g IV every 12 hours',
     dosageAr: '2 جم وريدياً كل 12 ساعة'
   },
@@ -2290,7 +2057,6 @@ export const treatments: Treatment[] = [
     diseaseId: 'meningitis',
     nameEn: 'Dexamethasone',
     nameAr: 'ديكساميثازون',
-    price: '30-60',
     dosageEn: '0.15mg/kg every 6 hours',
     dosageAr: '0.15 ملغ/كغ كل 6 ساعات'
   },
@@ -2299,7 +2065,6 @@ export const treatments: Treatment[] = [
     diseaseId: 'meningitis',
     nameEn: 'Ampicillin',
     nameAr: 'أمبيسيلين',
-    price: '40-80',
     dosageEn: '2g IV every 4 hours',
     dosageAr: '2 جم وريدياً كل 4 ساعات'
   },
@@ -2312,7 +2077,6 @@ export const treatments: Treatment[] = [
     diseaseId: 'agoraphobia',
     nameEn: 'Exposure Therapy',
     nameAr: 'العلاج بالتعرض',
-    price: '300-600',
     dosageEn: 'Weekly sessions with gradual exposure',
     dosageAr: 'جلسات أسبوعية مع تعرض تدريجي'
   },
@@ -2321,7 +2085,6 @@ export const treatments: Treatment[] = [
     diseaseId: 'agoraphobia',
     nameEn: 'Sertraline (Zoloft)',
     nameAr: 'زولوفت',
-    price: '80-150',
     dosageEn: '50-200mg daily',
     dosageAr: '50-200 ملغ يومياً'
   },
@@ -2330,7 +2093,6 @@ export const treatments: Treatment[] = [
     diseaseId: 'agoraphobia',
     nameEn: 'Alprazolam (Xanax)',
     nameAr: 'زاناكس',
-    price: '50-100',
     dosageEn: '0.25-0.5mg as needed',
     dosageAr: '0.25-0.5 ملغ عند الحاجة'
   },
@@ -2341,7 +2103,6 @@ export const treatments: Treatment[] = [
     diseaseId: 'adjustment_disorder',
     nameEn: 'Supportive Psychotherapy',
     nameAr: 'العلاج النفسي الداعم',
-    price: '250-500',
     dosageEn: 'Weekly therapy sessions',
     dosageAr: 'جلسات علاجية أسبوعية'
   },
@@ -2350,7 +2111,6 @@ export const treatments: Treatment[] = [
     diseaseId: 'adjustment_disorder',
     nameEn: 'Escitalopram (Cipralex)',
     nameAr: 'سيبرالكس',
-    price: '100-180',
     dosageEn: '10-20mg daily',
     dosageAr: '10-20 ملغ يومياً'
   },
@@ -2359,7 +2119,6 @@ export const treatments: Treatment[] = [
     diseaseId: 'adjustment_disorder',
     nameEn: 'Buspirone (Buspar)',
     nameAr: 'بوسبار',
-    price: '80-140',
     dosageEn: '5-10mg twice daily',
     dosageAr: '5-10 ملغ مرتين يومياً'
   },
@@ -2370,7 +2129,6 @@ export const treatments: Treatment[] = [
     diseaseId: 'somatoform',
     nameEn: 'CBT for Health Anxiety',
     nameAr: 'العلاج المعرفي السلوكي لقلق الصحة',
-    price: '300-600',
     dosageEn: 'Weekly specialized sessions',
     dosageAr: 'جلسات متخصصة أسبوعية'
   },
@@ -2379,7 +2137,6 @@ export const treatments: Treatment[] = [
     diseaseId: 'somatoform',
     nameEn: 'Duloxetine (Cymbalta)',
     nameAr: 'سيمبالتا',
-    price: '150-250',
     dosageEn: '30-60mg daily',
     dosageAr: '30-60 ملغ يومياً'
   },
@@ -2388,7 +2145,6 @@ export const treatments: Treatment[] = [
     diseaseId: 'somatoform',
     nameEn: 'Mindfulness Therapy',
     nameAr: 'العلاج باليقظة الذهنية',
-    price: '200-400',
     dosageEn: 'Weekly group or individual sessions',
     dosageAr: 'جلسات جماعية أو فردية أسبوعية'
   },
@@ -2399,7 +2155,6 @@ export const treatments: Treatment[] = [
     diseaseId: 'avoidant_personality',
     nameEn: 'Schema Therapy',
     nameAr: 'العلاج بالمخطط',
-    price: '350-700',
     dosageEn: 'Long-term weekly therapy',
     dosageAr: 'علاج طويل الأمد أسبوعي'
   },
@@ -2408,7 +2163,6 @@ export const treatments: Treatment[] = [
     diseaseId: 'avoidant_personality',
     nameEn: 'Paroxetine (Paxil)',
     nameAr: 'باكسيل',
-    price: '80-150',
     dosageEn: '20-40mg daily',
     dosageAr: '20-40 ملغ يومياً'
   },
@@ -2417,7 +2171,6 @@ export const treatments: Treatment[] = [
     diseaseId: 'avoidant_personality',
     nameEn: 'Social Skills Training',
     nameAr: 'تدريب المهارات الاجتماعية',
-    price: '200-400',
     dosageEn: 'Weekly group sessions',
     dosageAr: 'جلسات جماعية أسبوعية'
   },
@@ -2428,7 +2181,6 @@ export const treatments: Treatment[] = [
     diseaseId: 'narcissistic_personality',
     nameEn: 'Psychodynamic Therapy',
     nameAr: 'العلاج النفسي الديناميكي',
-    price: '400-800',
     dosageEn: 'Long-term individual therapy',
     dosageAr: 'علاج فردي طويل الأمد'
   },
@@ -2437,7 +2189,6 @@ export const treatments: Treatment[] = [
     diseaseId: 'narcissistic_personality',
     nameEn: 'Mentalization-Based Therapy',
     nameAr: 'العلاج القائم على العقلنة',
-    price: '350-700',
     dosageEn: 'Weekly therapy focusing on empathy',
     dosageAr: 'علاج أسبوعي يركز على التعاطف'
   },
@@ -2446,7 +2197,6 @@ export const treatments: Treatment[] = [
     diseaseId: 'narcissistic_personality',
     nameEn: 'Lamictal (Lamotrigine)',
     nameAr: 'لاميكتال',
-    price: '100-180',
     dosageEn: '100-200mg daily for mood stability',
     dosageAr: '100-200 ملغ يومياً لاستقرار المزاج'
   },
@@ -2457,7 +2207,6 @@ export const treatments: Treatment[] = [
     diseaseId: 'dependent_personality',
     nameEn: 'Assertiveness Training',
     nameAr: 'تدريب الحزم',
-    price: '200-400',
     dosageEn: 'Weekly skills-based sessions',
     dosageAr: 'جلسات مهارية أسبوعية'
   },
@@ -2466,7 +2215,6 @@ export const treatments: Treatment[] = [
     diseaseId: 'dependent_personality',
     nameEn: 'Individual Psychotherapy',
     nameAr: 'العلاج النفسي الفردي',
-    price: '300-600',
     dosageEn: 'Weekly therapy for independence',
     dosageAr: 'علاج أسبوعي للاستقلالية'
   },
@@ -2475,7 +2223,6 @@ export const treatments: Treatment[] = [
     diseaseId: 'dependent_personality',
     nameEn: 'Fluoxetine (Prozac)',
     nameAr: 'بروزاك',
-    price: '80-150',
     dosageEn: '20-40mg daily',
     dosageAr: '20-40 ملغ يومياً'
   },
@@ -2486,7 +2233,6 @@ export const treatments: Treatment[] = [
     diseaseId: 'paranoid_personality',
     nameEn: 'Trust-Building Therapy',
     nameAr: 'علاج بناء الثقة',
-    price: '350-700',
     dosageEn: 'Long-term individual therapy',
     dosageAr: 'علاج فردي طويل الأمد'
   },
@@ -2495,7 +2241,6 @@ export const treatments: Treatment[] = [
     diseaseId: 'paranoid_personality',
     nameEn: 'Risperidone (Risperdal)',
     nameAr: 'ريسبيردال',
-    price: '80-160',
     dosageEn: '0.5-2mg daily for severe symptoms',
     dosageAr: '0.5-2 ملغ يومياً للأعراض الشديدة'
   },
@@ -2504,7 +2249,6 @@ export const treatments: Treatment[] = [
     diseaseId: 'paranoid_personality',
     nameEn: 'Cognitive Restructuring Therapy',
     nameAr: 'علاج إعادة الهيكلة المعرفية',
-    price: '300-600',
     dosageEn: 'Weekly sessions to challenge beliefs',
     dosageAr: 'جلسات أسبوعية لتحدي المعتقدات'
   },
@@ -2516,7 +2260,6 @@ export const treatments: Treatment[] = [
     diseaseId: 'heart_failure',
     nameEn: 'Lasix (Furosemide)',
     nameAr: 'لازكس',
-    price: '15-30',
     dosageEn: '40-80mg daily',
     dosageAr: '40-80 ملغ يومياً'
   },
@@ -2525,7 +2268,6 @@ export const treatments: Treatment[] = [
     diseaseId: 'heart_failure',
     nameEn: 'Enalapril',
     nameAr: 'إنالابريل',
-    price: '25-45',
     dosageEn: '5-20mg twice daily',
     dosageAr: '5-20 ملغ مرتين يومياً'
   },
@@ -2534,7 +2276,6 @@ export const treatments: Treatment[] = [
     diseaseId: 'heart_failure',
     nameEn: 'Carvedilol',
     nameAr: 'كارفيديلول',
-    price: '30-55',
     dosageEn: '3.125-25mg twice daily',
     dosageAr: '3.125-25 ملغ مرتين يومياً'
   },
@@ -2545,7 +2286,6 @@ export const treatments: Treatment[] = [
     diseaseId: 'prostate_enlargement',
     nameEn: 'Tamsulosin (Flomax)',
     nameAr: 'تامسولوسين',
-    price: '45-75',
     dosageEn: '0.4mg once daily',
     dosageAr: '0.4 ملغ مرة يومياً'
   },
@@ -2554,7 +2294,6 @@ export const treatments: Treatment[] = [
     diseaseId: 'prostate_enlargement',
     nameEn: 'Finasteride (Proscar)',
     nameAr: 'فيناسترايد',
-    price: '50-90',
     dosageEn: '5mg once daily',
     dosageAr: '5 ملغ مرة يومياً'
   },
@@ -2563,7 +2302,6 @@ export const treatments: Treatment[] = [
     diseaseId: 'prostate_enlargement',
     nameEn: 'Alfuzosin',
     nameAr: 'الفوزوسين',
-    price: '55-85',
     dosageEn: '10mg once daily',
     dosageAr: '10 ملغ مرة يومياً'
   },
@@ -2574,7 +2312,6 @@ export const treatments: Treatment[] = [
     diseaseId: 'pancreatitis',
     nameEn: 'Pain Management (Hospital)',
     nameAr: 'إدارة الألم (مستشفى)',
-    price: '500-1500',
     dosageEn: 'IV fluids and pain control',
     dosageAr: 'سوائل وريدية والتحكم بالألم'
   },
@@ -2583,7 +2320,6 @@ export const treatments: Treatment[] = [
     diseaseId: 'pancreatitis',
     nameEn: 'Creon (Pancreatic Enzymes)',
     nameAr: 'كريون',
-    price: '150-250',
     dosageEn: '1-3 capsules with meals',
     dosageAr: '1-3 كبسولات مع الوجبات'
   },
@@ -2592,7 +2328,6 @@ export const treatments: Treatment[] = [
     diseaseId: 'pancreatitis',
     nameEn: 'Omeprazole',
     nameAr: 'أوميبرازول',
-    price: '20-40',
     dosageEn: '20-40mg daily',
     dosageAr: '20-40 ملغ يومياً'
   },
@@ -2603,7 +2338,6 @@ export const treatments: Treatment[] = [
     diseaseId: 'diverticulitis',
     nameEn: 'Metronidazole + Ciprofloxacin',
     nameAr: 'مترونيدازول + سيبروفلوكساسين',
-    price: '50-90',
     dosageEn: 'Combined antibiotic course',
     dosageAr: 'علاج مضاد حيوي مشترك'
   },
@@ -2612,7 +2346,6 @@ export const treatments: Treatment[] = [
     diseaseId: 'diverticulitis',
     nameEn: 'Buscopan',
     nameAr: 'بوسكوبان',
-    price: '25-45',
     dosageEn: '10mg 3 times daily',
     dosageAr: '10 ملغ 3 مرات يومياً'
   },
@@ -2621,7 +2354,6 @@ export const treatments: Treatment[] = [
     diseaseId: 'diverticulitis',
     nameEn: 'High Fiber Diet',
     nameAr: 'نظام غذائي عالي الألياف',
-    price: '0-50',
     dosageEn: '25-35g fiber daily',
     dosageAr: '25-35 غرام ألياف يومياً'
   },
@@ -2632,7 +2364,6 @@ export const treatments: Treatment[] = [
     diseaseId: 'glaucoma',
     nameEn: 'Timolol Eye Drops',
     nameAr: 'قطرة تيمولول',
-    price: '30-60',
     dosageEn: '1 drop twice daily',
     dosageAr: 'قطرة مرتين يومياً'
   },
@@ -2641,7 +2372,6 @@ export const treatments: Treatment[] = [
     diseaseId: 'glaucoma',
     nameEn: 'Latanoprost (Xalatan)',
     nameAr: 'لاتانوبروست',
-    price: '80-150',
     dosageEn: '1 drop at bedtime',
     dosageAr: 'قطرة قبل النوم'
   },
@@ -2650,7 +2380,6 @@ export const treatments: Treatment[] = [
     diseaseId: 'glaucoma',
     nameEn: 'Dorzolamide',
     nameAr: 'دورزولاميد',
-    price: '50-90',
     dosageEn: '1 drop 3 times daily',
     dosageAr: 'قطرة 3 مرات يومياً'
   },
@@ -2661,7 +2390,6 @@ export const treatments: Treatment[] = [
     diseaseId: 'cataracts',
     nameEn: 'Cataract Surgery',
     nameAr: 'جراحة المياه البيضاء',
-    price: '5000-15000',
     dosageEn: 'Outpatient surgical procedure',
     dosageAr: 'إجراء جراحي'
   },
@@ -2670,7 +2398,6 @@ export const treatments: Treatment[] = [
     diseaseId: 'cataracts',
     nameEn: 'Anti-inflammatory Eye Drops',
     nameAr: 'قطرة مضادة للالتهاب',
-    price: '40-80',
     dosageEn: 'Post-surgery care',
     dosageAr: 'للعناية بعد الجراحة'
   },
@@ -2679,7 +2406,6 @@ export const treatments: Treatment[] = [
     diseaseId: 'cataracts',
     nameEn: 'Antibiotic Eye Drops',
     nameAr: 'قطرة مضاد حيوي',
-    price: '30-60',
     dosageEn: 'Post-surgery infection prevention',
     dosageAr: 'للوقاية من العدوى بعد الجراحة'
   },
@@ -2690,7 +2416,6 @@ export const treatments: Treatment[] = [
     diseaseId: 'carpal_tunnel',
     nameEn: 'Wrist Splint',
     nameAr: 'جبيرة الرسغ',
-    price: '80-200',
     dosageEn: 'Wear at night',
     dosageAr: 'ارتداء ليلاً'
   },
@@ -2699,7 +2424,6 @@ export const treatments: Treatment[] = [
     diseaseId: 'carpal_tunnel',
     nameEn: 'Ibuprofen',
     nameAr: 'إيبوبروفين',
-    price: '15-30',
     dosageEn: '400mg 3 times daily',
     dosageAr: '400 ملغ 3 مرات يومياً'
   },
@@ -2708,7 +2432,6 @@ export const treatments: Treatment[] = [
     diseaseId: 'carpal_tunnel',
     nameEn: 'Corticosteroid Injection',
     nameAr: 'حقن الكورتيزون',
-    price: '200-500',
     dosageEn: 'Single injection',
     dosageAr: 'حقنة واحدة'
   },
@@ -2719,7 +2442,6 @@ export const treatments: Treatment[] = [
     diseaseId: 'fibromyalgia',
     nameEn: 'Lyrica (Pregabalin)',
     nameAr: 'ليريكا',
-    price: '100-200',
     dosageEn: '150-300mg daily',
     dosageAr: '150-300 ملغ يومياً'
   },
@@ -2728,7 +2450,6 @@ export const treatments: Treatment[] = [
     diseaseId: 'fibromyalgia',
     nameEn: 'Cymbalta (Duloxetine)',
     nameAr: 'سيمبالتا',
-    price: '120-220',
     dosageEn: '60mg daily',
     dosageAr: '60 ملغ يومياً'
   },
@@ -2737,7 +2458,6 @@ export const treatments: Treatment[] = [
     diseaseId: 'fibromyalgia',
     nameEn: 'Amitriptyline',
     nameAr: 'أميتريبتيلين',
-    price: '20-40',
     dosageEn: '10-50mg at bedtime',
     dosageAr: '10-50 ملغ قبل النوم'
   },
@@ -2748,7 +2468,6 @@ export const treatments: Treatment[] = [
     diseaseId: 'lupus',
     nameEn: 'Plaquenil (Hydroxychloroquine)',
     nameAr: 'بلاكنيل',
-    price: '80-150',
     dosageEn: '200-400mg daily',
     dosageAr: '200-400 ملغ يومياً'
   },
@@ -2757,7 +2476,6 @@ export const treatments: Treatment[] = [
     diseaseId: 'lupus',
     nameEn: 'Prednisone',
     nameAr: 'بريدنيزون',
-    price: '20-50',
     dosageEn: '5-60mg daily',
     dosageAr: '5-60 ملغ يومياً'
   },
@@ -2766,7 +2484,6 @@ export const treatments: Treatment[] = [
     diseaseId: 'lupus',
     nameEn: 'Imuran (Azathioprine)',
     nameAr: 'إيموران',
-    price: '100-180',
     dosageEn: '50-150mg daily',
     dosageAr: '50-150 ملغ يومياً'
   },
@@ -2777,7 +2494,6 @@ export const treatments: Treatment[] = [
     diseaseId: 'sleep_apnea',
     nameEn: 'CPAP Machine',
     nameAr: 'جهاز ضغط الهواء الإيجابي',
-    price: '3000-8000',
     dosageEn: 'Use every night during sleep',
     dosageAr: 'الاستخدام كل ليلة أثناء النوم'
   },
@@ -2786,7 +2502,6 @@ export const treatments: Treatment[] = [
     diseaseId: 'sleep_apnea',
     nameEn: 'Oral Appliance',
     nameAr: 'جهاز فموي',
-    price: '1500-4000',
     dosageEn: 'Wear during sleep',
     dosageAr: 'ارتداء أثناء النوم'
   },
@@ -2795,7 +2510,6 @@ export const treatments: Treatment[] = [
     diseaseId: 'sleep_apnea',
     nameEn: 'Weight Management',
     nameAr: 'إدارة الوزن',
-    price: '0-500',
     dosageEn: 'Lifestyle changes',
     dosageAr: 'تغييرات نمط الحياة'
   },
@@ -2806,7 +2520,6 @@ export const treatments: Treatment[] = [
     diseaseId: 'shingles',
     nameEn: 'Acyclovir',
     nameAr: 'أسيكلوفير',
-    price: '40-80',
     dosageEn: '800mg 5 times daily for 7 days',
     dosageAr: '800 ملغ 5 مرات يومياً لمدة 7 أيام'
   },
@@ -2815,7 +2528,6 @@ export const treatments: Treatment[] = [
     diseaseId: 'shingles',
     nameEn: 'Valacyclovir',
     nameAr: 'فالاسيكلوفير',
-    price: '80-150',
     dosageEn: '1000mg 3 times daily for 7 days',
     dosageAr: '1000 ملغ 3 مرات يومياً لمدة 7 أيام'
   },
@@ -2824,7 +2536,6 @@ export const treatments: Treatment[] = [
     diseaseId: 'shingles',
     nameEn: 'Gabapentin',
     nameAr: 'جابابنتين',
-    price: '30-70',
     dosageEn: '300-600mg 3 times daily',
     dosageAr: '300-600 ملغ 3 مرات يومياً'
   },
@@ -2835,7 +2546,6 @@ export const treatments: Treatment[] = [
     diseaseId: 'celiac_intolerance',
     nameEn: 'Lactaid Tablets',
     nameAr: 'أقراص لاكتيز',
-    price: '80-150',
     dosageEn: '1-2 tablets before dairy',
     dosageAr: '1-2 قرص قبل منتجات الألبان'
   },
@@ -2844,7 +2554,6 @@ export const treatments: Treatment[] = [
     diseaseId: 'celiac_intolerance',
     nameEn: 'Lactose-Free Products',
     nameAr: 'منتجات خالية من اللاكتوز',
-    price: '50-150',
     dosageEn: 'Replace regular dairy',
     dosageAr: 'استبدال منتجات الألبان العادية'
   },
@@ -2853,7 +2562,6 @@ export const treatments: Treatment[] = [
     diseaseId: 'celiac_intolerance',
     nameEn: 'Calcium Supplement',
     nameAr: 'مكمل الكالسيوم',
-    price: '40-80',
     dosageEn: '500-1000mg daily',
     dosageAr: '500-1000 ملغ يومياً'
   },
@@ -2864,7 +2572,6 @@ export const treatments: Treatment[] = [
     diseaseId: 'meniere_disease',
     nameEn: 'Betahistine (Betaserc)',
     nameAr: 'بيتاسيرك',
-    price: '50-100',
     dosageEn: '16mg 3 times daily',
     dosageAr: '16 ملغ 3 مرات يومياً'
   },
@@ -2873,7 +2580,6 @@ export const treatments: Treatment[] = [
     diseaseId: 'meniere_disease',
     nameEn: 'Diuretics (Low Salt Diet)',
     nameAr: 'مدرات البول ونظام قليل الملح',
-    price: '20-50',
     dosageEn: 'As prescribed with diet changes',
     dosageAr: 'حسب الوصفة مع تغييرات غذائية'
   },
@@ -2882,7 +2588,6 @@ export const treatments: Treatment[] = [
     diseaseId: 'meniere_disease',
     nameEn: 'Prochlorperazine',
     nameAr: 'بروكلوربيرازين',
-    price: '25-50',
     dosageEn: '5-10mg 3 times daily',
     dosageAr: '5-10 ملغ 3 مرات يومياً'
   },
@@ -2894,7 +2599,6 @@ export const treatments: Treatment[] = [
     diseaseId: 'borderline_personality',
     nameEn: 'Dialectical Behavior Therapy (DBT)',
     nameAr: 'العلاج السلوكي الجدلي',
-    price: '400-800',
     dosageEn: 'Weekly individual and group sessions',
     dosageAr: 'جلسات فردية وجماعية أسبوعية'
   },
@@ -2903,7 +2607,6 @@ export const treatments: Treatment[] = [
     diseaseId: 'borderline_personality',
     nameEn: 'Quetiapine (Seroquel)',
     nameAr: 'سيروكويل',
-    price: '80-180',
     dosageEn: '50-300mg daily',
     dosageAr: '50-300 ملغ يومياً'
   },
@@ -2912,7 +2615,6 @@ export const treatments: Treatment[] = [
     diseaseId: 'borderline_personality',
     nameEn: 'Mood Stabilizers',
     nameAr: 'مثبتات المزاج',
-    price: '60-150',
     dosageEn: 'As prescribed',
     dosageAr: 'حسب الوصفة'
   },
@@ -2923,7 +2625,6 @@ export const treatments: Treatment[] = [
     diseaseId: 'cyclothymia',
     nameEn: 'Lithium',
     nameAr: 'ليثيوم',
-    price: '40-80',
     dosageEn: '300-600mg daily',
     dosageAr: '300-600 ملغ يومياً'
   },
@@ -2932,7 +2633,6 @@ export const treatments: Treatment[] = [
     diseaseId: 'cyclothymia',
     nameEn: 'Lamotrigine',
     nameAr: 'لاموتريجين',
-    price: '60-120',
     dosageEn: '25-200mg daily',
     dosageAr: '25-200 ملغ يومياً'
   },
@@ -2941,7 +2641,6 @@ export const treatments: Treatment[] = [
     diseaseId: 'cyclothymia',
     nameEn: 'Psychotherapy',
     nameAr: 'العلاج النفسي',
-    price: '300-600',
     dosageEn: 'Weekly sessions',
     dosageAr: 'جلسات أسبوعية'
   },
@@ -2952,7 +2651,6 @@ export const treatments: Treatment[] = [
     diseaseId: 'selective_mutism',
     nameEn: 'Behavioral Therapy',
     nameAr: 'العلاج السلوكي',
-    price: '300-600',
     dosageEn: 'Weekly sessions',
     dosageAr: 'جلسات أسبوعية'
   },
@@ -2961,7 +2659,6 @@ export const treatments: Treatment[] = [
     diseaseId: 'selective_mutism',
     nameEn: 'Fluoxetine (for severe cases)',
     nameAr: 'فلوكستين للحالات الشديدة',
-    price: '40-80',
     dosageEn: '10-20mg daily',
     dosageAr: '10-20 ملغ يومياً'
   },
@@ -2970,7 +2667,6 @@ export const treatments: Treatment[] = [
     diseaseId: 'selective_mutism',
     nameEn: 'School-Based Intervention',
     nameAr: 'التدخل المدرسي',
-    price: '200-400',
     dosageEn: 'Coordinated with school',
     dosageAr: 'بالتنسيق مع المدرسة'
   },
@@ -2981,7 +2677,6 @@ export const treatments: Treatment[] = [
     diseaseId: 'reactive_attachment',
     nameEn: 'Attachment-Focused Therapy',
     nameAr: 'علاج التركيز على التعلق',
-    price: '400-800',
     dosageEn: 'Family-based weekly sessions',
     dosageAr: 'جلسات عائلية أسبوعية'
   },
@@ -2990,7 +2685,6 @@ export const treatments: Treatment[] = [
     diseaseId: 'reactive_attachment',
     nameEn: 'Parent Training',
     nameAr: 'تدريب الوالدين',
-    price: '300-600',
     dosageEn: 'Regular training sessions',
     dosageAr: 'جلسات تدريب منتظمة'
   },
@@ -2999,7 +2693,6 @@ export const treatments: Treatment[] = [
     diseaseId: 'reactive_attachment',
     nameEn: 'Play Therapy',
     nameAr: 'العلاج باللعب',
-    price: '250-500',
     dosageEn: 'Weekly sessions',
     dosageAr: 'جلسات أسبوعية'
   },
@@ -3010,7 +2703,6 @@ export const treatments: Treatment[] = [
     diseaseId: 'excoriation',
     nameEn: 'Habit Reversal Training',
     nameAr: 'تدريب عكس العادة',
-    price: '300-600',
     dosageEn: 'Weekly therapy sessions',
     dosageAr: 'جلسات علاج أسبوعية'
   },
@@ -3019,7 +2711,6 @@ export const treatments: Treatment[] = [
     diseaseId: 'excoriation',
     nameEn: 'N-Acetylcysteine',
     nameAr: 'إن-أسيتيل سيستين',
-    price: '60-120',
     dosageEn: '1200-2400mg daily',
     dosageAr: '1200-2400 ملغ يومياً'
   },
@@ -3028,7 +2719,6 @@ export const treatments: Treatment[] = [
     diseaseId: 'excoriation',
     nameEn: 'Sertraline',
     nameAr: 'سيرترالين',
-    price: '50-100',
     dosageEn: '50-200mg daily',
     dosageAr: '50-200 ملغ يومياً'
   },
@@ -3039,7 +2729,6 @@ export const treatments: Treatment[] = [
     diseaseId: 'gambling_disorder',
     nameEn: 'Cognitive Behavioral Therapy',
     nameAr: 'العلاج المعرفي السلوكي',
-    price: '300-600',
     dosageEn: 'Weekly individual sessions',
     dosageAr: 'جلسات فردية أسبوعية'
   },
@@ -3048,7 +2737,6 @@ export const treatments: Treatment[] = [
     diseaseId: 'gambling_disorder',
     nameEn: 'Naltrexone',
     nameAr: 'نالتريكسون',
-    price: '100-200',
     dosageEn: '50-100mg daily',
     dosageAr: '50-100 ملغ يومياً'
   },
@@ -3057,7 +2745,6 @@ export const treatments: Treatment[] = [
     diseaseId: 'gambling_disorder',
     nameEn: 'Support Groups',
     nameAr: 'مجموعات الدعم',
-    price: '0-100',
     dosageEn: 'Regular group meetings',
     dosageAr: 'اجتماعات جماعية منتظمة'
   },
@@ -3068,7 +2755,6 @@ export const treatments: Treatment[] = [
     diseaseId: 'illness_anxiety',
     nameEn: 'CBT for Health Anxiety',
     nameAr: 'العلاج المعرفي لقلق الصحة',
-    price: '350-700',
     dosageEn: 'Weekly therapy sessions',
     dosageAr: 'جلسات علاج أسبوعية'
   },
@@ -3077,7 +2763,6 @@ export const treatments: Treatment[] = [
     diseaseId: 'illness_anxiety',
     nameEn: 'Paroxetine',
     nameAr: 'باروكستين',
-    price: '60-120',
     dosageEn: '20-40mg daily',
     dosageAr: '20-40 ملغ يومياً'
   },
@@ -3086,7 +2771,6 @@ export const treatments: Treatment[] = [
     diseaseId: 'illness_anxiety',
     nameEn: 'Stress Management Training',
     nameAr: 'تدريب إدارة التوتر',
-    price: '200-400',
     dosageEn: 'Weekly sessions',
     dosageAr: 'جلسات أسبوعية'
   },
@@ -3097,7 +2781,6 @@ export const treatments: Treatment[] = [
     diseaseId: 'binge_eating',
     nameEn: 'CBT for Eating Disorders',
     nameAr: 'العلاج المعرفي لاضطرابات الأكل',
-    price: '400-800',
     dosageEn: 'Weekly therapy sessions',
     dosageAr: 'جلسات علاج أسبوعية'
   },
@@ -3106,7 +2789,6 @@ export const treatments: Treatment[] = [
     diseaseId: 'binge_eating',
     nameEn: 'Lisdexamfetamine (Vyvanse)',
     nameAr: 'ليسديكسامفيتامين',
-    price: '200-400',
     dosageEn: '30-70mg daily',
     dosageAr: '30-70 ملغ يومياً'
   },
@@ -3115,7 +2797,6 @@ export const treatments: Treatment[] = [
     diseaseId: 'binge_eating',
     nameEn: 'Nutritional Counseling',
     nameAr: 'الإرشاد الغذائي',
-    price: '150-300',
     dosageEn: 'Regular sessions',
     dosageAr: 'جلسات منتظمة'
   },
@@ -3126,7 +2807,6 @@ export const treatments: Treatment[] = [
     diseaseId: 'rumination',
     nameEn: 'Diaphragmatic Breathing Training',
     nameAr: 'تدريب التنفس الحجابي',
-    price: '200-400',
     dosageEn: 'Daily practice',
     dosageAr: 'ممارسة يومية'
   },
@@ -3135,7 +2815,6 @@ export const treatments: Treatment[] = [
     diseaseId: 'rumination',
     nameEn: 'Behavioral Therapy',
     nameAr: 'العلاج السلوكي',
-    price: '300-600',
     dosageEn: 'Weekly sessions',
     dosageAr: 'جلسات أسبوعية'
   },
@@ -3144,7 +2823,6 @@ export const treatments: Treatment[] = [
     diseaseId: 'rumination',
     nameEn: 'Biofeedback',
     nameAr: 'الارتجاع البيولوجي',
-    price: '250-500',
     dosageEn: 'Regular training sessions',
     dosageAr: 'جلسات تدريب منتظمة'
   },
@@ -3155,7 +2833,6 @@ export const treatments: Treatment[] = [
     diseaseId: 'separation_anxiety',
     nameEn: 'Family Therapy',
     nameAr: 'العلاج الأسري',
-    price: '350-700',
     dosageEn: 'Weekly family sessions',
     dosageAr: 'جلسات عائلية أسبوعية'
   },
@@ -3164,7 +2841,6 @@ export const treatments: Treatment[] = [
     diseaseId: 'separation_anxiety',
     nameEn: 'Sertraline',
     nameAr: 'سيرترالين',
-    price: '50-100',
     dosageEn: '25-200mg daily',
     dosageAr: '25-200 ملغ يومياً'
   },
@@ -3173,7 +2849,6 @@ export const treatments: Treatment[] = [
     diseaseId: 'separation_anxiety',
     nameEn: 'Exposure Therapy',
     nameAr: 'العلاج بالتعرض',
-    price: '300-600',
     dosageEn: 'Gradual exposure sessions',
     dosageAr: 'جلسات تعرض تدريجي'
   },
@@ -3184,7 +2859,6 @@ export const treatments: Treatment[] = [
     diseaseId: 'conversion_disorder',
     nameEn: 'Physical Therapy',
     nameAr: 'العلاج الطبيعي',
-    price: '150-300',
     dosageEn: 'Regular rehabilitation sessions',
     dosageAr: 'جلسات تأهيل منتظمة'
   },
@@ -3193,7 +2867,6 @@ export const treatments: Treatment[] = [
     diseaseId: 'conversion_disorder',
     nameEn: 'Psychotherapy',
     nameAr: 'العلاج النفسي',
-    price: '300-600',
     dosageEn: 'Weekly sessions',
     dosageAr: 'جلسات أسبوعية'
   },
@@ -3202,7 +2875,6 @@ export const treatments: Treatment[] = [
     diseaseId: 'conversion_disorder',
     nameEn: 'Stress Reduction Techniques',
     nameAr: 'تقنيات تقليل التوتر',
-    price: '100-250',
     dosageEn: 'Daily practice',
     dosageAr: 'ممارسة يومية'
   },
@@ -3212,7 +2884,6 @@ export const treatments: Treatment[] = [
     diseaseId: 'meningitis',
     nameEn: 'Ceftriaxone Injection',
     nameAr: 'حقن سيفترياكسون',
-    price: '100-200',
     dosageEn: 'As prescribed by doctor',
     dosageAr: 'حسب وصفة الطبيب'
   },
@@ -3221,7 +2892,6 @@ export const treatments: Treatment[] = [
     diseaseId: 'meningitis',
     nameEn: 'Dexamethasone',
     nameAr: 'ديكساميثازون',
-    price: '30-60',
     dosageEn: 'As prescribed',
     dosageAr: 'حسب الوصفة'
   },
@@ -3230,7 +2900,6 @@ export const treatments: Treatment[] = [
     diseaseId: 'pancreatitis',
     nameEn: 'Creon',
     nameAr: 'كريون',
-    price: '150-250',
     dosageEn: '1-2 capsules with meals',
     dosageAr: '1-2 كبسولة مع الوجبات'
   },
@@ -3239,7 +2908,6 @@ export const treatments: Treatment[] = [
     diseaseId: 'pancreatitis',
     nameEn: 'Omeprazole',
     nameAr: 'أوميبرازول',
-    price: '25-45',
     dosageEn: '1 capsule daily before meals',
     dosageAr: 'كبسولة يومياً قبل الأكل'
   },
@@ -3248,7 +2916,6 @@ export const treatments: Treatment[] = [
     diseaseId: 'diverticulitis',
     nameEn: 'Metronidazole',
     nameAr: 'ميترونيدازول',
-    price: '20-35',
     dosageEn: '1 tablet 3 times daily',
     dosageAr: 'قرص 3 مرات يومياً'
   },
@@ -3257,7 +2924,6 @@ export const treatments: Treatment[] = [
     diseaseId: 'diverticulitis',
     nameEn: 'Ciprofloxacin',
     nameAr: 'سيبروفلوكساسين',
-    price: '25-40',
     dosageEn: '1 tablet twice daily',
     dosageAr: 'قرص مرتين يومياً'
   },
@@ -3266,7 +2932,6 @@ export const treatments: Treatment[] = [
     diseaseId: 'hernia',
     nameEn: 'Surgical Repair',
     nameAr: 'إصلاح جراحي',
-    price: '5000-15000',
     dosageEn: 'One-time surgery',
     dosageAr: 'عملية جراحية واحدة'
   },
@@ -3275,7 +2940,6 @@ export const treatments: Treatment[] = [
     diseaseId: 'hernia',
     nameEn: 'Pain Management',
     nameAr: 'إدارة الألم',
-    price: '30-60',
     dosageEn: 'As needed for pain',
     dosageAr: 'عند الحاجة للألم'
   },
@@ -3284,7 +2948,6 @@ export const treatments: Treatment[] = [
     diseaseId: 'lupus',
     nameEn: 'Hydroxychloroquine',
     nameAr: 'هيدروكسي كلوروكين',
-    price: '80-120',
     dosageEn: '1-2 tablets daily',
     dosageAr: '1-2 قرص يومياً'
   },
@@ -3293,7 +2956,6 @@ export const treatments: Treatment[] = [
     diseaseId: 'lupus',
     nameEn: 'Prednisone',
     nameAr: 'بريدنيزون',
-    price: '25-50',
     dosageEn: 'As prescribed by rheumatologist',
     dosageAr: 'حسب وصفة طبيب الروماتيزم'
   },
@@ -3302,7 +2964,6 @@ export const treatments: Treatment[] = [
     diseaseId: 'fibromyalgia',
     nameEn: 'Lyrica',
     nameAr: 'ليريكا',
-    price: '150-250',
     dosageEn: '75-150mg twice daily',
     dosageAr: '75-150 ملغ مرتين يومياً'
   },
@@ -3311,7 +2972,6 @@ export const treatments: Treatment[] = [
     diseaseId: 'fibromyalgia',
     nameEn: 'Cymbalta',
     nameAr: 'سيمبالتا',
-    price: '180-280',
     dosageEn: '60mg once daily',
     dosageAr: '60 ملغ مرة يومياً'
   },
@@ -3320,7 +2980,6 @@ export const treatments: Treatment[] = [
     diseaseId: 'bells_palsy',
     nameEn: 'Prednisolone',
     nameAr: 'بريدنيزولون',
-    price: '30-50',
     dosageEn: 'Tapering dose over 10 days',
     dosageAr: 'جرعة تنازلية لمدة 10 أيام'
   },
@@ -3329,7 +2988,6 @@ export const treatments: Treatment[] = [
     diseaseId: 'bells_palsy',
     nameEn: 'Eye Lubricant',
     nameAr: 'مرطب العين',
-    price: '25-45',
     dosageEn: 'Apply as needed',
     dosageAr: 'يوضع عند الحاجة'
   },
@@ -3338,7 +2996,6 @@ export const treatments: Treatment[] = [
     diseaseId: 'carpal_tunnel',
     nameEn: 'Wrist Splint',
     nameAr: 'جبيرة الرسغ',
-    price: '80-150',
     dosageEn: 'Wear at night',
     dosageAr: 'ارتداء ليلاً'
   },
@@ -3347,7 +3004,6 @@ export const treatments: Treatment[] = [
     diseaseId: 'carpal_tunnel',
     nameEn: 'Ibuprofen',
     nameAr: 'إيبوبروفين',
-    price: '15-30',
     dosageEn: '1 tablet every 6-8 hours',
     dosageAr: 'قرص كل 6-8 ساعات'
   },
@@ -3356,7 +3012,6 @@ export const treatments: Treatment[] = [
     diseaseId: 'plantar_fasciitis',
     nameEn: 'Orthotic Insoles',
     nameAr: 'نعال تقويمية',
-    price: '150-300',
     dosageEn: 'Wear daily in shoes',
     dosageAr: 'ارتداء يومياً في الحذاء'
   },
@@ -3365,7 +3020,6 @@ export const treatments: Treatment[] = [
     diseaseId: 'plantar_fasciitis',
     nameEn: 'Naproxen',
     nameAr: 'نابروكسين',
-    price: '25-45',
     dosageEn: '1 tablet twice daily',
     dosageAr: 'قرص مرتين يومياً'
   },
@@ -3374,7 +3028,6 @@ export const treatments: Treatment[] = [
     diseaseId: 'tendinitis',
     nameEn: 'Voltaren Gel',
     nameAr: 'جل فولتارين',
-    price: '45-75',
     dosageEn: 'Apply 3-4 times daily',
     dosageAr: 'يوضع 3-4 مرات يومياً'
   },
@@ -3383,7 +3036,6 @@ export const treatments: Treatment[] = [
     diseaseId: 'tendinitis',
     nameEn: 'Physical Therapy',
     nameAr: 'علاج طبيعي',
-    price: '150-300',
     dosageEn: '2-3 sessions weekly',
     dosageAr: '2-3 جلسات أسبوعياً'
   },
@@ -3392,7 +3044,6 @@ export const treatments: Treatment[] = [
     diseaseId: 'bursitis',
     nameEn: 'Corticosteroid Injection',
     nameAr: 'حقن كورتيكوستيرويد',
-    price: '200-400',
     dosageEn: 'Single injection as needed',
     dosageAr: 'حقنة واحدة عند الحاجة'
   },
@@ -3401,7 +3052,6 @@ export const treatments: Treatment[] = [
     diseaseId: 'bursitis',
     nameEn: 'Ketoprofen',
     nameAr: 'كيتوبروفين',
-    price: '35-55',
     dosageEn: '1 capsule twice daily',
     dosageAr: 'كبسولة مرتين يومياً'
   },
@@ -3410,7 +3060,6 @@ export const treatments: Treatment[] = [
     diseaseId: 'shingles',
     nameEn: 'Acyclovir',
     nameAr: 'أسيكلوفير',
-    price: '50-80',
     dosageEn: '800mg 5 times daily for 7 days',
     dosageAr: '800 ملغ 5 مرات يومياً لمدة 7 أيام'
   },
@@ -3419,7 +3068,6 @@ export const treatments: Treatment[] = [
     diseaseId: 'shingles',
     nameEn: 'Gabapentin',
     nameAr: 'جابابنتين',
-    price: '60-100',
     dosageEn: 'Starting 300mg, increase as needed',
     dosageAr: 'بدء 300 ملغ، زيادة حسب الحاجة'
   },
@@ -3428,7 +3076,6 @@ export const treatments: Treatment[] = [
     diseaseId: 'rosacea',
     nameEn: 'Metrogel',
     nameAr: 'ميتروجيل',
-    price: '80-130',
     dosageEn: 'Apply twice daily',
     dosageAr: 'يوضع مرتين يومياً'
   },
@@ -3437,7 +3084,6 @@ export const treatments: Treatment[] = [
     diseaseId: 'rosacea',
     nameEn: 'Doxycycline',
     nameAr: 'دوكسيسايكلين',
-    price: '40-70',
     dosageEn: '100mg daily',
     dosageAr: '100 ملغ يومياً'
   },
@@ -3446,7 +3092,6 @@ export const treatments: Treatment[] = [
     diseaseId: 'vitiligo',
     nameEn: 'Tacrolimus Ointment',
     nameAr: 'مرهم تاكروليموس',
-    price: '150-250',
     dosageEn: 'Apply twice daily',
     dosageAr: 'يوضع مرتين يومياً'
   },
@@ -3455,7 +3100,6 @@ export const treatments: Treatment[] = [
     diseaseId: 'vitiligo',
     nameEn: 'Phototherapy',
     nameAr: 'العلاج الضوئي',
-    price: '200-500',
     dosageEn: '2-3 sessions weekly',
     dosageAr: '2-3 جلسات أسبوعياً'
   },
@@ -3464,7 +3108,6 @@ export const treatments: Treatment[] = [
     diseaseId: 'glaucoma',
     nameEn: 'Xalatan Eye Drops',
     nameAr: 'قطرة زالاتان',
-    price: '180-280',
     dosageEn: '1 drop at bedtime',
     dosageAr: 'قطرة واحدة قبل النوم'
   },
@@ -3473,7 +3116,6 @@ export const treatments: Treatment[] = [
     diseaseId: 'glaucoma',
     nameEn: 'Timolol Eye Drops',
     nameAr: 'قطرة تيمولول',
-    price: '50-90',
     dosageEn: '1 drop twice daily',
     dosageAr: 'قطرة مرتين يومياً'
   },
@@ -3482,7 +3124,6 @@ export const treatments: Treatment[] = [
     diseaseId: 'cataracts',
     nameEn: 'Cataract Surgery',
     nameAr: 'جراحة الساد',
-    price: '10000-25000',
     dosageEn: 'One-time surgical procedure',
     dosageAr: 'إجراء جراحي لمرة واحدة'
   },
@@ -3491,7 +3132,6 @@ export const treatments: Treatment[] = [
     diseaseId: 'cataracts',
     nameEn: 'Eye Vitamins',
     nameAr: 'فيتامينات العين',
-    price: '80-150',
     dosageEn: '1 capsule daily',
     dosageAr: 'كبسولة يومياً'
   },
@@ -3500,7 +3140,6 @@ export const treatments: Treatment[] = [
     diseaseId: 'macular_degeneration',
     nameEn: 'Lucentis Injection',
     nameAr: 'حقن لوسينتيس',
-    price: '3000-5000',
     dosageEn: 'Monthly eye injections',
     dosageAr: 'حقن شهرية في العين'
   },
@@ -3509,7 +3148,6 @@ export const treatments: Treatment[] = [
     diseaseId: 'macular_degeneration',
     nameEn: 'AREDS Supplements',
     nameAr: 'مكملات AREDS',
-    price: '200-350',
     dosageEn: '2 capsules daily',
     dosageAr: 'كبسولتان يومياً'
   },
@@ -3518,7 +3156,6 @@ export const treatments: Treatment[] = [
     diseaseId: 'otitis_media',
     nameEn: 'Amoxicillin',
     nameAr: 'أموكسيسيلين',
-    price: '25-45',
     dosageEn: '3 times daily for 7-10 days',
     dosageAr: '3 مرات يومياً لمدة 7-10 أيام'
   },
@@ -3527,7 +3164,6 @@ export const treatments: Treatment[] = [
     diseaseId: 'otitis_media',
     nameEn: 'Ear Drops',
     nameAr: 'قطرة الأذن',
-    price: '30-60',
     dosageEn: '3-4 drops 3 times daily',
     dosageAr: '3-4 قطرات 3 مرات يومياً'
   },
@@ -3536,7 +3172,6 @@ export const treatments: Treatment[] = [
     diseaseId: 'tinnitus',
     nameEn: 'Betaserc',
     nameAr: 'بيتاسيرك',
-    price: '80-130',
     dosageEn: '1 tablet 3 times daily',
     dosageAr: 'قرص 3 مرات يومياً'
   },
@@ -3545,7 +3180,6 @@ export const treatments: Treatment[] = [
     diseaseId: 'tinnitus',
     nameEn: 'Ginkgo Biloba',
     nameAr: 'جينكو بيلوبا',
-    price: '60-100',
     dosageEn: '1 capsule twice daily',
     dosageAr: 'كبسولة مرتين يومياً'
   },
@@ -3555,7 +3189,6 @@ export const treatments: Treatment[] = [
     diseaseId: 'reactive_attachment',
     nameEn: 'Play Therapy',
     nameAr: 'العلاج باللعب',
-    price: '200-400',
     dosageEn: 'Weekly sessions',
     dosageAr: 'جلسات أسبوعية'
   },
@@ -3564,7 +3197,6 @@ export const treatments: Treatment[] = [
     diseaseId: 'reactive_attachment',
     nameEn: 'Family Therapy',
     nameAr: 'العلاج الأسري',
-    price: '300-600',
     dosageEn: 'Weekly family sessions',
     dosageAr: 'جلسات أسرية أسبوعية'
   },
@@ -3573,7 +3205,6 @@ export const treatments: Treatment[] = [
     diseaseId: 'selective_mutism',
     nameEn: 'Behavioral Therapy',
     nameAr: 'العلاج السلوكي',
-    price: '250-450',
     dosageEn: 'Weekly sessions',
     dosageAr: 'جلسات أسبوعية'
   },
@@ -3582,7 +3213,6 @@ export const treatments: Treatment[] = [
     diseaseId: 'selective_mutism',
     nameEn: 'Fluoxetine',
     nameAr: 'فلوكستين',
-    price: '40-80',
     dosageEn: '10-20mg daily',
     dosageAr: '10-20 ملغ يومياً'
   },
@@ -3591,7 +3221,6 @@ export const treatments: Treatment[] = [
     diseaseId: 'depersonalization',
     nameEn: 'Psychotherapy',
     nameAr: 'العلاج النفسي',
-    price: '300-500',
     dosageEn: 'Weekly sessions',
     dosageAr: 'جلسات أسبوعية'
   },
@@ -3600,7 +3229,6 @@ export const treatments: Treatment[] = [
     diseaseId: 'depersonalization',
     nameEn: 'Naltrexone',
     nameAr: 'نالتريكسون',
-    price: '150-250',
     dosageEn: '50mg daily',
     dosageAr: '50 ملغ يومياً'
   },
@@ -3609,7 +3237,6 @@ export const treatments: Treatment[] = [
     diseaseId: 'psychogenic_amnesia',
     nameEn: 'Trauma-focused Therapy',
     nameAr: 'علاج الصدمات',
-    price: '350-600',
     dosageEn: 'Weekly sessions',
     dosageAr: 'جلسات أسبوعية'
   },
@@ -3618,7 +3245,6 @@ export const treatments: Treatment[] = [
     diseaseId: 'psychogenic_amnesia',
     nameEn: 'EMDR Therapy',
     nameAr: 'علاج EMDR',
-    price: '400-700',
     dosageEn: 'Bi-weekly sessions',
     dosageAr: 'جلسات كل أسبوعين'
   },
@@ -3627,7 +3253,6 @@ export const treatments: Treatment[] = [
     diseaseId: 'factitious_disorder',
     nameEn: 'Cognitive Behavioral Therapy',
     nameAr: 'العلاج السلوكي المعرفي',
-    price: '300-550',
     dosageEn: 'Weekly sessions',
     dosageAr: 'جلسات أسبوعية'
   },
@@ -3636,7 +3261,6 @@ export const treatments: Treatment[] = [
     diseaseId: 'factitious_disorder',
     nameEn: 'Family Counseling',
     nameAr: 'الإرشاد الأسري',
-    price: '250-450',
     dosageEn: 'Bi-weekly sessions',
     dosageAr: 'جلسات كل أسبوعين'
   },
@@ -3645,7 +3269,6 @@ export const treatments: Treatment[] = [
     diseaseId: 'brief_psychotic',
     nameEn: 'Risperidone',
     nameAr: 'ريسبيريدون',
-    price: '80-150',
     dosageEn: '1-2mg daily',
     dosageAr: '1-2 ملغ يومياً'
   },
@@ -3654,7 +3277,6 @@ export const treatments: Treatment[] = [
     diseaseId: 'brief_psychotic',
     nameEn: 'Olanzapine',
     nameAr: 'أولانزابين',
-    price: '100-200',
     dosageEn: '5-10mg daily',
     dosageAr: '5-10 ملغ يومياً'
   },
@@ -3663,7 +3285,6 @@ export const treatments: Treatment[] = [
     diseaseId: 'acute_stress',
     nameEn: 'Brief CBT',
     nameAr: 'علاج سلوكي معرفي قصير',
-    price: '250-450',
     dosageEn: '4-8 sessions',
     dosageAr: '4-8 جلسات'
   },
@@ -3672,7 +3293,6 @@ export const treatments: Treatment[] = [
     diseaseId: 'acute_stress',
     nameEn: 'Prazosin',
     nameAr: 'برازوسين',
-    price: '50-90',
     dosageEn: '1-2mg at bedtime',
     dosageAr: '1-2 ملغ قبل النوم'
   },
@@ -3681,7 +3301,6 @@ export const treatments: Treatment[] = [
     diseaseId: 'pyromania',
     nameEn: 'Cognitive Behavioral Therapy',
     nameAr: 'العلاج السلوكي المعرفي',
-    price: '300-500',
     dosageEn: 'Weekly sessions',
     dosageAr: 'جلسات أسبوعية'
   },
@@ -3690,7 +3309,6 @@ export const treatments: Treatment[] = [
     diseaseId: 'pyromania',
     nameEn: 'Naltrexone',
     nameAr: 'نالتريكسون',
-    price: '150-250',
     dosageEn: '50mg daily',
     dosageAr: '50 ملغ يومياً'
   },
@@ -3699,7 +3317,6 @@ export const treatments: Treatment[] = [
     diseaseId: 'kleptomania',
     nameEn: 'Fluvoxamine',
     nameAr: 'فلوفوكسامين',
-    price: '80-140',
     dosageEn: '100-200mg daily',
     dosageAr: '100-200 ملغ يومياً'
   },
@@ -3708,7 +3325,6 @@ export const treatments: Treatment[] = [
     diseaseId: 'kleptomania',
     nameEn: 'Behavioral Therapy',
     nameAr: 'العلاج السلوكي',
-    price: '250-450',
     dosageEn: 'Weekly sessions',
     dosageAr: 'جلسات أسبوعية'
   },
@@ -3717,7 +3333,6 @@ export const treatments: Treatment[] = [
     diseaseId: 'excoriation',
     nameEn: 'N-Acetyl Cysteine',
     nameAr: 'إن-أسيتيل سيستين',
-    price: '60-120',
     dosageEn: '1200-2400mg daily',
     dosageAr: '1200-2400 ملغ يومياً'
   },
@@ -3726,7 +3341,6 @@ export const treatments: Treatment[] = [
     diseaseId: 'excoriation',
     nameEn: 'Habit Reversal Therapy',
     nameAr: 'علاج عكس العادات',
-    price: '300-500',
     dosageEn: 'Weekly sessions',
     dosageAr: 'جلسات أسبوعية'
   },
@@ -3735,7 +3349,6 @@ export const treatments: Treatment[] = [
     diseaseId: 'pica',
     nameEn: 'Iron Supplements',
     nameAr: 'مكملات الحديد',
-    price: '30-60',
     dosageEn: '1 tablet daily',
     dosageAr: 'قرص يومياً'
   },
@@ -3744,7 +3357,6 @@ export const treatments: Treatment[] = [
     diseaseId: 'pica',
     nameEn: 'Behavioral Intervention',
     nameAr: 'تدخل سلوكي',
-    price: '200-400',
     dosageEn: 'Weekly sessions',
     dosageAr: 'جلسات أسبوعية'
   }

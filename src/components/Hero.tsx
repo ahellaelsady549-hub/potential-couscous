@@ -247,7 +247,7 @@ export const Hero = () => {
                                   <p className="font-semibold text-sm mb-1">
                                     {language === 'ar' ? treatment.nameAr : treatment.nameEn}
                                   </p>
-                                  <MedicinePrice price={treatment.price} verifiedAt={treatment.priceVerifiedAt} sourceUrl={treatment.priceSourceUrl} />
+                                  <MedicinePrice searchTerm={treatment.nameAr} price={treatment.price} packageDescription={treatment.pricePackage} sourceType={treatment.priceSourceType} verifiedAt={treatment.priceVerifiedAt} sourceUrl={treatment.priceSourceUrl} />
                                   <MedicineUseNotice />
                                 </div>
                               ))}
