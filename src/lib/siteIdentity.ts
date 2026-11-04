@@ -41,8 +41,8 @@ export function getSiteCreatorReply(question: string, userName = ''): string | n
   const firstName = userName.split(/\s+/)[0];
 
   if (/[A-Za-z]/.test(normalizedQuestion) && !/[\u0600-\u06FF]/.test(normalizedQuestion)) {
-    return `${firstName ? `Hi ${firstName}, ` : ''}Es3efny was founded in 2024, about two years ago, by Mohamed Abdelaziz. Its content has been reviewed by accredited doctors, and the website is still under Ministry of Health review; final approval has not been issued.`;
+    return `${firstName ? `Hi ${firstName}, ` : ''}Es3efny Company established the website in 2024, about two years ago. Its content has been reviewed by accredited doctors, and the website is still under Ministry of Health review; final approval has not been issued.`;
   }
 
-  return `${firstName ? `يا ${firstName}، ` : ''}تأسس موقع إسعفني عام 2024، منذ نحو عامين، على يد محمد عبد العزيز. راجع محتواه أطباء معتمدون، والموقع ما زال قيد مراجعة وزارة الصحة ولم تصدر الموافقة النهائية بعد.`;
+  return `${firstName ? `يا ${firstName}، ` : ''}أنشأت شركة إسعفني الموقع عام 2024، منذ نحو عامين. راجع محتواه أطباء معتمدون، والموقع ما زال قيد مراجعة وزارة الصحة ولم تصدر الموافقة النهائية بعد.`;
 }

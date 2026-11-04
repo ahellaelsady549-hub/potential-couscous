@@ -1,7 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useLanguage } from '@/contexts/LanguageContext';
-import { announceAiResponse } from '@/lib/aiResponse';
 import { useAuth } from '@/contexts/AuthContext';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -131,7 +130,6 @@ const Auth = () => {
 
       if (error) throw error;
       setCvReview(data?.response || L('تم استلام السيرة الذاتية وسيتم مراجعتها','CV received and will be reviewed'));
-      if (typeof data?.response === 'string' && data.response) announceAiResponse(data.response);
     } catch (error) {
       console.error('Error reviewing CV:', error);
       setCvReview(L('تم استلام السيرة الذاتية وسيتم مراجعتها من قبل الإدارة','CV received and will be reviewed by our team'));
@@ -155,6 +153,21 @@ const Auth = () => {
           variant: 'destructive'
         });
         return;
+      }
+      if (userType === 'doctor') {
+        const msg = doctorBio.trim().length < 20
+          ? L('النبذة عن الطبيب إلزامية (20 حرفًا على الأقل)', 'Doctor bio is required (at least 20 characters)')
+          : !doctorCvFile
+          ? L('رفع ملف السيرة الذاتية PDF إلزامي', 'Uploading a PDF CV is required')
+          : doctorCvFile.type !== 'application/pdf' && !doctorCvFile.name.toLowerCase().endsWith('.pdf')
+          ? L('السيرة الذاتية يجب أن تكون بصيغة PDF', 'The CV must be a PDF')
+          : doctorCvFile.size > 300 * 1024 * 1024
+          ? L('حجم الملف أكبر من 300 ميجا', 'File is larger than 300 MB')
+          : null;
+        if (msg) {
+          toast({ title: L('خطأ في البيانات','Invalid data'), description: msg, variant: 'destructive' });
+          return;
+        }
       }
     } catch (err) {
       if (err instanceof z.ZodError) {
@@ -451,16 +464,14 @@ const Auth = () => {
                         className="pr-10 pl-10"
                         required
                       />
-                      <Button
+                      <button
                         type="button"
-                        variant="ghost"
-                        size="icon"
+                        className="absolute left-3 top-2.5 text-muted-foreground hover:text-foreground"
                         onClick={() => setShowLoginPassword((visible) => !visible)}
                         aria-label={showLoginPassword ? L('إخفاء كلمة المرور', 'Hide password') : L('إظهار كلمة المرور', 'Show password')}
-                        className="absolute left-1 top-1/2 h-8 w-8 -translate-y-1/2"
                       >
                         {showLoginPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
-                      </Button>
+                      </button>
                     </div>
                   </div>
                   <Button 
@@ -541,16 +552,14 @@ const Auth = () => {
                         className="pr-10 pl-10"
                         required
                       />
-                      <Button
+                      <button
                         type="button"
-                        variant="ghost"
-                        size="icon"
+                        className="absolute left-3 top-2.5 text-muted-foreground hover:text-foreground"
                         onClick={() => setShowSignupPassword((visible) => !visible)}
                         aria-label={showSignupPassword ? L('إخفاء كلمة المرور', 'Hide password') : L('إظهار كلمة المرور', 'Show password')}
-                        className="absolute left-1 top-1/2 h-8 w-8 -translate-y-1/2"
                       >
                         {showSignupPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
-                      </Button>
+                      </button>
                     </div>
                   </div>
 
@@ -576,7 +585,7 @@ const Auth = () => {
                       </div>
 
                       <div className="space-y-2">
-                        <Label>{L('نبذة عنك (اختياري)','About you (optional)')}</Label>
+                        <Label>{L('نبذة عنك (إلزامي)','About you (required)')}</Label>
                         <Textarea
                           placeholder={L('اكتب نبذة مختصرة عن خبراتك ومؤهلاتك...','Write a short bio about your experience and qualifications...')}
                           value={doctorBio}
@@ -586,7 +595,7 @@ const Auth = () => {
                       </div>
 
                       <div className="space-y-2">
-                        <Label>{L('رابط السيرة الذاتية (Google Drive, LinkedIn, etc.)','CV link (Google Drive, LinkedIn, etc.)')}</Label>
+                        <Label>{L('رابط السيرة الذاتية (اختياري)','CV link (optional)')}</Label>
                         <div className="flex gap-2">
                           <div className="relative flex-1">
                             <FileText className="absolute right-3 top-3 h-4 w-4 text-muted-foreground" />
@@ -607,8 +616,8 @@ const Auth = () => {
                             {isReviewingCv ? <Loader2 className="w-4 h-4 animate-spin" /> : L('مراجعة','Review')}
                           </Button>
                         </div>
-                        <Label className="text-sm">{L('أو ارفع ملف السيرة الذاتية (PDF أو صورة، حتى 10 ميجا)','Or upload your CV file (PDF or image, up to 10MB)')}</Label>
-                        <Input type="file" accept=".pdf,.doc,.docx,image/*" className="h-12" onChange={(e) => setDoctorCvFile(e.target.files?.[0] ?? null)} />
+                        <Label className="text-sm">{L('ملف السيرة الذاتية PDF (إلزامي، حتى 300 ميجا)','CV file, PDF (required, up to 300 MB)')}</Label>
+                        <Input type="file" accept="application/pdf,.pdf" required className="h-12" onChange={(e) => setDoctorCvFile(e.target.files?.[0] ?? null)} />
                         {cvReview && (
                           <p className="text-sm text-muted-foreground bg-muted p-2 rounded">
                             {cvReview}

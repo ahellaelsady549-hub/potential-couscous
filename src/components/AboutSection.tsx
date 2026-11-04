@@ -1,11 +1,14 @@
 import { addedCareOptionsCount, physicalConditionCatalog, mentalConditionCatalog } from "@/data/conditionCatalog";
 import { treatments } from "@/data/treatments";
 import { firstAidTips } from "@/data/firstAidTips";
-import { Heart, Stethoscope, Brain, Cross } from "lucide-react";
+import { Heart, Stethoscope, Brain, Cross, Users } from "lucide-react";
 import { useLanguage } from "@/contexts/LanguageContext";
+import { AnimatedCounter } from "@/components/AnimatedCounter";
+import { usePublicSiteStats } from "@/hooks/usePublicSiteStats";
 
 export const AboutSection = () => {
   const { L } = useLanguage();
+  const { stats: publicStats, error: statsError } = usePublicSiteStats();
   const physicalDiseases = physicalConditionCatalog;
   const mentalDiseases = mentalConditionCatalog;
   const stats = [
@@ -36,6 +39,20 @@ export const AboutSection = () => {
       label: L("مرض نفسي", "Mental Disorder"),
       color: "text-purple-500",
       bgColor: "bg-purple-500/10"
+    },
+    {
+      icon: Users,
+      count: publicStats?.registeredUsers ?? null,
+      label: L("مستخدم مسجل", "Registered users"),
+      color: "text-cyan-500",
+      bgColor: "bg-cyan-500/10"
+    },
+    {
+      icon: Stethoscope,
+      count: publicStats?.doctors ?? null,
+      label: L("طبيب مسجل", "Registered doctors"),
+      color: "text-amber-500",
+      bgColor: "bg-amber-500/10"
     }
   ];
 
@@ -51,7 +68,7 @@ export const AboutSection = () => {
           </p>
         </div>
 
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-6 mb-12">
+        <div className="grid grid-cols-2 gap-4 md:grid-cols-3 xl:grid-cols-6 md:gap-6 mb-12">
           {stats.map((stat, index) => (
             <div 
               key={index}
@@ -60,11 +77,16 @@ export const AboutSection = () => {
               <div className={`w-12 h-12 md:w-16 md:h-16 ${stat.bgColor} rounded-full flex items-center justify-center mx-auto mb-3 md:mb-4`}>
                 <stat.icon className={`w-6 h-6 md:w-8 md:h-8 ${stat.color}`} />
               </div>
-              <div className="text-2xl md:text-4xl font-bold text-foreground mb-1 md:mb-2">{stat.count}</div>
+              <div className="text-2xl md:text-4xl font-bold text-foreground mb-1 md:mb-2"><AnimatedCounter value={stat.count} /></div>
               <div className="text-sm md:text-base text-muted-foreground font-medium">{stat.label}</div>
             </div>
           ))}
         </div>
+        {statsError && (
+          <p role="status" className="mb-8 text-center text-sm text-muted-foreground">
+            {L('تعذّر تحديث أعداد المستخدمين والأطباء الآن.', 'Could not refresh user and doctor counts right now.')}
+          </p>
+        )}
 
         <div className="bg-gradient-to-r from-primary/10 to-accent/10 rounded-2xl p-6 md:p-8 text-center">
           <h3 className="text-xl md:text-2xl font-bold text-foreground mb-3">{L('ماذا نقدم؟', 'What do we offer?')}</h3>

@@ -904,6 +904,7 @@ export type Database = {
       }
     }
     Functions: {
+      get_public_site_stats: { Args: never; Returns: Json }
       get_community_stats: { Args: never; Returns: Json }
       get_doctors_public: {
         Args: never

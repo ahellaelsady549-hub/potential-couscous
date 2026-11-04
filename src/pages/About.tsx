@@ -3,58 +3,25 @@ import { treatments } from "@/data/treatments";
 import { firstAidTips } from "@/data/firstAidTips";
 import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
-import { Heart, Stethoscope, Brain, Cross, Users, Target, Award, CalendarDays, UserRound, ShieldCheck } from "lucide-react";
-import { useEffect, useRef, useState } from "react";
+import { Heart, Stethoscope, Brain, Cross, Users, Target, Award } from "lucide-react";
 import { useLanguage } from "@/contexts/LanguageContext";
-
-const AnimatedCount = ({ value }: { value: number }) => {
-  const [count, setCount] = useState(0);
-  const countRef = useRef<HTMLSpanElement>(null);
-
-  useEffect(() => {
-    const element = countRef.current;
-    if (!element) return;
-
-    const showValue = () => setCount(value);
-    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches || !('IntersectionObserver' in window)) {
-      showValue();
-      return;
-    }
-
-    let frame = 0;
-    const observer = new IntersectionObserver(([entry]) => {
-      if (!entry.isIntersecting) return;
-      observer.disconnect();
-
-      const start = performance.now();
-      const duration = 1100;
-      const animate = (now: number) => {
-        const progress = Math.min((now - start) / duration, 1);
-        setCount(Math.round(value * (1 - (1 - progress) ** 3)));
-        if (progress < 1) frame = requestAnimationFrame(animate);
-      };
-      frame = requestAnimationFrame(animate);
-    }, { threshold: 0.3 });
-
-    observer.observe(element);
-    return () => {
-      observer.disconnect();
-      cancelAnimationFrame(frame);
-    };
-  }, [value]);
-
-  return <span ref={countRef} aria-label={String(value)}>{count}</span>;
-};
+import { useEffect, useState } from "react";
+import { supabase } from "@/integrations/supabase/client";
+import { UserCheck } from "lucide-react";
+import { AnimatedCounter } from "@/components/AnimatedCounter";
 
 const About = () => {
   const { L } = useLanguage();
-  const physicalDiseases = physicalConditionCatalog;
-  const mentalDiseases = mentalConditionCatalog;
-  
+  const [live, setLive] = useState<{ users: number; doctors: number } | null>(null);
+  useEffect(() => {
+    supabase.rpc('get_public_stats').then(({ data }) => { if (data) setLive(data as unknown as { users: number; doctors: number }); });
+  }, []);
   const stats = [
+    { icon: Users, count: live?.users ?? '…', label: L("مستخدم مسجل", "registered users"), color: "text-primary", bgColor: "bg-primary/10" },
+    { icon: UserCheck, count: live?.doctors ?? '…', label: L("طبيب معتمد", "verified doctors"), color: "text-primary", bgColor: "bg-primary/10" },
     {
       icon: Stethoscope,
-      count: physicalDiseases.length,
+      count: physicalConditionCatalog.length,
       label: L("مرض جسدي", "physical disease"),
       color: "text-blue-500",
       bgColor: "bg-blue-500/10"
@@ -75,7 +42,7 @@ const About = () => {
     },
     {
       icon: Brain,
-      count: mentalDiseases.length,
+      count: mentalConditionCatalog.length,
       label: L("مرض نفسي", "mental illness"),
       color: "text-purple-500",
       bgColor: "bg-purple-500/10"
@@ -93,52 +60,16 @@ const About = () => {
             {L('من نحن', 'About Us')}
           </h1>
           <p className="text-xl text-muted-foreground max-w-3xl mx-auto leading-relaxed">
-            {L('إسعفني شركة ومنصة طبية رقمية تهدف إلى خدمة المجتمع المصري بمعلومات صحية وإرشادات للإسعافات الأولية والصحة النفسية.', 'Es3efny is a digital medical company and platform serving the Egyptian community with health information and first-aid and mental-health guidance.')}
+            {L('إسعفني هو منصة صحية شاملة مصممة خصيصاً لخدمة المجتمع المصري، نقدم معلومات طبية موثوقة وإرشادات للإسعافات الأولية والصحة النفسية.', 'Es3efny is a comprehensive health platform designed specifically to serve the Egyptian community, providing reliable medical information and guidance on first aid and mental health.')}
           </p>
         </div>
-
-        <section className="mb-16" aria-labelledby="about-company">
-          <h2 id="about-company" className="mb-8 text-center text-3xl font-bold text-foreground">
-            {L('عن الشركة', 'About the Company')}
-          </h2>
-          <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
-            {[
-              {
-                icon: CalendarDays,
-                title: L('سنة التأسيس', 'Founded'),
-                description: L('تأسست عام 2024، منذ نحو عامين.', 'Founded in 2024, about two years ago.'),
-              },
-              {
-                icon: UserRound,
-                title: L('مؤسس الموقع', 'Founder'),
-                description: L('أنشأ الموقع محمد عبد العزيز.', 'The website was created by Mohamed Abdelaziz.'),
-              },
-              {
-                icon: ShieldCheck,
-                title: L('المراجعة الطبية', 'Medical Review'),
-                description: L('تمت مراجعة المحتوى من قبل أطباء معتمدين.', 'The content has been reviewed by accredited doctors.'),
-              },
-              {
-                icon: Stethoscope,
-                title: L('مراجعة وزارة الصحة', 'Ministry of Health Review'),
-                description: L('الموقع قيد المراجعة من قبل وزارة الصحة، ولم تصدر الموافقة النهائية بعد.', 'The website is under review by the Ministry of Health; final approval has not yet been issued.'),
-              },
-            ].map(({ icon: Icon, title, description }) => (
-              <div key={title} className="rounded-2xl border border-border bg-card p-6 text-center">
-                <Icon className="mx-auto mb-3 h-8 w-8 text-primary" aria-hidden="true" />
-                <h3 className="mb-2 font-bold text-foreground">{title}</h3>
-                <p className="text-sm leading-7 text-muted-foreground">{description}</p>
-              </div>
-            ))}
-          </div>
-        </section>
 
         {/* Statistics Section */}
         <div className="mb-16">
           <h2 className="text-3xl font-bold text-center text-foreground mb-10">
             {L('إحصائيات الموقع', 'Site Statistics')}
           </h2>
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
+          <div className="grid grid-cols-2 md:grid-cols-3 gap-4 md:gap-6">
             {stats.map((stat, index) => (
               <div 
                 key={index}
@@ -147,7 +78,9 @@ const About = () => {
                 <div className={`w-16 h-16 ${stat.bgColor} rounded-full flex items-center justify-center mx-auto mb-4`}>
                   <stat.icon className={`w-8 h-8 ${stat.color}`} />
                 </div>
-                <div className="text-4xl font-bold text-foreground mb-2"><AnimatedCount value={stat.count} /></div>
+                <div className="text-4xl font-bold text-foreground mb-2">
+                  {typeof stat.count === "number" ? <AnimatedCounter value={stat.count} /> : stat.count}
+                </div>
                 <div className="text-muted-foreground font-medium">{stat.label}</div>
               </div>
             ))}
@@ -191,7 +124,7 @@ const About = () => {
         <div className="bg-gradient-to-r from-primary/10 to-primary/5 rounded-2xl p-8 text-center">
           <h2 className="text-2xl font-bold text-foreground mb-4">{L('ماذا نقدم؟', 'What We Offer?')}</h2>
           <p className="text-muted-foreground max-w-2xl mx-auto">
-            {L(`نقدم قاعدة بيانات شاملة تضم ${physicalDiseases.length} مرض جسدي و${treatments.length + addedCareOptionsCount} خيار علاج ورعاية و${firstAidTips.length} إرشاد إسعاف أولي و${mentalDiseases.length} مرض نفسي، بالإضافة إلى أرقام الطوارئ وحاسبة BMI وخطط النظام الغذائي والبحث عن أقرب المستشفيات والصيدليات.`, `We offer a comprehensive database including ${physicalDiseases.length} physical diseases, ${treatments.length + addedCareOptionsCount} treatment and care options, ${firstAidTips.length} first-aid guides, and ${mentalDiseases.length} mental health conditions, in addition to emergency numbers, a BMI calculator, diet plans, and nearby facility search.`)}
+            {L(`نقدم قاعدة بيانات شاملة تضم ${physicalConditionCatalog.length} مرض جسدي و${treatments.length + addedCareOptionsCount} خيار علاج ورعاية و${firstAidTips.length} إرشاد إسعاف أولي و${mentalConditionCatalog.length} مرض نفسي، بالإضافة إلى أرقام الطوارئ وحاسبة BMI وخطط النظام الغذائي والبحث عن أقرب المستشفيات والصيدليات.`, `We offer a comprehensive database including ${physicalConditionCatalog.length} physical diseases, ${treatments.length + addedCareOptionsCount} treatment and care options, ${firstAidTips.length} first-aid guides, and ${mentalConditionCatalog.length} mental health conditions, in addition to emergency numbers, a BMI calculator, diet plans, and nearby facility search.`)}
           </p>
         </div>
       </main>
