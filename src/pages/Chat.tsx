@@ -9,6 +9,8 @@ import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { useToast } from '@/hooks/use-toast';
 import { useLanguage } from '@/contexts/LanguageContext';
+import { BookingPanel } from '@/components/chat/BookingPanel';
+import { isSessionOpen, type BookingRow } from '@/lib/sessions';
 import { 
   Send, 
   ArrowRight, 
@@ -47,6 +49,50 @@ const Chat = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [otherParticipant, setOtherParticipant] = useState<Participant | null>(null);
   const messagesEndRef = useRef<HTMLDivElement>(null);
+  const fileRef = useRef<HTMLInputElement>(null);
+  const [conv, setConv] = useState<{ doctor_id: string; user_id: string } | null>(null);
+  const [isDoctorSide, setIsDoctorSide] = useState(false);
+  const [sessions, setSessions] = useState<BookingRow[]>([]);
+  const [banned, setBanned] = useState(false);
+  const [signed, setSigned] = useState<Record<string, string>>({});
+  const [uploading, setUploading] = useState(false);
+  const [tick, setTick] = useState(0);
+  useEffect(() => { const t = setInterval(() => setTick((x) => x + 1), 30000); return () => clearInterval(t); }, []);
+
+  const loadSessions = async (c: { doctor_id: string; user_id: string }) => {
+    const [{ data }, { data: ban }] = await Promise.all([
+      supabase.from('doctor_bookings').select('starts_at,ends_at,status').eq('doctor_id', c.doctor_id).eq('user_id', c.user_id).eq('status', 'confirmed').gte('ends_at', new Date(Date.now() - 3600000).toISOString()).order('starts_at'),
+      supabase.rpc('can_chat', { _conversation_id: conversationId!, _user_id: user!.id }),
+    ]);
+    setSessions(data || []);
+    const open = (data || []).some((b) => isSessionOpen(b));
+    setBanned(open && ban === false);
+  };
+  const openSession = sessions.find((b) => isSessionOpen(b));
+  const nextSession = sessions.find((b) => new Date(b.starts_at) > new Date());
+  void tick;
+
+  useEffect(() => {
+    messages.forEach(async (m) => {
+      if (m.file_url?.startsWith('storage:') && !signed[m.id]) {
+        const { data } = await supabase.storage.from('chat-files').createSignedUrl(m.file_url.slice(8), 3600);
+        if (data) setSigned((p) => ({ ...p, [m.id]: data.signedUrl }));
+      }
+    });
+  }, [messages]);
+
+  const sendFile = async (f: File) => {
+    if (!user || !conversationId) return;
+    if (f.size > 20 * 1024 * 1024) { toast({ title: L('الملف أكبر من 20 ميجا', 'File exceeds 20MB'), variant: 'destructive' }); return; }
+    setUploading(true);
+    const path = `${conversationId}/${user.id}-${Date.now()}-${f.name.replace(/[^\w.-]/g, '_')}`;
+    const up = await supabase.storage.from('chat-files').upload(path, f, { contentType: f.type });
+    if (!up.error) {
+      const { error } = await supabase.from('messages').insert({ conversation_id: conversationId, sender_id: user.id, content: null, file_url: `storage:${path}`, file_type: f.type || 'application/octet-stream' });
+      if (error) toast({ title: L('تعذر الإرسال', 'Send failed'), description: error.message, variant: 'destructive' });
+    } else toast({ title: L('تعذر رفع الملف', 'Upload failed'), description: up.error.message, variant: 'destructive' });
+    setUploading(false);
+  };
 
   useEffect(() => {
     if (!user) {
@@ -81,8 +127,12 @@ const Chat = () => {
       if (convError) throw convError;
 
       // Determine the other participant
-      const isUserDoctor = conv.doctor_id === user.id;
+      const { data: docRow } = await supabase.from('doctors').select('user_id').eq('id', conv.doctor_id).maybeSingle();
+      const isUserDoctor = docRow?.user_id === user.id;
       const otherUserId = isUserDoctor ? conv.user_id : conv.doctor_id;
+      setConv({ doctor_id: conv.doctor_id, user_id: conv.user_id });
+      setIsDoctorSide(isUserDoctor);
+      loadSessions(conv);
 
       // Fetch other participant's profile
       if (isUserDoctor) {
@@ -287,18 +337,18 @@ const Chat = () => {
                       {L('تم تمييز هذه الرسالة', 'This message has been flagged')}
                     </div>
                   )}
-                  <p className="text-sm whitespace-pre-wrap">{message.content}</p>
+                  {message.content && <p className="text-sm whitespace-pre-wrap">{message.content}</p>}
                   {message.file_url && (
                     <div className="mt-2">
                       {message.file_type?.startsWith('image/') ? (
                         <img 
-                          src={message.file_url} 
+                          src={message.file_url.startsWith('storage:') ? signed[message.id] : message.file_url} 
                           alt={L('مرفق', 'Attachment')} 
                           className="max-w-full rounded-lg"
                         />
                       ) : (
                         <a 
-                          href={message.file_url} 
+                          href={message.file_url.startsWith('storage:') ? signed[message.id] : message.file_url} 
                           target="_blank" 
                           rel="noopener noreferrer"
                           className="text-sm underline"
@@ -324,7 +374,20 @@ const Chat = () => {
 
       {/* Input */}
       <div className="border-t border-border bg-background p-4">
+        {banned ? (
+          <p className="max-w-2xl mx-auto text-center text-sm text-destructive">{L('المحادثة موقوفة من الإدارة', 'This chat has been suspended by moderators')}</p>
+        ) : !openSession ? (
+          <div className="max-w-2xl mx-auto space-y-2">
+            {nextSession && <p className="text-sm text-center">{L('جلستك القادمة:', 'Next session:')} {new Date(nextSession.starts_at).toLocaleString('ar-EG', { weekday: 'long', day: 'numeric', hour: '2-digit', minute: '2-digit' })}</p>}
+            {conv && user && !isDoctorSide ? <BookingPanel doctorId={conv.doctor_id} userId={user.id} canBook onBooked={() => loadSessions(conv)} />
+              : <p className="text-sm text-center text-muted-foreground">{L('المحادثة بتفتح وقت الجلسة المحجوزة فقط', 'Chat opens only during a booked session')}</p>}
+          </div>
+        ) : (
         <div className="max-w-2xl mx-auto flex items-center gap-2">
+          <input ref={fileRef} type="file" accept="image/*,application/pdf,.doc,.docx" className="hidden" onChange={(e) => { const f = e.target.files?.[0]; if (f) sendFile(f); e.target.value = ''; }} />
+          <Button size="icon" variant="outline" onClick={() => fileRef.current?.click()} disabled={uploading} aria-label={L('إرفاق صورة أو ملف', 'Attach image or file')}>
+            <Paperclip className="w-4 h-4" />
+          </Button>
           <Input
             placeholder={L('اكتب رسالتك...', 'Type your message...')}
             value={newMessage}
@@ -341,6 +404,7 @@ const Chat = () => {
             <Send className="w-4 h-4" />
           </Button>
         </div>
+        )}
       </div>
     </div>
   );
