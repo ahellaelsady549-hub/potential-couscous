@@ -11,6 +11,7 @@ import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { toast } from 'sonner';
+import { ChatBansAdmin } from '@/components/chat/ChatBansAdmin';
 
 type Doc = {
   id: string; full_name: string | null; email: string | null; specialty: string; bio: string | null;
@@ -110,10 +111,12 @@ const AdminPage = () => {
         <h1 className="text-2xl font-bold">{L('لوحة الأدمن', 'Admin panel')}</h1>
         {isAdmin === null ? <Loader2 className="h-6 w-6 animate-spin mx-auto" /> : (
           <Tabs defaultValue="new">
-            <TabsList className="grid w-full grid-cols-2 h-12">
+            <TabsList className="grid w-full grid-cols-3 h-12">
               <TabsTrigger value="new">{L('طلبات جديدة', 'New requests')} ({pending.length})</TabsTrigger>
               <TabsTrigger value="done">{L('تم الرد عليها', 'Answered')} ({answered.length})</TabsTrigger>
+              <TabsTrigger value="bans">{L('الحظر', 'Bans')}</TabsTrigger>
             </TabsList>
+            <TabsContent value="bans"><ChatBansAdmin /></TabsContent>
             <TabsContent value="new" className="space-y-4">
               {pending.length === 0 ? <p className="text-muted-foreground">{L('لا توجد طلبات', 'No requests')}</p> : pending.map((d) => renderCard(d, true))}
             </TabsContent>
