@@ -33,6 +33,7 @@ import {
 import { treatments } from '@/data/treatments';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { WorkoutProgress } from '@/components/gym/WorkoutProgress';
+import { DoctorSchedule } from '@/components/chat/DoctorSchedule';
 
 interface Medication {
   id: string;
@@ -78,6 +79,12 @@ const Dashboard = () => {
   const { toast } = useToast();
   const { L } = useLanguage();
 
+  const [myDoctorId, setMyDoctorId] = useState<string | null>(null);
+  useEffect(() => {
+    if (!user) return;
+    supabase.from('doctors').select('id').eq('user_id', user.id).eq('is_verified', true).maybeSingle()
+      .then(({ data }) => setMyDoctorId(data?.id ?? null));
+  }, [user]);
   const [medications, setMedications] = useState<Medication[]>([]);
   const [dietPlans, setDietPlans] = useState<DietPlan[]>([]);
   const [personalityResults, setPersonalityResults] = useState<PersonalityResult[]>([]);
@@ -324,6 +331,8 @@ const Dashboard = () => {
             </div>
           </CardContent>
         </Card>
+
+        {myDoctorId && <div className="mb-6"><DoctorSchedule doctorId={myDoctorId} /></div>}
 
         {/* Tabs */}
         <Tabs defaultValue="medications" className="space-y-6">
