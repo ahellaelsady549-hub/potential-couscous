@@ -132,6 +132,12 @@ export const requestWebNotificationPermission = async (): Promise<boolean> => {
     const permission = await Notification.requestPermission();
     return permission === 'granted';
   }
-  
+
   return false;
+};
+
+export const playMedicationReminderSound = async (): Promise<void> => {
+  const audio = new Audio('/freesound_community-shaking-pill-bottle-94736.mp3');
+  audio.volume = 0.8;
+  await audio.play();
 };
