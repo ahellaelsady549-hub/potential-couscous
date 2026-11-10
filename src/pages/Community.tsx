@@ -13,7 +13,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/u
 import { useToast } from '@/hooks/use-toast';
 import { Header as SiteHeader } from '@/components/Header';
 import {
-  Home, Send, Image, Mic, MicOff, Search, Flag, Reply, Trash2, 
+  Send, Image, Mic, MicOff, Search, Flag, Reply, Trash2,
   Shield, BarChart3, Ban, MessageCircle, ArrowRight, Loader2, X,
   Heart, Bell, BellDot, Check, Video
 } from 'lucide-react';
@@ -59,6 +59,7 @@ const Community = () => {
   const [newContent, setNewContent] = useState('');
   const [searchQuery, setSearchQuery] = useState('');
   const [isLoading, setIsLoading] = useState(false);
+  const [isSendingPost, setIsSendingPost] = useState(false);
   const [replyTo, setReplyTo] = useState<string | null>(null);
   const [isDoctor, setIsDoctor] = useState(false);
   const [isAdmin, setIsAdmin] = useState(false);
@@ -277,15 +278,24 @@ const Community = () => {
 
   const handleSendPost = async () => {
     if (!user || (!newContent.trim() && !imageFile && !videoFile && !audioBlob)) return;
-    
-    setIsLoading(true);
+    if (imageFile && videoFile) {
+      toast({
+        title: L('اختيار غير صالح', 'Invalid selection'),
+        description: L('أرسل صورة أو فيديو واحدًا في المنشور.', 'Attach either an image or a video to a post, not both.'),
+        variant: 'destructive',
+      });
+      return;
+    }
+
+    setIsSendingPost(true);
     try {
       let imageUrl: string | null = null;
       let videoUrl: string | null = null;
       let voiceUrl: string | null = null;
 
       if (imageFile) {
-        const path = `images/${user.id}/${Date.now()}-${imageFile.name}`;
+        const extension = imageFile.name.split('.').pop()?.replace(/[^a-zA-Z0-9]/g, '') || 'image';
+        const path = `images/${user.id}/${crypto.randomUUID()}.${extension}`;
         imageUrl = await uploadFile(imageFile, path);
       }
 
@@ -296,11 +306,13 @@ const Community = () => {
       }
 
       if (audioBlob) {
-        const path = `voice/${user.id}/${Date.now()}.webm`;
+        const path = `voice/${user.id}/${crypto.randomUUID()}.webm`;
         voiceUrl = await uploadFile(audioBlob, path);
       }
 
-      const { data: newPost, error } = await supabase.from('community_posts').insert({
+      const postId = crypto.randomUUID();
+      const { error } = await supabase.from('community_posts').insert({
+        id: postId,
         user_id: user.id,
         category: activeCategory,
         content: newContent.trim() || null,
@@ -308,26 +320,32 @@ const Community = () => {
         video_url: videoUrl,
         voice_url: voiceUrl,
         parent_id: replyTo,
-      }).select().single();
+      });
 
       if (error) throw error;
 
       // Send notification to the original post owner if replying
-      if (replyTo && newPost) {
-        const { data: parentPost } = await supabase
+      if (replyTo) {
+        const { data: parentPost, error: parentPostError } = await supabase
           .from('community_posts')
           .select('user_id')
           .eq('id', replyTo)
           .single();
-        
+
+        if (parentPostError) {
+          console.error('Unable to load the replied-to community post:', parentPostError);
+        }
         if (parentPost && parentPost.user_id !== user.id) {
-          await supabase.from('community_notifications').insert({
+          const { error: notificationError } = await supabase.from('community_notifications').insert({
             user_id: parentPost.user_id,
             post_id: replyTo,
-            reply_id: newPost.id,
+            reply_id: postId,
             type: 'reply',
             actor_id: user.id,
           });
+          if (notificationError) {
+            console.error('Community reply was sent, but its notification could not be created:', notificationError);
+          }
         }
       }
 
@@ -338,11 +356,28 @@ const Community = () => {
       if (videoInputRef.current) videoInputRef.current.value = '';
       setAudioBlob(null);
       setReplyTo(null);
-      fetchPosts();
-    } catch (err: any) {
-      toast({ title: L('خطأ','Error'), description: err.message || L('حدث خطأ','Something went wrong'), variant: 'destructive' });
+      await fetchPosts();
+    } catch (error: unknown) {
+      console.error('Unable to send community post:', error);
+      const message = error instanceof Error
+        ? error.message
+        : typeof error === 'object' && error !== null && 'message' in error && typeof error.message === 'string'
+          ? error.message
+          : L('حدث خطأ غير متوقع','An unexpected error occurred');
+      const schemaCacheError = message.includes('video_url') && message.toLowerCase().includes('schema cache');
+      toast({
+        title: L('تعذر إرسال المنشور','Could not send the post'),
+        description: schemaCacheError
+          ? L(
+            'قاعدة البيانات لم تُحدّث بعد لدعم الفيديو. طبّق ترحيلات Supabase ثم أعد المحاولة.',
+            'The database has not been updated to support video posts. Apply Supabase migrations, then try again.'
+          )
+          : message,
+        variant: 'destructive',
+      });
+    } finally {
+      setIsSendingPost(false);
     }
-    setIsLoading(false);
   };
 
   const handleReport = async () => {
@@ -419,16 +454,7 @@ const Community = () => {
 
       {/* Page bar */}
       <header className="border-b border-border bg-background/95">
-        <div className="container mx-auto px-4 py-3 flex items-center justify-between">
-          <div className="flex items-center gap-3">
-            <Button variant="ghost" size="icon" onClick={() => navigate('/')}>
-              <Home className="h-5 w-5" />
-            </Button>
-            <h1 className="text-xl font-bold bg-gradient-medical bg-clip-text text-transparent flex items-center gap-2">
-              <MessageCircle className="h-5 w-5 text-primary" />
-              {L('مجتمع إسعفني','Es3efny Community')}
-            </h1>
-          </div>
+        <div className="container mx-auto px-4 py-3 flex items-center justify-end">
           <div className="flex items-center gap-2">
             {/* Notifications Bell */}
             <div className="relative">
@@ -697,9 +723,9 @@ const Community = () => {
                       {isRecording ? <MicOff className="h-4 w-4" /> : <Mic className="h-4 w-4" />}
                     </Button>
                   </div>
-                  <Button onClick={handleSendPost} disabled={isLoading || (!newContent.trim() && !imageFile && !videoFile && !audioBlob)} size="sm">
-                    <Send className="h-4 w-4 ml-1" />
-                    {L('نشر','Post')}
+                  <Button onClick={handleSendPost} disabled={isSendingPost || (!newContent.trim() && !imageFile && !videoFile && !audioBlob)} size="sm">
+                    {isSendingPost ? <Loader2 className="h-4 w-4 ml-1 animate-spin" /> : <Send className="h-4 w-4 ml-1" />}
+                    {isSendingPost ? L('جارٍ النشر...','Posting...') : L('نشر','Post')}
                   </Button>
                 </div>
               </CardContent>

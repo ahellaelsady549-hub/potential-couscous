@@ -1,5 +1,4 @@
 import { useEffect } from 'react';
-import { Link } from 'react-router-dom';
 import { Header } from '@/components/Header';
 import { Footer } from '@/components/Footer';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
@@ -80,12 +79,6 @@ const GymPage = () => {
     <div className="min-h-screen bg-background">
       <Header />
       <main className="container mx-auto px-4 py-8 route-content">
-        <nav aria-label={L('مسار التنقل','Breadcrumb')} className="mb-4 text-sm text-muted-foreground">
-          <Link to="/" className="hover:text-primary">{L('الرئيسية','Home')}</Link>
-          <span className="mx-2">/</span>
-          <span>{L('الجيم والتغذية','Gym & Nutrition')}</span>
-        </nav>
-
         <header className="mb-6">
           <h1 className="text-3xl font-bold bg-gradient-medical bg-clip-text text-transparent">
             {L('الجيم والتغذية','Gym & Nutrition')}

@@ -467,6 +467,63 @@ export type Database = {
         }
         Relationships: []
       }
+      gym_user_custom_programs: {
+        Row: {
+          created_at: string
+          id: string
+          plan: Json
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          plan: Json
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          plan?: Json
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      web_push_subscriptions: {
+        Row: {
+          appointment_reminders: boolean
+          created_at: string
+          endpoint: string
+          id: string
+          medication_reminders: boolean
+          subscription: Json
+          timezone: string
+          user_id: string
+        }
+        Insert: {
+          appointment_reminders?: boolean
+          created_at?: string
+          endpoint: string
+          id?: string
+          medication_reminders?: boolean
+          subscription: Json
+          timezone?: string
+          user_id: string
+        }
+        Update: {
+          appointment_reminders?: boolean
+          created_at?: string
+          endpoint?: string
+          id?: string
+          medication_reminders?: boolean
+          subscription?: Json
+          timezone?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       gym_video_analyses: {
         Row: {
           analysis: string | null

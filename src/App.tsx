@@ -7,7 +7,7 @@ import { BrowserRouter, Routes, Route, useLocation } from "react-router-dom";
 import { LanguageProvider } from "@/contexts/LanguageContext";
 import { ThemeProvider } from "@/contexts/ThemeContext";
 import { AuthProvider } from "@/contexts/AuthContext";
-import { initializePushNotifications, requestWebNotificationPermission } from "@/services/pushNotifications";
+import { ReminderScheduler } from '@/components/ReminderScheduler';
 import Index from "./pages/Index";
 const About = lazy(() => import("./pages/About"));
 const Auth = lazy(() => import("./pages/Auth"));
@@ -36,14 +36,6 @@ const NotFound = lazy(() => import("./pages/NotFound"));
 const AskMePage = lazy(() => import("./pages/AskMePage"));
 
 const queryClient = new QueryClient();
-
-// Initialize push notifications
-const initNotifications = async () => {
-  await initializePushNotifications();
-  await requestWebNotificationPermission();
-};
-
-initNotifications();
 
 const AnimatedRoutes = () => {
   const location = useLocation();
@@ -97,6 +89,7 @@ const App = () => (
               <Sonner />
               <ConnectionNotice />
               <TermsGate />
+              <ReminderScheduler />
               <AnimatedRoutes />
               <BackToTop />
               <SiteGuideBot />

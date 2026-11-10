@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
 import { supabase } from '@/integrations/supabase/client';
@@ -28,7 +28,8 @@ import {
   Activity,
   Stethoscope,
   Calendar,
-  Link as LinkIcon
+  Link as LinkIcon,
+  Volume2
 } from 'lucide-react';
 import { treatments } from '@/data/treatments';
 import { useLanguage } from '@/contexts/LanguageContext';
@@ -36,10 +37,9 @@ import { WorkoutProgress } from '@/components/gym/WorkoutProgress';
  
 import { DoctorSchedule } from '@/components/chat/DoctorSchedule';
 
-import { playMedicationReminderSound } from '@/services/pushNotifications';
+import { playMedicationReminderSound, requestWebNotificationPermission } from '@/services/pushNotifications';
 
 const DEFAULT_DOSE_TIMES = ['08:00', '14:00', '20:00', '22:00'];
-
 const normalizeDoseTime = (time: string): string | null => {
   const match = time.match(/^([01]\d|2[0-3]):[0-5]\d(?::[0-5]\d)?$/);
   return match ? time.slice(0, 5) : null;
@@ -120,7 +120,6 @@ const Dashboard = () => {
   const [isAddingMed, setIsAddingMed] = useState(false);
   const [isAddingDisease, setIsAddingDisease] = useState(false);
   const [newDisease, setNewDisease] = useState({ name: '', type: 'physical' as 'physical' | 'mental' });
-  const notifiedDoseKeys = useRef(new Set<string>());
   const [userProfile, setUserProfile] = useState<{ full_name: string | null; avatar_url: string | null } | null>(null);
   const [newMed, setNewMed] = useState({
     name: '',
@@ -141,48 +140,6 @@ const Dashboard = () => {
       fetchUserData();
     }
   }, [user]);
-
-  useEffect(() => {
-    const checkMedicationReminders = () => {
-      const now = new Date();
-      const currentTime = `${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}`;
-      const currentDate = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')}`;
-
-      medications.forEach((medication) => {
-        if (!medication.reminder_enabled) return;
-
-        getMedicationTimes(medication.time).forEach((time) => {
-          if (time !== currentTime) return;
-          const reminderKey = `${currentDate}:${medication.id}:${time}`;
-          if (notifiedDoseKeys.current.has(reminderKey)) return;
-          notifiedDoseKeys.current.add(reminderKey);
-
-          const title = L('تذكير بموعد الدواء 💊', 'Medication reminder 💊');
-          const body = L(
-            `حان موعد تناول ${medication.name} - ${medication.dosage}`,
-            `It's time to take ${medication.name} - ${medication.dosage}`
-          );
-
-          if (typeof Notification !== 'undefined' && Notification.permission === 'granted') {
-            new Notification(title, {
-              body,
-              icon: '/favicon.ico',
-              tag: `medication-${medication.id}-${time}`,
-            });
-          }
-
-          void playMedicationReminderSound().catch((error: unknown) => {
-            console.error('Unable to play the medication reminder sound:', error);
-          });
-          toast({ title, description: body });
-        });
-      });
-    };
-
-    checkMedicationReminders();
-    const interval = window.setInterval(checkMedicationReminders, 15000);
-    return () => window.clearInterval(interval);
-  }, [medications, L, toast]);
 
   const fetchUserData = async () => {
     if (!user) return;
@@ -294,6 +251,27 @@ const Dashboard = () => {
         description: foundTreatment 
           ? L(`تم إضافة ${newMed.name} مع الجرعة الموصى بها تلقائياً`, `${newMed.name} was added with the recommended dosage automatically`)
           : L('تم إضافة الدواء بنجاح', 'Medication added successfully')
+      });
+    }
+  };
+
+  const handleTestMedicationReminder = async () => {
+    try {
+      const soundStarted = playMedicationReminderSound();
+      const notificationPermission = await requestWebNotificationPermission();
+      await soundStarted;
+      toast({
+        title: L('تم تفعيل صوت التذكير', 'Reminder sound enabled'),
+        description: notificationPermission
+          ? L('تم تشغيل النغمة والسماح بالإشعارات.', 'The sound played and notifications are allowed.')
+          : L('تم تشغيل النغمة. اسمح بالإشعارات من إعدادات المتصفح لتلقي التنبيهات.', 'The sound played. Allow notifications in your browser settings to receive alerts.'),
+      });
+    } catch (error) {
+      console.error('Unable to test the medication reminder:', error);
+      toast({
+        title: L('تعذر تشغيل صوت التذكير', 'Unable to play the reminder sound'),
+        description: L('تحقق من إعدادات الصوت في المتصفح ثم جرّب مرة أخرى.', 'Check your browser sound settings and try again.'),
+        variant: 'destructive',
       });
     }
   };
@@ -497,23 +475,28 @@ const Dashboard = () => {
           {/* Medications Tab */}
           <TabsContent value="medications">
             <Card>
-              <CardHeader className="flex flex-row items-center justify-between">
+              <CardHeader className="flex flex-col items-start justify-between gap-4 sm:flex-row sm:items-center">
                 <div>
                   <CardTitle>{L('أدويتي', 'My Medications')}</CardTitle>
                   <CardDescription>{L('إدارة الأدوية والتذكيرات', 'Manage medications and reminders')}</CardDescription>
                 </div>
-                <Dialog open={isAddingMed} onOpenChange={setIsAddingMed}>
-                  <DialogTrigger asChild>
-                    <Button className="bg-gradient-medical">
-                      <Plus className="w-4 h-4 ml-2" />
-                      {L('إضافة دواء', 'Add Medication')}
-                    </Button>
-                  </DialogTrigger>
-                  <DialogContent>
-                    <DialogHeader>
-                      <DialogTitle>{L('إضافة دواء جديد', 'Add New Medication')}</DialogTitle>
-                    </DialogHeader>
-                    <div className="space-y-4">
+                <div className="flex w-full flex-col gap-2 sm:w-auto sm:flex-row">
+                  <Button variant="outline" onClick={handleTestMedicationReminder}>
+                    <Volume2 className="w-4 h-4 ml-2" />
+                    {L('تفعيل وتجربة صوت التذكير', 'Enable and test reminder sound')}
+                  </Button>
+                  <Dialog open={isAddingMed} onOpenChange={setIsAddingMed}>
+                    <DialogTrigger asChild>
+                      <Button className="bg-gradient-medical">
+                        <Plus className="w-4 h-4 ml-2" />
+                        {L('إضافة دواء', 'Add Medication')}
+                      </Button>
+                    </DialogTrigger>
+                    <DialogContent>
+                      <DialogHeader>
+                        <DialogTitle>{L('إضافة دواء جديد', 'Add New Medication')}</DialogTitle>
+                      </DialogHeader>
+                      <div className="space-y-4">
                       <div>
                         <Label>{L('اسم الدواء', 'Medication Name')}</Label>
                         <Input
@@ -576,9 +559,10 @@ const Dashboard = () => {
                       <Button onClick={handleAddMedication} className="w-full bg-gradient-medical">
                         {L('إضافة', 'Add')}
                       </Button>
-                    </div>
-                  </DialogContent>
-                </Dialog>
+                      </div>
+                    </DialogContent>
+                  </Dialog>
+                </div>
               </CardHeader>
               <CardContent>
                 {medications.length === 0 ? (

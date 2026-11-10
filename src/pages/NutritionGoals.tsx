@@ -101,14 +101,6 @@ const NutritionGoals = () => {
     <div className="min-h-screen bg-background" dir={dir}>
       <Header />
       <main className="container mx-auto max-w-3xl px-4 py-8 animate-in fade-in duration-500">
-        <nav aria-label="breadcrumb" className="mb-4 text-sm text-muted-foreground">
-          <Link to="/" className="hover:text-primary">{t('nav.home')}</Link>
-          <span className="mx-2">/</span>
-          <Link to="/gym" className="hover:text-primary">{t('nav.gym')}</Link>
-          <span className="mx-2">/</span>
-          <span>{t('goals.title')}</span>
-        </nav>
-
         <header className="mb-6">
           <h1 className="flex items-center gap-2 text-3xl font-bold bg-gradient-medical bg-clip-text text-transparent">
             <Target className="h-7 w-7 text-primary" />

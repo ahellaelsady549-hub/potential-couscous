@@ -5,7 +5,7 @@ import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
 import { Label } from '@/components/ui/label';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
-import { Loader2, Stethoscope, Brain, Activity, AlertTriangle, ArrowLeft, ImagePlus, X } from 'lucide-react';
+import { Loader2, Stethoscope, Brain, Activity, AlertTriangle, ImagePlus, X } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { useAuth } from '@/contexts/AuthContext';
 import { supabase } from '@/integrations/supabase/client';
@@ -173,15 +173,6 @@ const PersonalDiagnosis = () => {
       <Header />
       
       <main className="container mx-auto px-4 py-8 max-w-4xl">
-        <Button
-          variant="ghost"
-          onClick={() => navigate('/')}
-          className="mb-6 gap-2"
-        >
-          <ArrowLeft className="h-4 w-4" />
-          {L('العودة للرئيسية','Back to home')}
-        </Button>
-
         <div className="text-center mb-8">
           <div className="inline-flex items-center justify-center w-16 h-16 bg-primary/10 rounded-full mb-4">
             <Stethoscope className="h-8 w-8 text-primary" />

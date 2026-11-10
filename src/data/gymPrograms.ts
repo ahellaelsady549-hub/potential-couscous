@@ -4,6 +4,7 @@ export interface GymDay {
   nameEn: string;
   muscles: string;
   musclesEn: string;
+  muscleGroupIds?: string[];
   exercises: string[];
   exercisesEn: string[];
 }

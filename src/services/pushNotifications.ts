@@ -1,5 +1,6 @@
 import { PushNotifications } from '@capacitor/push-notifications';
 import { Capacitor } from '@capacitor/core';
+import { supabase } from '@/integrations/supabase/client';
 
 export const initializePushNotifications = async () => {
   if (!Capacitor.isNativePlatform()) {
@@ -52,18 +53,13 @@ export const initializePushNotifications = async () => {
   }
 };
 
-const showLocalNotification = (title: string, body: string) => {
-  // For web, use browser notifications
-  if ('Notification' in window && Notification.permission === 'granted') {
-    new Notification(title, { body });
-  }
-};
-
-const handleNotificationAction = (data: any) => {
+const handleNotificationAction = (value: unknown) => {
+  if (!value || typeof value !== 'object') return;
+  const data = value as Record<string, unknown>;
   // Handle different notification types
   if (data?.type === 'medication_reminder') {
     window.location.href = '/dashboard?tab=medications';
-  } else if (data?.type === 'new_message') {
+  } else if (data.type === 'new_message' && typeof data.conversationId === 'string') {
     window.location.href = `/chat/${data.conversationId}`;
   } else if (data?.type === 'doctor_verified') {
     window.location.href = '/dashboard';
@@ -117,7 +113,6 @@ export const scheduleMedicationReminder = async (
   console.log(`Scheduled reminder for ${medicationName} at ${time}`);
 };
 
-// Request web notification permission
 export const requestWebNotificationPermission = async (): Promise<boolean> => {
   if (!('Notification' in window)) {
     console.log('This browser does not support notifications');
@@ -136,8 +131,109 @@ export const requestWebNotificationPermission = async (): Promise<boolean> => {
   return false;
 };
 
+const vapidPublicKey = import.meta.env.VITE_WEB_PUSH_PUBLIC_KEY;
+
+const decodeVapidKey = (key: string): Uint8Array => {
+  const padding = '='.repeat((4 - key.length % 4) % 4);
+  const base64 = (key + padding).replace(/-/g, '+').replace(/_/g, '/');
+  const raw = window.atob(base64);
+  return Uint8Array.from(raw, (character) => character.charCodeAt(0));
+};
+
+export const registerWebPushSubscription = async (
+  userId: string,
+  preferences: { medicationReminders: boolean; appointmentReminders: boolean },
+): Promise<void> => {
+  if (!('serviceWorker' in navigator) || !('PushManager' in window)) {
+    throw new Error('هذا المتصفح لا يدعم إشعارات الخلفية.');
+  }
+  if (!vapidPublicKey) {
+    throw new Error('إشعارات الخلفية غير مهيأة: أضف VITE_WEB_PUSH_PUBLIC_KEY إلى إعدادات الموقع.');
+  }
+  if (!(await requestWebNotificationPermission())) {
+    throw new Error('لم يتم السماح بإشعارات المتصفح.');
+  }
+
+  const registration = await navigator.serviceWorker.register('/sw.js');
+  const existingSubscription = await registration.pushManager.getSubscription();
+  const subscription = existingSubscription ?? await registration.pushManager.subscribe({
+    userVisibleOnly: true,
+    applicationServerKey: decodeVapidKey(vapidPublicKey),
+  });
+  const payload = subscription.toJSON();
+  if (!payload.endpoint || !payload.keys?.p256dh || !payload.keys.auth) {
+    throw new Error('تعذر إنشاء اشتراك إشعارات صالح لهذا المتصفح.');
+  }
+
+  const { error } = await supabase.from('web_push_subscriptions').upsert({
+    user_id: userId,
+    endpoint: payload.endpoint,
+    subscription: payload,
+    timezone: Intl.DateTimeFormat().resolvedOptions().timeZone || 'UTC',
+    medication_reminders: preferences.medicationReminders,
+    appointment_reminders: preferences.appointmentReminders,
+  }, { onConflict: 'endpoint' });
+  if (error) throw error;
+};
+
+export const updateWebPushPreferences = async (
+  preferences: { medicationReminders: boolean; appointmentReminders: boolean },
+): Promise<void> => {
+  if (!('serviceWorker' in navigator)) return;
+  const registration = await navigator.serviceWorker.getRegistration('/');
+  const subscription = await registration?.pushManager.getSubscription();
+  const endpoint = subscription?.endpoint;
+  if (!endpoint) return;
+
+  const { error } = await supabase.from('web_push_subscriptions').update({
+    medication_reminders: preferences.medicationReminders,
+    appointment_reminders: preferences.appointmentReminders,
+  }).eq('endpoint', endpoint);
+  if (error) throw error;
+};
+
+let medicationReminderAudio: HTMLAudioElement | null = null;
+let upcomingAppointmentAudio: HTMLAudioElement | null = null;
+
 export const playMedicationReminderSound = async (): Promise<void> => {
-  const audio = new Audio('/freesound_community-shaking-pill-bottle-94736.mp3');
-  audio.volume = 0.8;
-  await audio.play();
+  if (!medicationReminderAudio) {
+    medicationReminderAudio = new Audio(new URL('../components/medical_pager.mp3', import.meta.url).href);
+    medicationReminderAudio.preload = 'auto';
+    medicationReminderAudio.volume = 0.8;
+  }
+
+  medicationReminderAudio.currentTime = 0;
+  await medicationReminderAudio.play();
+};
+
+export const playAppointmentReminderSound = playMedicationReminderSound;
+
+export const playUpcomingAppointmentReminderSound = async (): Promise<void> => {
+  if (!upcomingAppointmentAudio) {
+    upcomingAppointmentAudio = new Audio('/freesound_community-shaking-pill-bottle-94736.mp3');
+    upcomingAppointmentAudio.preload = 'auto';
+    upcomingAppointmentAudio.volume = 0.8;
+  }
+
+  upcomingAppointmentAudio.currentTime = 0;
+  await upcomingAppointmentAudio.play();
+};
+
+export const showReminderNotification = async (title: string, body: string, tag: string) => {
+  if (typeof Notification === 'undefined' || Notification.permission !== 'granted') return;
+
+  if ('serviceWorker' in navigator) {
+    const registration = await navigator.serviceWorker.getRegistration('/');
+    if (registration) {
+      await registration.showNotification(title, {
+        body,
+        icon: '/favicon.ico',
+        tag,
+        data: { url: window.location.origin },
+      });
+      return;
+    }
+  }
+
+  new Notification(title, { body, icon: '/favicon.ico', tag });
 };

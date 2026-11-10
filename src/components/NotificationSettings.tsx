@@ -7,13 +7,16 @@ import { Bell, BellOff, Smartphone, Check, X } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { 
   initializePushNotifications, 
-  requestWebNotificationPermission,
+  registerWebPushSubscription,
+  updateWebPushPreferences,
   getPushToken 
 } from '@/services/pushNotifications';
 import { Capacitor } from '@capacitor/core';
+import { useAuth } from '@/contexts/AuthContext';
 
 const NotificationSettings = () => {
   const { toast } = useToast();
+  const { user } = useAuth();
   const [notificationsEnabled, setNotificationsEnabled] = useState(false);
   const [medicationReminders, setMedicationReminders] = useState(true);
   const [appointmentReminders, setAppointmentReminders] = useState(true);
@@ -34,10 +37,17 @@ const NotificationSettings = () => {
     // Load saved preferences
     const savedPrefs = localStorage.getItem('notification_preferences');
     if (savedPrefs) {
-      const prefs = JSON.parse(savedPrefs);
-      setMedicationReminders(prefs.medicationReminders ?? true);
-      setAppointmentReminders(prefs.appointmentReminders ?? true);
-      setNewMessages(prefs.newMessages ?? true);
+      try {
+        const prefs: unknown = JSON.parse(savedPrefs);
+        if (typeof prefs === 'object' && prefs !== null) {
+          const values = prefs as Record<string, unknown>;
+          setMedicationReminders(values.medicationReminders !== false);
+          setAppointmentReminders(values.appointmentReminders !== false);
+          setNewMessages(values.newMessages !== false);
+        }
+      } catch (error) {
+        console.error('Unable to read notification preferences:', error);
+      }
     }
   }, []);
 
@@ -47,7 +57,18 @@ const NotificationSettings = () => {
     if (isNative) {
       success = await initializePushNotifications() ?? false;
     } else {
-      success = await requestWebNotificationPermission();
+      try {
+        if (!user) throw new Error('سجّل الدخول أولاً لتفعيل إشعارات الخلفية.');
+        await registerWebPushSubscription(user.id, { medicationReminders, appointmentReminders });
+        success = true;
+      } catch (error) {
+        toast({
+          title: 'فشل تفعيل الإشعارات',
+          description: error instanceof Error ? error.message : 'يرجى السماح بالإشعارات من إعدادات المتصفح أو الجهاز',
+          variant: 'destructive'
+        });
+        return;
+      }
     }
     
     setNotificationsEnabled(success);
@@ -55,8 +76,8 @@ const NotificationSettings = () => {
     
     if (success) {
       toast({
-        title: 'تم تفعيل الإشعارات',
-        description: 'ستتلقى إشعارات بتذكيرات الأدوية والرسائل الجديدة'
+        title: 'تم تسجيل المتصفح للإشعارات',
+        description: 'تذكيرات الخلفية ستعمل بعد إعداد مفاتيح Web Push وترحيل قاعدة البيانات على الخادم.'
       });
     } else {
       toast({
@@ -67,14 +88,25 @@ const NotificationSettings = () => {
     }
   };
 
-  const savePreferences = () => {
+  const savePreferences = async () => {
     const prefs = {
       medicationReminders,
       appointmentReminders,
       newMessages
     };
     localStorage.setItem('notification_preferences', JSON.stringify(prefs));
-    
+    try {
+      await updateWebPushPreferences({ medicationReminders, appointmentReminders });
+    } catch (error) {
+      console.error('Unable to update web push preferences:', error);
+      toast({
+        title: 'تم حفظ التفضيلات محليًا',
+        description: error instanceof Error ? error.message : 'تعذر تحديث إعدادات إشعارات الخلفية.',
+        variant: 'destructive'
+      });
+      return;
+    }
+
     toast({
       title: 'تم حفظ التفضيلات',
       description: 'سيتم تطبيق إعدادات الإشعارات الجديدة'
@@ -106,7 +138,9 @@ const NotificationSettings = () => {
                 {notificationsEnabled ? 'الإشعارات مفعلة' : 'الإشعارات معطلة'}
               </p>
               <p className="text-sm text-muted-foreground">
-                {isNative ? 'إشعارات التطبيق' : 'إشعارات المتصفح'}
+                {isNative
+                  ? 'إشعارات التطبيق'
+                  : 'إشعارات الخلفية تحتاج إعداد Web Push؛ صوت MP3 يعمل عندما يكون الموقع مفتوحًا فقط.'}
               </p>
             </div>
           </div>
