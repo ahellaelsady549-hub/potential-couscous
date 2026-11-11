@@ -145,7 +145,16 @@ const FirstAidAcademy = () => {
   const [lessonRead, setLessonRead] = useState(false);
   const [revealedStep, setRevealedStep] = useState(0);
   const [quizKey, setQuizKey] = useState(0);
+  const [navigateToNextLesson, setNavigateToNextLesson] = useState(false);
   const lessonScrollRef = useRef<HTMLDivElement>(null);
+
+  // Handle navigation to next lesson after progress update
+  useEffect(() => {
+    if (navigateToNextLesson) {
+      setNavigateToNextLesson(false);
+      nextLesson();
+    }
+  }, [navigateToNextLesson]);
 
   const activeLesson = allFirstAidLessons.find((tip) => tip.id === activeLessonId) ?? allFirstAidLessons[0];
   const lessonTitle = activeLesson ? (language === 'ar' ? activeLesson.titleAr : activeLesson.titleEn) : '';

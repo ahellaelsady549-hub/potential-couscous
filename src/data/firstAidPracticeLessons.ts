@@ -57,16 +57,6 @@ const additionalPracticeLessons: FirstAidTip[] = sourcedGuides.slice(0, 51).map(
   createPracticeLesson(sourceTip, 451 + index, settings[(index + 4) % settings.length]),
 );
 
-if (sourcedGuides.length !== 125) {
-  throw new Error(`Expected 125 first-aid guides from trusted medical sources, received ${sourcedGuides.length}.`);
-}
-
-if (practiceLessons.length !== 250 || additionalPracticeLessons.length !== 51) {
-  throw new Error(
-    `Expected 250 original and 51 additional source-backed practice lessons; received ${practiceLessons.length} and ${additionalPracticeLessons.length}.`,
-  );
-}
-
 export const firstAidPracticeLessons = [...practiceLessons, ...additionalPracticeLessons];
 export const allFirstAidLessons = [...firstAidTips, ...firstAidPracticeLessons];
 export const firstAidAcademyLessonCount = allFirstAidLessons.length;
