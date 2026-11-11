@@ -8,7 +8,15 @@ const settings = [
   { ar: 'في الخارج', en: 'outdoors', illustration: 'outdoors' },
 ] as const;
 
-const trustedSourceHosts = new Set(['www.sja.org.uk', 'www.nhs.uk', 'www.redcross.org.uk']);
+const trustedSourceHosts = new Set([
+  'www.sja.org.uk', 
+  'www.nhs.uk', 
+  'www.redcross.org.uk',
+  'www.bhf.org.uk',
+  'www.stroke.org.uk',
+  'www.stroke.org',
+  'www.world-stroke.org'
+]);
 const sourcedGuides = firstAidTips.filter((tip) =>
   tip.sources?.length
   && tip.sources.every((source) => {

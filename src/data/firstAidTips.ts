@@ -176,6 +176,62 @@ export const firstAidTips: FirstAidTip[] = [
     videoUrl: "https://www.youtube.com/watch?v=mkpS4wbKFXw"
   },
   {
+    id: 7,
+    titleEn: "Stroke Recognition (FAST)",
+    titleAr: "التعرف على السكتة الدماغية",
+    descriptionEn: "Quick stroke assessment",
+    descriptionAr: "التقييم السريع للسكتة الدماغية",
+    stepsEn: [
+      "Face: Ask to smile, check for drooping",
+      "Arms: Raise both arms, watch for drift",
+      "Speech: Check for slurred speech",
+      "Time: Call 123 immediately if any signs",
+      "Note time symptoms started"
+    ],
+    stepsAr: [
+      "الوجه: اطلب الابتسام، تحقق من الترهل",
+      "الذراعان: ارفع كلا الذراعين، راقب الانجراف",
+      "الكلام: تحقق من تداخل الكلام",
+      "الوقت: اتصل بـ 123 فوراً عند أي علامة",
+      "سجل وقت بدء الأعراض"
+    ],
+    videoUrl: "https://www.youtube.com/watch?v=mkpS4wbKFXw"
+  },
+  {
+    id: 71,
+    titleEn: "Stroke — Complete Guide: What It Is, Types, Causes & First Aid",
+    titleAr: "السكتة الدماغية — دليل شامل: ما هي، أنواعها، أسبابها والإسعافات",
+    descriptionEn: "Understand stroke from A to Z: what happens in the brain, types (ischemic, hemorrhagic, TIA), risk factors, and complete first aid response",
+    descriptionAr: "افهم السكتة الدماغية من الألف للياء: إيه اللي بيحصل في المخ، أنواعها (إقفارية، نزفية، عابرة)، عوامل الخطر، والإسعافات الأولية بالتفصيل",
+    stepsEn: [
+      "🧠 What is a stroke? Blood supply to part of the brain is cut off — brain cells start dying within minutes. It's a medical emergency where every second counts.",
+      "📋 Types of stroke: 1) Ischemic (87%) — clot blocks blood vessel. 2) Hemorrhagic (13%) — vessel bursts and bleeds. 3) TIA (Transient Ischemic Attack) — 'mini-stroke', symptoms resolve but warns of major stroke.",
+      "⚠️ Risk factors: High blood pressure (biggest), diabetes, high cholesterol, smoking, obesity, atrial fibrillation, age 55+, family history. Many are controllable!",
+      "🚨 FAST — Recognize stroke instantly: Face drooping? Arm weakness? Speech difficulty? Time to call 123! Don't wait — treatment works best within 4.5 hours.",
+      "📞 First Aid: Call 123 immediately. Keep person calm, lying down with head slightly raised. Note exact time symptoms started. Don't give food/water/medicine. Loosen tight clothing. Monitor breathing — be ready for CPR.",
+      "⏱️ Why time matters: 'Time is brain' — 1.9 million neurons die every minute. Clot-busting drugs (tPA) only work within 4.5 hours. Mechanical thrombectomy up to 24 hours for some.",
+      "🏥 Hospital care: CT scan to confirm type. Ischemic → tPA or thrombectomy. Hemorrhagic → control bleeding, surgery if needed. ICU monitoring for complications."
+    ],
+    stepsAr: [
+      "🧠 إيه هي السكتة الدماغية؟ انقطاع الدم عن جزء من المخ → خلايا المخ بتموت في دقايق. طارئة طبية كل ثانية فيها مهمة.",
+      "📋 أنواع السكتة: 1) إقفارية (٨٧٪) — جلطة تسد وعاء دموي. 2) نزفية (١٣٪) — وعاء بيفجر وينزف. 3) عابرة (TIA) — 'سكتة صغيرة'، الأعراض بتمشي بس بتحذر من سكتة كبيرة.",
+      "⚠️ عوامل الخطر: ضغط الدم العالي (الأخطر)، سكري، كوليسترول عالي، تدخين، سمنة، رجفان أذيني، سن ٥٥+، تاريخ عائلي. كتير منها تقدر تتحكم فيها!",
+      "🚨 FAST — اكتشف السكتة فوراً: الوجه متدلّي؟ ضعف في الذراع؟ صعوبة في الكلام؟ الوقت: اتصل ١٢٣! مستناش — العلاج بيشتغل أحسن في أول ٤.٥ ساعة.",
+      "📞 الإسعافات: اتصل ١٢٣ فوراً. خلي الشخص هادي، مضجع مع رفع راس شوية. سجّل وقت بداية الأعراض بالظبط. متعطيش/مطعمش/مدوّهوش دواء. فك الملابس الضيقة. راقب التنفس — كون مستعد للإنعاش القلبي.",
+      "⏱️ ليه الوقت مهم؟ 'الوقت دماغ' — ١.٩ مليون خلية مخ بتموت كل دقيقة. أدوية تسييح الجلطة (tPA) بتمشي بس في ٤.٥ ساعة. سحب الجلطة ميكانيكياً ممكن لـ ٢٤ ساعة للبعض.",
+      "🏥 الرعاية في المستشفى: أشعة مقطعية تؤكد النوع. إقفاري → tPA أو سحب جلطة. نزفي → وقف النزيف، جراحة لو محتاج. عناية مركزة للمتابعة."
+    ],
+    videoUrl: "https://www.youtube.com/watch?v=mkpS4wbKFXw",
+    category: "stroke",
+    sources: [
+      { nameEn: "NHS — Stroke", nameAr: "NHS — السكتة الدماغية", url: "https://www.nhs.uk/conditions/stroke/" },
+      { nameEn: "British Heart Foundation — Stroke", nameAr: "مؤسسة القلب البريطانية — السكتة", url: "https://www.bhf.org.uk/informationsupport/conditions/stroke" },
+      { nameEn: "Stroke Association UK", nameAr: "جمعية السكتة الدماغية UK", url: "https://www.stroke.org.uk/" },
+      { nameEn: "American Stroke Association", nameAr: "جمعية السكتة الأمريكية", url: "https://www.stroke.org/" },
+      { nameEn: "World Stroke Organization", nameAr: "منظمة السكتة العالمية", url: "https://www.world-stroke.org/" }
+    ]
+  },
+  {
     id: 8,
     titleEn: "Seizure Response",
     titleAr: "التعامل مع النوبات",

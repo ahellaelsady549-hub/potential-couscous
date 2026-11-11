@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useRef, useState, type UIEvent } from 'react';
-import { BookOpen, CheckCircle2, CircleHelp, Flame, HeartPulse, LockKeyhole, Medal, Search, Trophy } from 'lucide-react';
+import { BookOpen, CheckCircle2, ChevronLeft, CircleHelp, Flame, HeartPulse, LockKeyhole, Medal, Search, Trophy } from 'lucide-react';
 import { Header } from '@/components/Header';
 import { Footer } from '@/components/Footer';
 import { Button } from '@/components/ui/button';
@@ -145,16 +145,7 @@ const FirstAidAcademy = () => {
   const [lessonRead, setLessonRead] = useState(false);
   const [revealedStep, setRevealedStep] = useState(0);
   const [quizKey, setQuizKey] = useState(0);
-  const [navigateToNextLesson, setNavigateToNextLesson] = useState(false);
   const lessonScrollRef = useRef<HTMLDivElement>(null);
-
-  // Handle navigation to next lesson after progress update
-  useEffect(() => {
-    if (navigateToNextLesson) {
-      setNavigateToNextLesson(false);
-      nextLesson();
-    }
-  }, [navigateToNextLesson]);
 
   const activeLesson = allFirstAidLessons.find((tip) => tip.id === activeLessonId) ?? allFirstAidLessons[0];
   const lessonTitle = activeLesson ? (language === 'ar' ? activeLesson.titleAr : activeLesson.titleEn) : '';
@@ -303,8 +294,14 @@ const FirstAidAcademy = () => {
         completedLessonIds: [...new Set([...prev.completedLessonIds, activeLessonId])],
       }));
       void completeLesson(activeLessonId);
-      // Trigger navigation after state update
-      setNavigateToNextLesson(true);
+
+      // Go straight to the next lesson (force = bypass the lock check)
+      const currentIndex = allFirstAidLessons.findIndex((tip) => tip.id === activeLessonId);
+      const next = allFirstAidLessons[currentIndex + 1];
+      if (next) {
+        startLesson(next.id, true);
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      }
     }
   };
 
@@ -402,7 +399,7 @@ const FirstAidAcademy = () => {
           {user ? (
             leaderboard.length ? (
               <ol className="grid gap-2 sm:grid-cols-2 lg:grid-cols-3">
-                {                displayedLeaderboard.map((learner) => (
+                {displayedLeaderboard.map((learner) => (
                   <li key={`${learner.rank}-${learner.learnerLabel}`} className={`flex items-center justify-between gap-3 rounded-lg border p-3 ${learner.isCurrentUser ? 'border-primary bg-primary/5' : 'border-border'}`}>
                     <span className="flex min-w-0 items-center gap-2">
                       <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-muted text-sm font-bold">{learner.rank}</span>
