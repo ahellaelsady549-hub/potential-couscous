@@ -219,6 +219,17 @@ export const playUpcomingAppointmentReminderSound = async (): Promise<void> => {
   await upcomingAppointmentAudio.play();
 };
 
+export const stopMedicationReminderSound = () => {
+  if (medicationReminderAudio) {
+    medicationReminderAudio.pause();
+    medicationReminderAudio.currentTime = 0;
+  }
+  if (upcomingAppointmentAudio) {
+    upcomingAppointmentAudio.pause();
+    upcomingAppointmentAudio.currentTime = 0;
+  }
+};
+
 export const showReminderNotification = async (title: string, body: string, tag: string) => {
   if (typeof Notification === 'undefined' || Notification.permission !== 'granted') return;
 

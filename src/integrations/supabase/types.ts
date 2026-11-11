@@ -14,6 +14,48 @@ export type Database = {
   }
   public: {
     Tables: {
+      first_aid_learning_stats: {
+        Row: {
+          current_streak: number
+          last_active: string | null
+          points: number
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          current_streak?: number
+          last_active?: string | null
+          points?: number
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          current_streak?: number
+          last_active?: string | null
+          points?: number
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      first_aid_lesson_completions: {
+        Row: {
+          completed_at: string
+          lesson_id: number
+          user_id: string
+        }
+        Insert: {
+          completed_at?: string
+          lesson_id: number
+          user_id: string
+        }
+        Update: {
+          completed_at?: string
+          lesson_id?: number
+          user_id?: string
+        }
+        Relationships: []
+      }
       ask_me_history: {
         Row: {
           answer: string
@@ -961,6 +1003,26 @@ export type Database = {
       }
     }
     Functions: {
+      record_first_aid_activity: {
+        Args: { p_lesson_id: number | null }
+        Returns: {
+          current_streak: number
+          last_active: string
+          lesson_completed: boolean
+          points: number
+        }[]
+      }
+      get_first_aid_leaderboard: {
+        Args: never
+        Returns: {
+          completed_lessons: number
+          is_current_user: boolean
+          learner_label: string
+          points: number
+          rank: number
+          streak: number
+        }[]
+      }
       get_public_site_stats: { Args: never; Returns: Json }
       get_community_stats: { Args: never; Returns: Json }
       get_doctors_public: {

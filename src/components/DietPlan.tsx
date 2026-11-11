@@ -10,6 +10,8 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
 import { announceAiResponse } from '@/lib/aiResponse';
+import { getCachedFirstAidProgress } from '@/lib/firstAidProgress';
+import { allFirstAidLessons } from '@/data/firstAidPracticeLessons';
 
 interface UserData {
   height: string;
@@ -76,6 +78,14 @@ const activityLevels = [
   { value: 'active', label: 'نشيط جداً (6-7 يوم/أسبوع)' },
   { value: 'athlete', label: 'رياضي محترف' },
 ];
+
+const escapeXml = (value: string | number) => String(value).replace(/[<>&'"]/g, (character) => ({
+  '<': '&lt;',
+  '>': '&gt;',
+  '&': '&amp;',
+  "'": '&apos;',
+  '"': '&quot;',
+})[character] ?? character);
 
 export const DietPlan = () => {
   const { t, L } = useLanguage();
@@ -642,6 +652,37 @@ export const DietPlan = () => {
                 <Button
                   onClick={() => {
                     // Create Excel-compatible XML (SpreadsheetML)
+                    const learning = getCachedFirstAidProgress(user?.id);
+                    const completedLessons = new Set(learning.completedLessonIds);
+                    const learningRows = allFirstAidLessons.map((lesson) => {
+                      const assignment = lesson.scenario?.assignmentAr
+                        ?? `تدرّب على ترتيب خطوات درس «${lesson.titleAr}» واشرح متى تطلب الطوارئ.`;
+                      const scene = lesson.scenario
+                        ? `محادثة المسعف والمصاب — ${lesson.scenario.settingAr}`
+                        : 'محادثة متحركة بين المسعف والمصاب (شاهدها في صفحة الأكاديمية)';
+                      const sources = lesson.sources?.map((source) => source.url).join(' | ') ?? '';
+                      return `<Row ss:StyleID="Data">
+        <Cell><Data ss:Type="Number">${lesson.id}</Data></Cell>
+        <Cell><Data ss:Type="String">${escapeXml(lesson.titleAr)}</Data></Cell>
+        <Cell><Data ss:Type="String">${completedLessons.has(lesson.id) ? 'مكتمل' : 'لم يبدأ'}</Data></Cell>
+        <Cell><Data ss:Type="String">${escapeXml(assignment)}</Data></Cell>
+        <Cell><Data ss:Type="String">${escapeXml(scene)}</Data></Cell>
+        <Cell><Data ss:Type="String">${escapeXml(sources)}</Data></Cell>
+      </Row>`;
+                    }).join('\n      ');
+                    const mealRows = [
+      { title: dietPlan.breakfast?.title || 'الإفطار', meal: dietPlan.breakfast },
+      { title: dietPlan.lunch?.title || 'الغداء', meal: dietPlan.lunch },
+      { title: dietPlan.dinner?.title || 'العشاء', meal: dietPlan.dinner },
+      { title: dietPlan.snacks?.title || 'وجبات خفيفة', meal: dietPlan.snacks },
+                    ].flatMap(({ title, meal }) => {
+      const items = meal?.items?.length ? meal.items : ['لا توجد مكونات مسجلة'];
+      return items.map((item, index) => `<Row ss:StyleID="Data">
+        <Cell><Data ss:Type="String">${escapeXml(title)}</Data></Cell>
+        <Cell><Data ss:Type="String">${escapeXml(item)}</Data></Cell>
+        ${index === 0 ? `<Cell><Data ss:Type="Number">${meal?.calories ?? 0}</Data></Cell>` : '<Cell/>'}
+      </Row>`);
+                    }).join('\n      ');
                     const xmlContent = `<?xml version="1.0" encoding="UTF-8"?>
 <?mso-application progid="Excel.Sheet"?>
 <Workbook xmlns="urn:schemas-microsoft-com:office:spreadsheet"
@@ -677,7 +718,7 @@ export const DietPlan = () => {
         <Cell><Data ss:Type="String">مؤشر كتلة الجسم BMI</Data></Cell>
         <Cell><Data ss:Type="Number">${dietPlan.bmi}</Data></Cell>
         <Cell><Data ss:Type="String">-</Data></Cell>
-        <Cell><Data ss:Type="String">${dietPlan.bmiCategory}</Data></Cell>
+        <Cell><Data ss:Type="String">${escapeXml(dietPlan.bmiCategory)}</Data></Cell>
       </Row>
       <Row ss:StyleID="Data">
         <Cell><Data ss:Type="String">البروتين</Data></Cell>
@@ -699,7 +740,7 @@ export const DietPlan = () => {
       </Row>
       <Row ss:StyleID="Data">
         <Cell><Data ss:Type="String">الماء</Data></Cell>
-        <Cell><Data ss:Type="String">${dietPlan.waterIntake}</Data></Cell>
+        <Cell><Data ss:Type="String">${escapeXml(dietPlan.waterIntake)}</Data></Cell>
         <Cell><Data ss:Type="String">لتر</Data></Cell>
         <Cell><Data ss:Type="String">يومياً</Data></Cell>
       </Row>
@@ -733,26 +774,7 @@ export const DietPlan = () => {
         <Cell><Data ss:Type="String">المحتويات</Data></Cell>
         <Cell><Data ss:Type="String">السعرات</Data></Cell>
       </Row>
-      <Row ss:StyleID="Data">
-        <Cell><Data ss:Type="String">${dietPlan.breakfast?.title || 'الإفطار'}</Data></Cell>
-        <Cell><Data ss:Type="String">${dietPlan.breakfast?.items?.join('، ') || ''}</Data></Cell>
-        <Cell><Data ss:Type="Number">${dietPlan.breakfast?.calories || 0}</Data></Cell>
-      </Row>
-      <Row ss:StyleID="Data">
-        <Cell><Data ss:Type="String">${dietPlan.lunch?.title || 'الغداء'}</Data></Cell>
-        <Cell><Data ss:Type="String">${dietPlan.lunch?.items?.join('، ') || ''}</Data></Cell>
-        <Cell><Data ss:Type="Number">${dietPlan.lunch?.calories || 0}</Data></Cell>
-      </Row>
-      <Row ss:StyleID="Data">
-        <Cell><Data ss:Type="String">${dietPlan.dinner?.title || 'العشاء'}</Data></Cell>
-        <Cell><Data ss:Type="String">${dietPlan.dinner?.items?.join('، ') || ''}</Data></Cell>
-        <Cell><Data ss:Type="Number">${dietPlan.dinner?.calories || 0}</Data></Cell>
-      </Row>
-      <Row ss:StyleID="Data">
-        <Cell><Data ss:Type="String">${dietPlan.snacks?.title || 'وجبات خفيفة'}</Data></Cell>
-        <Cell><Data ss:Type="String">${dietPlan.snacks?.items?.join('، ') || ''}</Data></Cell>
-        <Cell><Data ss:Type="Number">${dietPlan.snacks?.calories || 0}</Data></Cell>
-      </Row>
+      ${mealRows}
     </Table>
   </Worksheet>
   <Worksheet ss:Name="النصائح">
@@ -761,7 +783,34 @@ export const DietPlan = () => {
       <Row ss:StyleID="Header">
         <Cell><Data ss:Type="String">نصائح مهمة</Data></Cell>
       </Row>
-      ${dietPlan.tips?.map(tip => `<Row ss:StyleID="Data"><Cell><Data ss:Type="String">${tip}</Data></Cell></Row>`).join('\n      ') || ''}
+      ${dietPlan.tips?.map(tip => `<Row ss:StyleID="Data"><Cell><Data ss:Type="String">${escapeXml(tip)}</Data></Cell></Row>`).join('\n      ') || ''}
+    </Table>
+  </Worksheet>
+  <Worksheet ss:Name="واجبات الإسعافات">
+    <Table>
+      <Column ss:Width="60"/>
+      <Column ss:Width="280"/>
+      <Column ss:Width="90"/>
+      <Column ss:Width="420"/>
+      <Column ss:Width="280"/>
+      <Column ss:Width="400"/>
+      <Row ss:StyleID="Header">
+        <Cell><Data ss:Type="String">رقم الدرس</Data></Cell>
+        <Cell><Data ss:Type="String">الدرس</Data></Cell>
+        <Cell><Data ss:Type="String">الحالة</Data></Cell>
+        <Cell><Data ss:Type="String">الواجب التدريبي</Data></Cell>
+        <Cell><Data ss:Type="String">الشخصيات والمشهد المتحرك</Data></Cell>
+        <Cell><Data ss:Type="String">المصدر الطبي الموثوق</Data></Cell>
+      </Row>
+      <Row ss:StyleID="Data">
+        <Cell><Data ss:Type="String">نقاطك</Data></Cell>
+        <Cell><Data ss:Type="Number">${learning.points}</Data></Cell>
+        <Cell><Data ss:Type="String">أيام التعلّم المتتالية</Data></Cell>
+        <Cell><Data ss:Type="Number">${learning.streak}</Data></Cell>
+        <Cell><Data ss:Type="String">الدروس المكتملة</Data></Cell>
+        <Cell><Data ss:Type="Number">${completedLessons.size}</Data></Cell>
+      </Row>
+      ${learningRows}
     </Table>
   </Worksheet>
 </Workbook>`;
@@ -770,8 +819,10 @@ export const DietPlan = () => {
                     const a = document.createElement('a');
                     a.href = url;
                     a.download = 'diet-plan.xls';
+                    document.body.appendChild(a);
                     a.click();
-                    URL.revokeObjectURL(url);
+                    a.remove();
+                    window.setTimeout(() => URL.revokeObjectURL(url), 1000);
                     toast({ title: L("تم التحميل", "Downloaded"), description: L("تم تحميل النظام الغذائي كجدول Excel", "Diet plan downloaded as an Excel sheet") });
                   }}
                   variant="outline"

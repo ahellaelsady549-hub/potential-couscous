@@ -1,5 +1,5 @@
 import { useState, useRef, useEffect } from 'react';
-import { X, Send, Bot, Sparkles, Trash2, Maximize2, Minimize2, Loader2, MessageCircle, ImageIcon } from 'lucide-react';
+import { X, Send, Sparkles, Trash2, Maximize2, Minimize2, Loader2, ImageIcon, EyeOff } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
@@ -32,6 +32,20 @@ const STORAGE_KEY = 'es3efny_chat_history';
 const GUEST_MSG_COUNT_KEY = 'es3efny_guest_msg_count';
 const GUEST_MSG_LIMIT = 5;
 
+type Point = { x: number; y: number };
+type DragState = { pointerId: number; startX: number; startY: number; origin: Point; width: number; height: number; target: 'launcher' | 'chat' };
+
+const TamennyCharacter = ({ className = '' }: { className?: string }) => (
+  <svg className={className} viewBox="0 0 48 48" fill="none" aria-hidden="true">
+    <path d="M10 43c.7-8.2 5.2-12.4 14-12.4S37.3 34.8 38 43" fill="currentColor" opacity=".3" />
+    <path d="M14 20.5c0-6 4.4-10.5 10-10.5s10 4.5 10 10.5v4c0 5.7-4.4 10-10 10s-10-4.3-10-10v-4Z" fill="white" />
+    <path d="M13 19h22l-2.8-7H16l-3 7Z" fill="#FDE68A" />
+    <path d="M20 24h.1m7.8 0h.1M21 28c1.7 1.8 4.3 1.8 6 0" stroke="#075985" strokeWidth="2" strokeLinecap="round" />
+    <path d="M23 10V6h5v4m-2.5-2.5h-5" stroke="white" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round" />
+    <path d="M24 33v8m-4-4h8" stroke="white" strokeWidth="2" strokeLinecap="round" opacity=".95" />
+  </svg>
+);
+
 interface SiteGuideBotProps {
   onOpenChange?: (isOpen: boolean) => void;
 }
@@ -40,6 +54,8 @@ export const SiteGuideBot = ({ onOpenChange }: SiteGuideBotProps = {}) => {
   const { toast } = useToast();
   const [isOpen, setIsOpen] = useState(false);
   const [isFullScreen, setIsFullScreen] = useState(false);
+  const [launcherPosition, setLauncherPosition] = useState<Point | null>(null);
+  const [chatPosition, setChatPosition] = useState<Point | null>(null);
   const [messages, setMessages] = useState<Message[]>(() => {
     const saved = localStorage.getItem(STORAGE_KEY);
     if (saved) {
@@ -56,6 +72,69 @@ export const SiteGuideBot = ({ onOpenChange }: SiteGuideBotProps = {}) => {
 
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const imageInputRef = useRef<HTMLInputElement>(null);
+  const dragRef = useRef<DragState | null>(null);
+  const suppressLauncherClickRef = useRef(false);
+
+  useEffect(() => {
+    const handlePointerMove = (event: PointerEvent) => {
+      const drag = dragRef.current;
+      if (!drag || drag.pointerId !== event.pointerId) return;
+      const width = Math.min(drag.width, window.innerWidth - 16);
+      const height = Math.min(drag.height, window.innerHeight - 16);
+      const next = {
+        x: Math.max(8, Math.min(window.innerWidth - width - 8, drag.origin.x + event.clientX - drag.startX)),
+        y: Math.max(8, Math.min(window.innerHeight - height - 8, drag.origin.y + event.clientY - drag.startY)),
+      };
+      if (drag.target === 'chat') setChatPosition(next);
+      else {
+        setLauncherPosition(next);
+        if (Math.abs(event.clientX - drag.startX) > 4 || Math.abs(event.clientY - drag.startY) > 4) {
+          suppressLauncherClickRef.current = true;
+        }
+      }
+    };
+    const handlePointerUp = (event: PointerEvent) => {
+      if (dragRef.current?.pointerId === event.pointerId) dragRef.current = null;
+    };
+    window.addEventListener('pointermove', handlePointerMove);
+    window.addEventListener('pointerup', handlePointerUp);
+    window.addEventListener('pointercancel', handlePointerUp);
+    return () => {
+      window.removeEventListener('pointermove', handlePointerMove);
+      window.removeEventListener('pointerup', handlePointerUp);
+      window.removeEventListener('pointercancel', handlePointerUp);
+    };
+  }, []);
+
+  useEffect(() => {
+    const keepLauncherInView = () => {
+      const width = window.innerWidth < 640 ? 56 : 180;
+      const height = 64;
+      setLauncherPosition((position) => position && ({
+        x: Math.max(8, Math.min(window.innerWidth - width - 8, position.x)),
+        y: Math.max(8, Math.min(window.innerHeight - height - 8, position.y)),
+      }));
+    };
+    window.addEventListener('resize', keepLauncherInView);
+    return () => window.removeEventListener('resize', keepLauncherInView);
+  }, []);
+
+  const startDrag = (event: React.PointerEvent<HTMLElement>, target: DragState['target']) => {
+    if (isFullScreen) return;
+    const rect = event.currentTarget.getBoundingClientRect();
+    const fallback = { x: rect.left, y: rect.top };
+    const origin = target === 'chat' ? (chatPosition ?? fallback) : (launcherPosition ?? fallback);
+    event.currentTarget.setPointerCapture(event.pointerId);
+    dragRef.current = {
+      pointerId: event.pointerId,
+      startX: event.clientX,
+      startY: event.clientY,
+      origin,
+      width: rect.width,
+      height: rect.height,
+      target,
+    };
+  };
 
   const scrollToBottom = () => messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   useEffect(() => { scrollToBottom(); }, [messages]);
@@ -216,6 +295,8 @@ export const SiteGuideBot = ({ onOpenChange }: SiteGuideBotProps = {}) => {
   const closeChat = () => {
     setIsOpen(false);
     setIsFullScreen(false);
+    setLauncherPosition(null);
+    setChatPosition(null);
   };
 
   return (
@@ -230,17 +311,31 @@ export const SiteGuideBot = ({ onOpenChange }: SiteGuideBotProps = {}) => {
 
       {/* Floating Button */}
       {!isOpen && (
-        <Button
-          onClick={() => setIsOpen(true)}
-          aria-label="افتح المحادثة مع طمّني"
-          aria-expanded={isOpen}
-          aria-controls="site-guide-chat"
-          className="fixed z-40 h-14 w-14 rounded-full border border-primary-foreground/20 bg-gradient-to-br from-primary to-secondary text-primary-foreground shadow-[0_8px_30px_-8px_hsl(var(--primary)/0.7)] transition-all duration-300 hover:-translate-y-1 hover:scale-105 hover:shadow-[0_12px_36px_-8px_hsl(var(--primary)/0.8)] focus-visible:ring-4 focus-visible:ring-primary/30 sm:w-auto sm:gap-3 sm:px-5"
-          style={{ right: 'max(1rem, env(safe-area-inset-right))', bottom: 'max(1rem, env(safe-area-inset-bottom))' }}
-        >
-          <MessageCircle className="h-6 w-6" />
-          <span className="hidden sm:inline">اسأل طمّني</span>
-        </Button>
+        <>
+          <Button
+            onPointerDown={(event) => startDrag(event, 'launcher')}
+            onClick={() => {
+              if (suppressLauncherClickRef.current) {
+                suppressLauncherClickRef.current = false;
+                return;
+              }
+              const rect = document.getElementById('site-guide-launcher')?.getBoundingClientRect();
+              if (rect) setChatPosition({ x: Math.max(8, Math.min(window.innerWidth - 336, rect.left)), y: Math.max(8, Math.min(window.innerHeight - 476, rect.top - 420)) });
+              setIsOpen(true);
+            }}
+            id="site-guide-launcher"
+            aria-label="افتح المحادثة مع طمّني"
+            aria-expanded={isOpen}
+            aria-controls="site-guide-chat"
+            className="tamenny-launcher fixed z-40 h-14 w-14 touch-none cursor-grab rounded-full border border-primary-foreground/20 bg-gradient-to-br from-primary to-secondary text-primary-foreground shadow-[0_8px_30px_-8px_hsl(var(--primary)/0.7)] transition-[box-shadow,scale] duration-300 hover:scale-105 hover:shadow-[0_12px_36px_-8px_hsl(var(--primary)/0.8)] focus-visible:ring-4 focus-visible:ring-primary/30 active:cursor-grabbing sm:w-auto sm:gap-3 sm:px-5"
+            style={launcherPosition
+              ? { left: launcherPosition.x, top: launcherPosition.y }
+              : { right: 'max(1rem, env(safe-area-inset-right))', bottom: 'max(1rem, env(safe-area-inset-bottom))' }}
+          >
+            <TamennyCharacter className="tamenny-character h-8 w-8" />
+            <span className="hidden sm:inline">اسأل طمّني</span>
+          </Button>
+        </>
       )}
 
       {/* Chat Window */}
@@ -248,26 +343,37 @@ export const SiteGuideBot = ({ onOpenChange }: SiteGuideBotProps = {}) => {
         <Card id="site-guide-chat" className={`fixed z-[60] flex flex-col overflow-hidden border border-primary/20 shadow-xl transition-all duration-300 ease-in-out
           ${isFullScreen
             ? 'inset-0 rounded-none'
-            : 'bottom-4 left-4 right-4 top-20 rounded-xl sm:top-auto sm:bottom-4 sm:left-auto sm:right-4 sm:w-80 sm:h-[420px]'
+            : 'rounded-xl sm:w-80 sm:h-[420px]'
           }
-        `}>
+        `} style={!isFullScreen
+          ? chatPosition
+            ? { left: chatPosition.x, top: chatPosition.y, width: 'min(320px, calc(100vw - 32px))', height: 'min(420px, calc(100vh - 32px))' }
+            : { top: 'max(5rem, env(safe-area-inset-top))', right: 16, height: 'min(420px, calc(100vh - max(5rem, env(safe-area-inset-top)) - 1rem))', width: 'min(320px, calc(100vw - 32px))' }
+          : undefined}>
           {/* Header */}
-          <div className="flex items-center justify-between px-3 py-2 border-b bg-gradient-to-r from-primary to-accent text-primary-foreground">
+          <div
+            onPointerDown={(event) => startDrag(event, 'chat')}
+            className={`flex touch-none items-center justify-between border-b bg-gradient-to-r from-primary to-accent px-3 py-2 text-primary-foreground ${isFullScreen ? '' : 'cursor-grab active:cursor-grabbing'}`}
+          >
             <div className="flex items-center gap-2">
               <div className="relative">
-                <Bot className="h-5 w-5" />
+                <TamennyCharacter className="tamenny-character h-7 w-7" />
                 <Sparkles className="h-2 w-2 absolute -top-1 -right-1 text-yellow-300" />
               </div>
               <span className="font-semibold text-sm">طمنّي</span>
             </div>
             <div className="flex items-center gap-0.5">
-              <Button variant="ghost" size="icon" onClick={() => setIsFullScreen(!isFullScreen)} className="h-7 w-7 hover:bg-primary-foreground/20 text-primary-foreground" title={isFullScreen ? "تصغير" : "ملء الشاشة"}>
+              <Button variant="ghost" size="icon" onPointerDown={(event) => event.stopPropagation()} onClick={() => setIsFullScreen(!isFullScreen)} className="h-7 w-7 hover:bg-primary-foreground/20 text-primary-foreground" title={isFullScreen ? "تصغير" : "ملء الشاشة"}>
                 {isFullScreen ? <Minimize2 className="h-3.5 w-3.5" /> : <Maximize2 className="h-3.5 w-3.5" />}
               </Button>
-              <Button variant="ghost" size="icon" onClick={clearHistory} className="h-7 w-7 hover:bg-primary-foreground/20 text-primary-foreground" title="مسح المحادثة">
+              <Button variant="ghost" size="icon" onPointerDown={(event) => event.stopPropagation()} onClick={clearHistory} className="h-7 w-7 hover:bg-primary-foreground/20 text-primary-foreground" title="مسح المحادثة">
                 <Trash2 className="h-3.5 w-3.5" />
               </Button>
-              <Button variant="ghost" size="icon" onClick={closeChat} className="h-7 w-7 hover:bg-primary-foreground/20 text-primary-foreground" title="إغلاق">
+              <Button variant="ghost" size="sm" onPointerDown={(event) => event.stopPropagation()} onClick={closeChat} className="h-7 gap-1 px-2 text-xs hover:bg-primary-foreground/20 text-primary-foreground" title="إخفاء">
+                <EyeOff className="h-3.5 w-3.5" />
+                <span>إخفاء</span>
+              </Button>
+              <Button variant="ghost" size="icon" onPointerDown={(event) => event.stopPropagation()} onClick={closeChat} className="h-7 w-7 hover:bg-primary-foreground/20 text-primary-foreground" title="إغلاق">
                 <X className="h-4 w-4" />
               </Button>
             </div>

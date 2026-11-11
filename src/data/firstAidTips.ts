@@ -9,6 +9,15 @@ export interface FirstAidTip {
   category?: string;
   videoUrl?: string;
   sources?: Array<{ nameAr: string; nameEn: string; url: string }>;
+  scenario?: {
+    settingAr: string;
+    settingEn: string;
+    patientPromptAr: string;
+    patientPromptEn: string;
+    assignmentAr: string;
+    assignmentEn: string;
+    illustration: 'home' | 'school' | 'public' | 'work' | 'outdoors';
+  };
 }
 
 export const firstAidTips: FirstAidTip[] = [

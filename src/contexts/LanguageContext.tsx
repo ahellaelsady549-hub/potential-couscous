@@ -19,6 +19,7 @@ const ar: Record<string, string> = {
   // Navigation
   'nav.home': 'الرئيسية',
   'nav.firstAid': 'الإسعافات الأولية',
+  'nav.firstAidAcademy': 'أكاديمية الإسعافات',
   'nav.treatments': 'العلاجات',
   'nav.dailyTip': 'نصائح صحية',
   'nav.dietPlan': 'النظام الغذائي',
@@ -166,6 +167,7 @@ const en: Record<string, string> = {
 
   'nav.home': 'Home',
   'nav.firstAid': 'First Aid',
+  'nav.firstAidAcademy': 'First-aid Academy',
   'nav.treatments': 'Treatments',
   'nav.dailyTip': 'Health Tips',
   'nav.dietPlan': 'Diet Plan',

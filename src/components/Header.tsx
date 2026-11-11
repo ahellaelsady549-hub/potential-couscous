@@ -1,9 +1,10 @@
 import { useRef, useState } from 'react';
 import { useNavigate, Link, useLocation } from 'react-router-dom';
 import {
-  Moon, Sun, Menu, User, LogIn, Stethoscope, UserRound, MessageCircle,
+  Moon, Sun, Menu, User, LogIn, Stethoscope,
   Dumbbell, Settings as SettingsIcon, Home, Siren, HeartPulse, Pill,
-  Lightbulb, Salad, MapPin, Newspaper, Target, Activity,
+  Lightbulb, Salad, MapPin, Newspaper, Target, Activity, BookOpen,
+  Brain, ClipboardPlus, Headset, Info, UsersRound,
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from '@/components/ui/sheet';
@@ -21,8 +22,9 @@ const items: Item[] = [
   { kind: 'section', id: 'home', labelKey: 'nav.home', icon: Home },
   { kind: 'section', id: 'emergency', labelKey: 'nav.emergency', icon: Siren },
   { kind: 'section', id: 'first-aid', labelKey: 'nav.firstAid', icon: HeartPulse },
+  { kind: 'route', to: '/first-aid-academy', labelKey: 'nav.firstAidAcademy', icon: BookOpen, auth: true },
   { kind: 'section', id: 'treatments', labelKey: 'nav.treatments', icon: Pill },
-  { kind: 'section', id: 'mental-health', labelKey: 'nav.mentalHealth', icon: UserRound },
+  { kind: 'section', id: 'mental-health', labelKey: 'nav.mentalHealth', icon: Brain },
   { kind: 'section', id: 'daily-tip', labelKey: 'nav.dailyTip', icon: Lightbulb },
   { kind: 'section', id: 'diet-plan', labelKey: 'nav.dietPlan', icon: Salad },
   { kind: 'section', id: 'physiotherapy', labelKey: 'nav.physiotherapy', icon: Activity },
@@ -30,11 +32,11 @@ const items: Item[] = [
   { kind: 'route', to: '/gym', labelKey: 'nav.gym', icon: Dumbbell },
   { kind: 'route', to: '/nutrition-goals', labelKey: 'nav.goals', icon: Target, auth: true },
   { kind: 'route', to: '/articles', labelKey: 'nav.articles', icon: Newspaper },
-  { kind: 'route', to: '/about', labelKey: 'nav.about', icon: HeartPulse },
-  { kind: 'route', to: '/find-doctor', labelKey: 'nav.findDoctor', icon: Stethoscope },
-  { kind: 'route', to: '/personal-diagnosis', labelKey: 'nav.diagnose', icon: UserRound, auth: true },
-  { kind: 'route', to: '/ask-me', labelKey: 'nav.askMe', icon: MessageCircle, auth: true },
-  { kind: 'route', to: '/community', labelKey: 'nav.community', icon: MessageCircle, auth: true },
+  { kind: 'route', to: '/about', labelKey: 'nav.about', icon: Info },
+  { kind: 'route', to: '/find-doctor', labelKey: 'nav.findDoctor', icon: Stethoscope, auth: true },
+  { kind: 'route', to: '/personal-diagnosis', labelKey: 'nav.diagnose', icon: ClipboardPlus, auth: true },
+  { kind: 'route', to: '/ask-me', labelKey: 'nav.askMe', icon: Headset, auth: true },
+  { kind: 'route', to: '/community', labelKey: 'nav.community', icon: UsersRound, auth: true },
   { kind: 'route', to: '/dashboard', labelKey: 'nav.dashboard', icon: User, auth: true },
 ];
 

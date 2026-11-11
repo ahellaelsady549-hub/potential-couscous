@@ -1,14 +1,16 @@
 import { Card } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { useLanguage } from '@/contexts/LanguageContext';
-import { firstAidTips } from '@/data/firstAidTips';
+import { allFirstAidLessons } from '@/data/firstAidPracticeLessons';
 import { Heart, Search, ChevronDown, ChevronUp, Filter, X } from 'lucide-react';
 import { useState } from 'react';
 import { Button } from '@/components/ui/button';
+import { Link } from 'react-router-dom';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { MedicalSources } from '@/components/MedicalSources';
 import { MedicalSourceLinks } from '@/components/MedicalSourceLinks';
 import { normalizeSearchText } from '@/lib/search';
+import { useAuth } from '@/contexts/AuthContext';
 
 const categories = [
   { id: 'all', nameAr: 'الكل', nameEn: 'All' },
@@ -22,7 +24,7 @@ const categories = [
   { id: 'other', nameAr: 'أخرى', nameEn: 'Other' }
 ];
 
-const getCategoryForTip = (tip: typeof firstAidTips[0]): string => {
+const getCategoryForTip = (tip: (typeof allFirstAidLessons)[number]): string => {
   const title = tip.titleAr.toLowerCase();
   const desc = tip.descriptionAr.toLowerCase();
   const combined = title + ' ' + desc;
@@ -39,12 +41,13 @@ const getCategoryForTip = (tip: typeof firstAidTips[0]): string => {
 
 export const FirstAid = () => {
   const { t, L, language } = useLanguage();
+  const { user } = useAuth();
   const [showAll, setShowAll] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedCategory, setSelectedCategory] = useState<string>('all');
   const [expandedCards, setExpandedCards] = useState<Set<string>>(new Set());
 
-  const filteredTips = firstAidTips.filter(tip => {
+  const filteredTips = allFirstAidLessons.filter(tip => {
     const tipCategory = tip.category || getCategoryForTip(tip);
     const matchesCategory = selectedCategory === 'all' || tipCategory === selectedCategory;
     const searchLower = normalizeSearchText(searchQuery.trim());
@@ -84,7 +87,7 @@ export const FirstAid = () => {
             {t('firstAid.title')}
           </h2>
           <p className="text-muted-foreground mt-2" aria-live="polite">
-            {filteredTips.length} {L('إسعاف أولي متاح', 'first aid tips available')}
+            {filteredTips.length} {L('إرشادًا وتمرينًا للإسعافات الأولية', 'first-aid tips and scenarios available')}
           </p>
         </div>
 
@@ -101,6 +104,17 @@ export const FirstAid = () => {
             </a>
           </Button>
         </div>
+
+        {user && (
+          <div className="mb-10 text-center">
+            <Button asChild size="lg" className="gap-2">
+              <Link to="/first-aid-academy">
+                <Heart className="h-4 w-4" />
+                {L('ابدأ التعلّم والاختبارات التفاعلية', 'Start interactive lessons and quizzes')}
+              </Link>
+            </Button>
+          </div>
+        )}
 
         <div className="max-w-xl mx-auto mb-12 space-y-4">
           <div className="flex items-center gap-2">

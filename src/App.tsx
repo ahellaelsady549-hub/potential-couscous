@@ -34,6 +34,7 @@ import { TermsGate } from "@/components/TermsGate";
 import { ConnectionNotice } from "@/components/ConnectionNotice";
 const NotFound = lazy(() => import("./pages/NotFound"));
 const AskMePage = lazy(() => import("./pages/AskMePage"));
+const FirstAidAcademy = lazy(() => import("./pages/FirstAidAcademy"));
 
 const queryClient = new QueryClient();
 
@@ -63,6 +64,7 @@ const AnimatedRoutes = () => {
         <Route path="/personal-diagnosis" element={<PersonalDiagnosis />} />
         <Route path="/personal-diagnosis/results" element={<DiagnosisResults />} />
         <Route path="/ask-me" element={<AskMePage />} />
+        <Route path="/first-aid-academy" element={<FirstAidAcademy />} />
         <Route path="/install" element={<Install />} />
         <Route path="/community" element={<Community />} />
         <Route path="/gym" element={<Gym />} />

@@ -1,6 +1,6 @@
 import { addedCareOptionsCount, physicalConditionCatalog, mentalConditionCatalog } from "@/data/conditionCatalog";
 import { treatments } from "@/data/treatments";
-import { firstAidTips } from "@/data/firstAidTips";
+import { firstAidAcademyLessonCount } from "@/data/firstAidPracticeLessons";
 import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
 import { Heart, Stethoscope, Brain, Cross, Users, Target, Award } from "lucide-react";
@@ -35,8 +35,8 @@ const About = () => {
     },
     {
       icon: Heart,
-      count: firstAidTips.length,
-      label: L("إسعاف أولي", "first aid tip"),
+      count: firstAidAcademyLessonCount,
+      label: L("درس وتمرين إسعاف أولي", "first-aid lessons and scenarios"),
       color: "text-red-500",
       bgColor: "bg-red-500/10"
     },
@@ -124,7 +124,7 @@ const About = () => {
         <div className="bg-gradient-to-r from-primary/10 to-primary/5 rounded-2xl p-8 text-center">
           <h2 className="text-2xl font-bold text-foreground mb-4">{L('ماذا نقدم؟', 'What We Offer?')}</h2>
           <p className="text-muted-foreground max-w-2xl mx-auto">
-            {L(`نقدم قاعدة بيانات شاملة تضم ${physicalConditionCatalog.length} مرض جسدي و${treatments.length + addedCareOptionsCount} خيار علاج ورعاية و${firstAidTips.length} إرشاد إسعاف أولي و${mentalConditionCatalog.length} مرض نفسي، بالإضافة إلى أرقام الطوارئ وحاسبة BMI وخطط النظام الغذائي والبحث عن أقرب المستشفيات والصيدليات.`, `We offer a comprehensive database including ${physicalConditionCatalog.length} physical diseases, ${treatments.length + addedCareOptionsCount} treatment and care options, ${firstAidTips.length} first-aid guides, and ${mentalConditionCatalog.length} mental health conditions, in addition to emergency numbers, a BMI calculator, diet plans, and nearby facility search.`)}
+            {L(`نقدم قاعدة بيانات شاملة تضم ${physicalConditionCatalog.length} مرض جسدي و${treatments.length + addedCareOptionsCount} خيار علاج ورعاية و${firstAidAcademyLessonCount} درسًا وتمرينًا تفاعليًا للإسعافات الأولية و${mentalConditionCatalog.length} مرض نفسي، بالإضافة إلى أرقام الطوارئ وحاسبة BMI وخطط النظام الغذائي والبحث عن أقرب المستشفيات والصيدليات.`, `We offer a comprehensive database including ${physicalConditionCatalog.length} physical diseases, ${treatments.length + addedCareOptionsCount} treatment and care options, ${firstAidAcademyLessonCount} interactive first-aid lessons and scenarios, and ${mentalConditionCatalog.length} mental health conditions, in addition to emergency numbers, a BMI calculator, diet plans, and nearby facility search.`)}
           </p>
         </div>
       </main>

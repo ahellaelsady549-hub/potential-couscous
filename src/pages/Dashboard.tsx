@@ -29,7 +29,8 @@ import {
   Stethoscope,
   Calendar,
   Link as LinkIcon,
-  Volume2
+  Volume2,
+  VolumeX
 } from 'lucide-react';
 import { treatments } from '@/data/treatments';
 import { useLanguage } from '@/contexts/LanguageContext';
@@ -37,7 +38,7 @@ import { WorkoutProgress } from '@/components/gym/WorkoutProgress';
  
 import { DoctorSchedule } from '@/components/chat/DoctorSchedule';
 
-import { playMedicationReminderSound, requestWebNotificationPermission } from '@/services/pushNotifications';
+import { playMedicationReminderSound, requestWebNotificationPermission, stopMedicationReminderSound } from '@/services/pushNotifications';
 
 const DEFAULT_DOSE_TIMES = ['08:00', '14:00', '20:00', '22:00'];
 const normalizeDoseTime = (time: string): string | null => {
@@ -484,6 +485,10 @@ const Dashboard = () => {
                   <Button variant="outline" onClick={handleTestMedicationReminder}>
                     <Volume2 className="w-4 h-4 ml-2" />
                     {L('تفعيل وتجربة صوت التذكير', 'Enable and test reminder sound')}
+                  </Button>
+                  <Button variant="outline" onClick={stopMedicationReminderSound}>
+                    <VolumeX className="w-4 h-4 ml-2" />
+                    {L('إيقاف صوت التذكير', 'Stop reminder sound')}
                   </Button>
                   <Dialog open={isAddingMed} onOpenChange={setIsAddingMed}>
                     <DialogTrigger asChild>
